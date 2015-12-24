@@ -1,3 +1,5 @@
+package Controlador;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -26,9 +28,18 @@ public class Controlador extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String accion = request.getParameter("accion");
+        String url;
+        switch(accion){
+            case "Acceso":
+                url = acceso(request);
+                break;
+        }
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
@@ -37,7 +48,7 @@ public class Controlador extends HttpServlet {
             out.println("<title>Servlet Controlador</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Controlador at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Controlador at " + accion + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -81,5 +92,9 @@ public class Controlador extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private String acceso(HttpServletRequest request) {
+       return null;
+    }
 
 }
