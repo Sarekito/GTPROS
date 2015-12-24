@@ -63,7 +63,7 @@ public class TrabajadorPersistencia {
         }
         Connection conexion = DriverManager.getConnection ("jdbc:mysql://localhost/PGP_grupo11","PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement(); 
-        
+        s.execute("INSERT INTO Vacaciones VALUES ('"+user+"',"+periodo+", "+(int)(year+1900)+", '"+(int)(inicio.getYear()+1900)+"-"+(int)(inicio.getMonth()+1)+"-"+inicio.getDate()+"', "+semanas+")");   
     }
     
 }
