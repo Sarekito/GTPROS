@@ -13,6 +13,15 @@ public class Rol {
 
     private String rol;
 
-    public void setJefe() {
+    public Rol(String r){
+        rol = r;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 }
