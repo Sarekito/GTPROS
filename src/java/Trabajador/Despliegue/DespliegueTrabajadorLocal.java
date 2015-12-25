@@ -5,6 +5,7 @@
  */
 package Trabajador.Despliegue;
 
+import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
 import java.util.Date;
 import javax.ejb.Local;
@@ -20,4 +21,6 @@ public interface DespliegueTrabajadorLocal {
     public boolean reservoVacaciones(String user);
 
     public void reservaVacaciones(Trabajador t, int i, Date fechaElegida, int semanas);
+
+    public Administrador getAdministrador(String parameter);
 }

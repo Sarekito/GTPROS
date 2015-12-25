@@ -5,6 +5,7 @@
  */
 package Trabajador.Despliegue;
 
+import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
 import Trabajador.Persistencia.TrabajadorPersistencia;
@@ -24,14 +25,14 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    public Trabajador getTrabajador(String user){
+    public Trabajador getTrabajador(String user) {
         Trabajador t = null;
         try {
             t = TrabajadorPersistencia.getTrabajador(user);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
-    return t;
+        return t;
     }
 
     @Override
@@ -42,10 +43,9 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (vacaciones.size()==0){
+        if (vacaciones.size() == 0) {
             return false;
-        }
-        else{
+        } else {
             return true;
         }
     }
@@ -58,5 +58,16 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public Administrador getAdministrador(String user) {
+        Administrador t = null;
+        try {
+            t = TrabajadorPersistencia.getAdministrador(user);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return t;
     }
 }

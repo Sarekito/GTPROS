@@ -1,5 +1,6 @@
 package Trabajador.Persistencia;
 
+import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Categoria;
 import Trabajador.Dominio.Rol;
 import Trabajador.Dominio.Trabajador;
@@ -18,7 +19,6 @@ import java.time.Instant;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author antonio
@@ -31,9 +31,9 @@ public class TrabajadorPersistencia {
         } catch (Exception e) {
 
         }
-        Connection conexion = DriverManager.getConnection ("jdbc:mysql://localhost/PGP_grupo11","PGP_grupo11", "P6AbQA8Z");
-        Statement s = conexion.createStatement(); 
-        ResultSet rs = s.executeQuery ("select * from Trabajador T where T.user='"+user+"'");
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("select * from Trabajador T where T.user='" + user + "'");
         rs.next();
         return new Trabajador(rs.getString(1), rs.getString(2), new Rol(rs.getString(3)), new Categoria(rs.getInt(4)));
     }
@@ -45,11 +45,11 @@ public class TrabajadorPersistencia {
         } catch (Exception e) {
 
         }
-        
-        Connection conexion = DriverManager.getConnection ("jdbc:mysql://localhost/PGP_grupo11","PGP_grupo11", "P6AbQA8Z");
-        Statement s = conexion.createStatement(); 
-        ResultSet rs = s.executeQuery ("select * from Vacaciones V where V.user='"+user+"' and V.ano = "+Date.from(Instant.now()).getYear());
-        while(rs.next()){
+
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("select * from Vacaciones V where V.user='" + user + "' and V.ano = " + (int) (Date.from(Instant.now()).getYear() + 1900));
+        while (rs.next()) {
             vacaciones.add(new Vacaciones(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getDate(4), rs.getInt(5)));
         }
         return vacaciones;
@@ -61,9 +61,22 @@ public class TrabajadorPersistencia {
         } catch (Exception e) {
 
         }
-        Connection conexion = DriverManager.getConnection ("jdbc:mysql://localhost/PGP_grupo11","PGP_grupo11", "P6AbQA8Z");
-        Statement s = conexion.createStatement(); 
-        s.execute("INSERT INTO Vacaciones VALUES ('"+user+"',"+periodo+", "+(int)(year+1900)+", '"+(int)(inicio.getYear()+1900)+"-"+(int)(inicio.getMonth()+1)+"-"+inicio.getDate()+"', "+semanas+")");   
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        s.execute("INSERT INTO Vacaciones VALUES ('" + user + "'," + periodo + ", " + (int) (year + 1900) + ", '" + (int) (inicio.getYear() + 1900) + "-" + (int) (inicio.getMonth() + 1) + "-" + inicio.getDate() + "', " + semanas + ")");
     }
-    
+
+    public static Administrador getAdministrador(String user) throws SQLException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("select * from Administrador T where T.user='" + user + "'");
+        rs.next();
+        return new Administrador(rs.getString(1), rs.getString(2));
+    }
+
 }

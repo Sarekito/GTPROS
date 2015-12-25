@@ -5,11 +5,12 @@ package Controlador;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import Trabajador.Despliegue.DespliegueTrabajadorLocal;
+import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
 import java.io.IOException;
 import java.sql.Date;
+import java.util.Calendar;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author antonio
  */
 public class Controlador extends HttpServlet {
+
     @EJB
     private DespliegueTrabajadorLocal despliegueTrabajador;
 
@@ -35,14 +37,14 @@ public class Controlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     Trabajador t;
-    
-    
+    Administrador a;
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String accion = request.getParameter("accion");
         String url = null;
-        switch(accion){
+        switch (accion) {
             case "Acceso":
                 url = acceso(request);
                 break;
@@ -51,6 +53,9 @@ public class Controlador extends HttpServlet {
                 break;
             case "reservaVacaciones":
                 url = reservaVacaiones(request);
+                break;
+            case "entrarAdmin":
+                url = entrarAdmin(request);
                 break;
         }
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
@@ -98,14 +103,12 @@ public class Controlador extends HttpServlet {
 
     private String acceso(HttpServletRequest request) {
         t = despliegueTrabajador.getTrabajador(request.getParameter("usuario"));
-        if(t == null){
+        if (t == null) {
             return "/error.jsp";
-        }
-        else{
-            if(!t.getPassword().equals(request.getParameter("clave"))){
+        } else {
+            if (!t.getPassword().equals(request.getParameter("clave"))) {
                 return "/error.jsp";
-            }
-            else{
+            } else {
                 return "/accesoUsuario.jsp";
             }
         }
@@ -113,20 +116,60 @@ public class Controlador extends HttpServlet {
 
     private String vacaciones(HttpServletRequest request) {
         boolean vcc = despliegueTrabajador.reservoVacaciones(t.getUser());
-        if(vcc){
+        if (vcc) {
             return "/vacacionesReservadas.jsp";
-        }
-        else{
-            return"/reservarVacaciones.jsp";
+        } else {
+            return "/reservarVacaciones.jsp";
         }
     }
 
     private String reservaVacaiones(HttpServletRequest request) {
-        
-        Date fechaElegida = Date.valueOf(request.getParameter("fecha"));
-        int semanas = Integer.parseInt(request.getParameter("semanas"));
-        despliegueTrabajador.reservaVacaciones(t, 1, fechaElegida, semanas);
+        java.util.Date hoy = new java.util.Date();
+        Date hoySql = new Date(hoy.getYear(), hoy.getMonth(), hoy.getDate());
+        if (request.getParameter("periodos") == null) {
+            int semanas = Integer.parseInt(request.getParameter("semanas1"));
+            Date fechaElegida = Date.valueOf(request.getParameter("fecha1"));
+            if (semanas != 4 || fechaElegida.getDay() != 1 || fechaElegida.before(hoySql)) {
+                return "/vacacionesErroneas.jsp";
+            } else {
+                despliegueTrabajador.reservaVacaciones(t, 1, fechaElegida, semanas);
+            }
+        } else {
+            int semanas1 = Integer.parseInt(request.getParameter("semanas1"));
+            Date fechaElegida1 = Date.valueOf(request.getParameter("fecha1"));
+            int semanas2 = Integer.parseInt(request.getParameter("semanas2"));
+            Date fechaElegida2 = Date.valueOf(request.getParameter("fecha2"));
+            Calendar c = Calendar.getInstance();
+            c.setTime(fechaElegida1);
+            c.add(Calendar.DATE, (semanas1 * 7) - 1);
+            Date fechaFin1 = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
+            System.out.println(fechaElegida1.toLocalDate());
+            System.out.println(fechaElegida2.toLocalDate());
+            System.out.println(fechaFin1.toLocalDate());
+            if (semanas1 + semanas2 != 4 || fechaElegida2.getDay() != 1 || fechaElegida1.getDay() != 1
+                    || fechaElegida1.after(fechaElegida2) || fechaElegida2.before(fechaFin1)
+                    || fechaElegida1.before(hoySql) || fechaElegida2.before(hoySql)) {
+                return "/vacacionesErroneas.jsp";
+            } else {
+                despliegueTrabajador.reservaVacaciones(t, 1, fechaElegida1, semanas1);
+                despliegueTrabajador.reservaVacaciones(t, 2, fechaElegida2, semanas2);
+            }
+
+        }
         return "/vacacionesGuardadas.jsp";
+    }
+
+    private String entrarAdmin(HttpServletRequest request) {
+        a = despliegueTrabajador.getAdministrador(request.getParameter("usuario"));
+        if (a == null) {
+            return "/error.jsp";
+        } else {
+            if (!a.getPassword().equals(request.getParameter("clave"))) {
+                return "/error.jsp";
+            } else {
+                return "/accesoAdmin.jsp";
+            }
+        }
     }
 
 }

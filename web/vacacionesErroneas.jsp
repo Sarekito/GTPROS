@@ -1,6 +1,6 @@
 <%-- 
-    Document   : reservarVacaciones
-    Created on : 24-dic-2015, 18:04:14
+    Document   : vacacionesErroneas
+    Created on : 25-dic-2015, 9:34:52
     Author     : antonio
 --%>
 
@@ -11,8 +11,10 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
     </head>
-    <body>
+     <body>
     <center>
+        <font size = "5" color="red">Los periodos vacacionales deben sumar cuatro semanas, empezar en lunes y no superponerse</font>
+        <br><br>
         <form name="Controlador" method ="post">
             <input type="checkbox" name="periodos" value="ON"/>Solicito las vacaciones en dos periodos
             <table>
