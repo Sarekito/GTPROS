@@ -16,6 +16,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface DespliegueTrabajadorLocal {
+    
     public Trabajador getTrabajador(String parameter);
 
     public boolean reservoVacaciones(String user);
@@ -23,4 +24,9 @@ public interface DespliegueTrabajadorLocal {
     public void reservaVacaciones(Trabajador t, int i, Date fechaElegida, int semanas);
 
     public Administrador getAdministrador(String parameter);
+
+    public void registrarTrabajador(Trabajador tr);
+
+    public boolean buscaTrabajador(String user);
+
 }

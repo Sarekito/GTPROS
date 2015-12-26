@@ -15,12 +15,12 @@
         <br>
     <center>
         <form name = "Controlador" method="POST">
-            <input type="hidden" name="accion" value="registroTrabajador" readonly="readonly" />
+            <input type="hidden" name="accion" value="registrarTrabajador" readonly="readonly" />
             <input type="submit" value="Registrar Trabajador" />
         </form>
         <br>
         <form name = "Controlador" method="POST">
-            <input type="hidden" name="accion" value=registroProyecto" readonly="readonly" />
+            <input type="hidden" name="accion" value=registrarProyecto" readonly="readonly" />
             <input type="submit" value="  Registrar Proyecto  " size = "50"/>
         </form>
     </center>

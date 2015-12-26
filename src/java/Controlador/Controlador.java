@@ -7,6 +7,8 @@ package Controlador;
  */
 import Trabajador.Despliegue.DespliegueTrabajadorLocal;
 import Trabajador.Dominio.Administrador;
+import Trabajador.Dominio.Rol;
+import Trabajador.Dominio.RolCat;
 import Trabajador.Dominio.Trabajador;
 import java.io.IOException;
 import java.sql.Date;
@@ -57,6 +59,16 @@ public class Controlador extends HttpServlet {
             case "entrarAdmin":
                 url = entrarAdmin(request);
                 break;
+            case "registrarTrabajador":
+                url = "/registroTrabajador.jsp";
+                break;
+            case "registrarProyecto":
+                url = "/registroProyecto";
+                break;
+            case "registroTrabajador":
+                url = registroTrabajador(request);
+                break;
+                
         }
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
         dispatcher.forward(request, response);
@@ -172,4 +184,16 @@ public class Controlador extends HttpServlet {
         }
     }
 
+    private String registroTrabajador(HttpServletRequest request) {
+        Trabajador tr = new Trabajador(request.getParameter("usuario"), request.getParameter("clave"), new Rol(request.getParameter("rol")), RolCat.dameCat(new Rol(request.getParameter("rol"))));
+        boolean existe = despliegueTrabajador.buscaTrabajador(tr.getUser());
+        if(!existe){
+            despliegueTrabajador.registrarTrabajador(tr);
+            return "/creacionConExito.jsp";
+        }
+        else{
+            return "/trabajadorCreado.jsp";
+        }
+        
+    }
 }

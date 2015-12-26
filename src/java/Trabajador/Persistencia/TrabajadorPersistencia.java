@@ -34,8 +34,11 @@ public class TrabajadorPersistencia {
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
         ResultSet rs = s.executeQuery("select * from Trabajador T where T.user='" + user + "'");
-        rs.next();
-        return new Trabajador(rs.getString(1), rs.getString(2), new Rol(rs.getString(3)), new Categoria(rs.getInt(4)));
+        if (rs.next()) {
+            return new Trabajador(rs.getString(1), rs.getString(2), new Rol(rs.getString(3)), new Categoria(rs.getInt(4)));
+        } else {
+            return null;
+        }
     }
 
     public static ArrayList<Vacaciones> getVacaciones(String user) throws SQLException {
@@ -77,6 +80,17 @@ public class TrabajadorPersistencia {
         ResultSet rs = s.executeQuery("select * from Administrador T where T.user='" + user + "'");
         rs.next();
         return new Administrador(rs.getString(1), rs.getString(2));
+    }
+
+    public static void registrarTrabajador(Trabajador tr) throws SQLException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        s.execute("Insert into Trabajador values('" + tr.getUser() + "', '" + tr.getPassword() + "', '" + tr.getTipoRol().getRol() + "', " + tr.getCategoria().getCategoria() + ")");
     }
 
 }

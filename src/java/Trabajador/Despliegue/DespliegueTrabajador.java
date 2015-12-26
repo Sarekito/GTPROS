@@ -25,6 +25,7 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+    @Override
     public Trabajador getTrabajador(String user) {
         Trabajador t = null;
         try {
@@ -70,4 +71,30 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
         }
         return t;
     }
+
+    @Override
+    public void registrarTrabajador(Trabajador tr) {
+        try {
+            TrabajadorPersistencia.registrarTrabajador(tr);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public boolean buscaTrabajador(String user) {
+        Trabajador t = null;
+        try {
+             t = TrabajadorPersistencia.getTrabajador(user);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (t==null){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
 }
