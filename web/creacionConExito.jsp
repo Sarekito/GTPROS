@@ -18,7 +18,7 @@
         </font>
         <br>
         <br>
-        <a href ="indexAdministrador.jsp">Volver a tu pagina de inicio</a>
+        <a href ="accesoAdmin.jsp">Volver a tu pagina de inicio</a>
     </center>
     </body>
 </html>

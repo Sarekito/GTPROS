@@ -20,7 +20,7 @@
         </form>
         <br>
         <form name = "Controlador" method="POST">
-            <input type="hidden" name="accion" value=registrarProyecto" readonly="readonly" />
+            <input type="hidden" name="accion" value="registrarProyecto" readonly="readonly" />
             <input type="submit" value="  Registrar Proyecto  " size = "50"/>
         </form>
     </center>

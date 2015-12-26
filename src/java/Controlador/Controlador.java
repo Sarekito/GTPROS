@@ -5,6 +5,8 @@ package Controlador;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import Proyecto.Despliegue.despliegueProyectoLocal;
+import Proyecto.Dominio.Proyecto;
 import Trabajador.Despliegue.DespliegueTrabajadorLocal;
 import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Rol;
@@ -12,6 +14,7 @@ import Trabajador.Dominio.RolCat;
 import Trabajador.Dominio.Trabajador;
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
@@ -25,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author antonio
  */
 public class Controlador extends HttpServlet {
+    @EJB
+    private despliegueProyectoLocal despliegueProyecto;
 
     @EJB
     private DespliegueTrabajadorLocal despliegueTrabajador;
@@ -63,10 +68,13 @@ public class Controlador extends HttpServlet {
                 url = "/registroTrabajador.jsp";
                 break;
             case "registrarProyecto":
-                url = "/registroProyecto";
+                url = "/registroProyecto.jsp";
                 break;
             case "registroTrabajador":
                 url = registroTrabajador(request);
+                break;
+            case "registroProyecto":
+                url = registroProyecto(request);
                 break;
                 
         }
@@ -195,5 +203,28 @@ public class Controlador extends HttpServlet {
             return "/trabajadorCreado.jsp";
         }
         
+    }
+
+    private String registroProyecto(HttpServletRequest request) {
+        String jefe = request.getParameter("jefe");
+        String nombreProyecto = request.getParameter("nombre");
+        boolean existe = despliegueTrabajador.buscaTrabajador(jefe);
+        if(!existe){
+            return "/errorProyectoNoJefe.jsp";
+        }
+        Trabajador tr = despliegueTrabajador.getTrabajador(jefe);
+        if (tr.getCategoria().getCategoria()!=1){
+            return "/errorNoPuedeSerJefe.jsp";
+        }
+        ArrayList<Proyecto> proyectosDeJefe = despliegueProyecto.getMisProyectos(jefe) ;
+        if (proyectosDeJefe.size()!=0){
+            return "/errorProyectoJefe.jsp";
+        }
+        Proyecto p = despliegueProyecto.getProyecto(nombreProyecto);
+        if(p!=null){
+            return "/errorExisteProyecto.jsp";
+        }
+        despliegueProyecto.generar(nombreProyecto, jefe);
+        return "/creacionConExito.jsp";
     }
 }
