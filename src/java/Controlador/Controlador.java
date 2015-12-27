@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author antonio
  */
 public class Controlador extends HttpServlet {
+
     @EJB
     private despliegueProyectoLocal despliegueProyecto;
 
@@ -76,7 +77,7 @@ public class Controlador extends HttpServlet {
             case "registroProyecto":
                 url = registroProyecto(request);
                 break;
-                
+
         }
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
         dispatcher.forward(request, response);
@@ -135,12 +136,7 @@ public class Controlador extends HttpServlet {
     }
 
     private String vacaciones(HttpServletRequest request) {
-        boolean vcc = despliegueTrabajador.reservoVacaciones(t.getUser());
-        if (vcc) {
-            return "/vacacionesReservadas.jsp";
-        } else {
-            return "/reservarVacaciones.jsp";
-        }
+        return "/reservarVacaciones.jsp";
     }
 
     private String reservaVacaiones(HttpServletRequest request) {
@@ -149,6 +145,9 @@ public class Controlador extends HttpServlet {
         if (request.getParameter("periodos") == null) {
             int semanas = Integer.parseInt(request.getParameter("semanas1"));
             Date fechaElegida = Date.valueOf(request.getParameter("fecha1"));
+            if(despliegueTrabajador.reservoVacaciones(t.getUser(), (int)(1900+fechaElegida.getYear()))){
+                return "/vacacionesReservadas.jsp";
+            }
             if (semanas != 4 || fechaElegida.getDay() != 1 || fechaElegida.before(hoySql)) {
                 return "/vacacionesErroneas.jsp";
             } else {
@@ -159,6 +158,9 @@ public class Controlador extends HttpServlet {
             Date fechaElegida1 = Date.valueOf(request.getParameter("fecha1"));
             int semanas2 = Integer.parseInt(request.getParameter("semanas2"));
             Date fechaElegida2 = Date.valueOf(request.getParameter("fecha2"));
+             if(despliegueTrabajador.reservoVacaciones(t.getUser(), (int)(1900+fechaElegida1.getYear()))){
+                return "/vacacionesReservadas.jsp";
+            }
             Calendar c = Calendar.getInstance();
             c.setTime(fechaElegida1);
             c.add(Calendar.DATE, (semanas1 * 7) - 1);
@@ -166,6 +168,7 @@ public class Controlador extends HttpServlet {
             System.out.println(fechaElegida1.toLocalDate());
             System.out.println(fechaElegida2.toLocalDate());
             System.out.println(fechaFin1.toLocalDate());
+            
             if (semanas1 + semanas2 != 4 || fechaElegida2.getDay() != 1 || fechaElegida1.getDay() != 1
                     || fechaElegida1.after(fechaElegida2) || fechaElegida2.before(fechaFin1)
                     || fechaElegida1.before(hoySql) || fechaElegida2.before(hoySql)) {
@@ -195,33 +198,32 @@ public class Controlador extends HttpServlet {
     private String registroTrabajador(HttpServletRequest request) {
         Trabajador tr = new Trabajador(request.getParameter("usuario"), request.getParameter("clave"), new Rol(request.getParameter("rol")), RolCat.dameCat(new Rol(request.getParameter("rol"))));
         boolean existe = despliegueTrabajador.buscaTrabajador(tr.getUser());
-        if(!existe){
+        if (!existe) {
             despliegueTrabajador.registrarTrabajador(tr);
             return "/creacionConExito.jsp";
-        }
-        else{
+        } else {
             return "/trabajadorCreado.jsp";
         }
-        
+
     }
 
     private String registroProyecto(HttpServletRequest request) {
         String jefe = request.getParameter("jefe");
         String nombreProyecto = request.getParameter("nombre");
         boolean existe = despliegueTrabajador.buscaTrabajador(jefe);
-        if(!existe){
+        if (!existe) {
             return "/errorProyectoNoJefe.jsp";
         }
         Trabajador tr = despliegueTrabajador.getTrabajador(jefe);
-        if (tr.getCategoria().getCategoria()!=1){
+        if (tr.getCategoria().getCategoria() != 1) {
             return "/errorNoPuedeSerJefe.jsp";
         }
-        ArrayList<Proyecto> proyectosDeJefe = despliegueProyecto.getMisProyectos(jefe) ;
-        if (proyectosDeJefe.size()!=0){
+        ArrayList<Proyecto> proyectosDeJefe = despliegueProyecto.getMisProyectos(jefe);
+        if (proyectosDeJefe.size() != 0) {
             return "/errorProyectoJefe.jsp";
         }
         Proyecto p = despliegueProyecto.getProyecto(nombreProyecto);
-        if(p!=null){
+        if (p != null) {
             return "/errorExisteProyecto.jsp";
         }
         despliegueProyecto.generar(nombreProyecto, jefe);

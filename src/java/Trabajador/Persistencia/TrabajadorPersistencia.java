@@ -41,7 +41,7 @@ public class TrabajadorPersistencia {
         }
     }
 
-    public static ArrayList<Vacaciones> getVacaciones(String user) throws SQLException {
+    public static ArrayList<Vacaciones> getVacaciones(String user, int year) throws SQLException {
         ArrayList<Vacaciones> vacaciones = new ArrayList<>();
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -51,7 +51,7 @@ public class TrabajadorPersistencia {
 
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        ResultSet rs = s.executeQuery("select * from Vacaciones V where V.user='" + user + "' and V.ano = " + (int) (Date.from(Instant.now()).getYear() + 1900));
+        ResultSet rs = s.executeQuery("select * from Vacaciones V where V.user='" + user + "' and V.ano = " + year);
         while (rs.next()) {
             vacaciones.add(new Vacaciones(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getDate(4), rs.getInt(5)));
         }

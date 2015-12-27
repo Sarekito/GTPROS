@@ -19,7 +19,7 @@ public interface DespliegueTrabajadorLocal {
     
     public Trabajador getTrabajador(String parameter);
 
-    public boolean reservoVacaciones(String user);
+    public boolean reservoVacaciones(String user, int date);
 
     public void reservaVacaciones(Trabajador t, int i, Date fechaElegida, int semanas);
 

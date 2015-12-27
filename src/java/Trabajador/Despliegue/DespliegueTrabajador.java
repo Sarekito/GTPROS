@@ -37,10 +37,10 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
     }
 
     @Override
-    public boolean reservoVacaciones(String user) {
+    public boolean reservoVacaciones(String user, int ano) {
         ArrayList<Vacaciones> vacaciones = null;
         try {
-            vacaciones = TrabajadorPersistencia.getVacaciones(user);
+            vacaciones = TrabajadorPersistencia.getVacaciones(user, ano);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -96,5 +96,4 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
             return true;
         }
     }
-
 }
