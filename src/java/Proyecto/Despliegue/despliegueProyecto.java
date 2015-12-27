@@ -24,7 +24,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
     public ArrayList<Proyecto> getMisProyectos(String jefe) {
         ArrayList<Proyecto> proyectos = new ArrayList<>();
         try {
-            PersistenciaProyecto.getMisProyectos(jefe);
+            proyectos = PersistenciaProyecto.getMisProyectos(jefe);
         } catch (SQLException ex) {
             Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
