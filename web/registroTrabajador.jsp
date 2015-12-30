@@ -53,6 +53,11 @@
                         <input type="radio" name="rol" value="Disenador" />Diseñador
                     </td>
                 </tr>
+                  <tr>
+                    <td>
+                        <input type="radio" name="rol" value="AnalistaProgramador" />Analista-Programador
+                    </td>
+                </tr>
                 <tr>
                     <td>
                         <input type="radio" name="rol" value="ResponsablePruebas" />Responsable del equipo de pruebas
