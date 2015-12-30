@@ -29,8 +29,9 @@ public class PersistenciaProyecto {
         } catch (Exception e) {
 
         }
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhostt/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
+        System.out.println("select * from Proyecto P where P.jefeProyecto='" + jefe + "' and P.estado <> 'cerrado'");
         ResultSet rs = s.executeQuery("select * from Proyecto P where P.jefeProyecto='" + jefe + "' and P.estado <> 'cerrado'");
         while (rs.next()) {
             Proyecto p = new Proyecto(rs.getString("nombre"), rs.getDate("fechaInicio"), rs.getDate("fechaFin"), rs.getString("jefeProyecto"), rs.getString("estado"));
@@ -61,7 +62,7 @@ public class PersistenciaProyecto {
         } catch (Exception e) {
 
         }
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhostt/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
         s.execute("insert into Proyecto(nombre, jefeProyecto, estado) values ('"+nombreProyecto+"', '"+jefe+"', 'pendiente')");
     }

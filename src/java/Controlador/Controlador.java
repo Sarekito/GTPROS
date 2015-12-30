@@ -46,6 +46,7 @@ public class Controlador extends HttpServlet {
      */
     Trabajador t;
     Administrador a;
+    ArrayList<Proyecto> misProyectos;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -79,6 +80,12 @@ public class Controlador extends HttpServlet {
                 break;
             case "creacionExito":
                 url = "/accesoAdmin.jsp";
+                break;
+            case "misProyectos":
+                url = verMisProyectos(request);
+                break;
+            case "verProyecto":
+                url = verProyecto(request);
                 break;
         }
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
@@ -226,5 +233,19 @@ public class Controlador extends HttpServlet {
         }
         despliegueProyecto.generar(nombreProyecto, jefe);
         return "/creacionConExito.jsp";
+    }
+
+    private String verMisProyectos(HttpServletRequest request) {
+        misProyectos = despliegueProyecto.getMisProyectos(t.getUser());
+        request.setAttribute("misProyectos", misProyectos);
+        System.out.println(misProyectos);
+        return "/verProyectos.jsp";
+    }
+
+    private String verProyecto(HttpServletRequest request) {
+        int elegido = Integer.parseInt(request.getParameter("eleccion"));
+        System.out.print(misProyectos.get(elegido));
+        /*Ahora viene toda la logica en funcion del proyecto*/
+        //TODO 
     }
 }
