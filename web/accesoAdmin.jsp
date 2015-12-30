@@ -1,6 +1,6 @@
 <%-- 
     Document   : accesoAdmin
-    Created on : 25-dic-2015, 11:44:09
+    Created on : 30-dic-2015, 20:44:55
     Author     : antonio
 --%>
 
@@ -15,13 +15,13 @@
         <br>
     <center>
         <form name = "Controlador" method="POST">
-            <input type="hidden" name="accion" value="registrarTrabajador" readonly="readonly" />
+            <input type="hidden" name="accion" value="registrarTrabajador"/>
             <input type="submit" value="Registrar Trabajador" />
         </form>
         <br>
         <form name = "Controlador" method="POST">
-            <input type="hidden" name="accion" value="registrarProyecto" readonly="readonly" />
-            <input type="submit" value="  Registrar Proyecto  " size = "50"/>
+            <input type="hidden" name="accion" value="registrarProyecto"/>
+            <input type="submit" value="  Registrar Proyecto  " />
         </form>
     </center>
 </body>

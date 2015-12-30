@@ -21,7 +21,7 @@ public interface DespliegueTrabajadorLocal {
 
     public boolean reservoVacaciones(String user, int date);
 
-    public void reservaVacaciones(Trabajador t, int i, Date fechaElegida, int semanas);
+    public void reservaVacaciones(Trabajador t, int year, int i, Date fechaElegida, int semanas);
 
     public Administrador getAdministrador(String parameter);
 

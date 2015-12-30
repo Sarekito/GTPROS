@@ -52,10 +52,10 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
     }
 
     @Override
-    public void reservaVacaciones(Trabajador t, int periodo, Date fechaElegida, int semanas) {
+    public void reservaVacaciones(Trabajador t, int periodo, int year, Date fechaElegida, int semanas) {
         Vacaciones v = new Vacaciones(t.getUser(), periodo, fechaElegida.getYear(), fechaElegida, semanas);
         try {
-            TrabajadorPersistencia.guardaVacaciones(v.getUser(), v.getInicio().getYear(), v.getPeriodo(), v.getInicio(), v.getSemanas());
+            TrabajadorPersistencia.guardaVacaciones(v.getUser(), v.getPeriodo(), year , v.getInicio(), v.getSemanas());
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -1,6 +1,6 @@
 <%-- 
     Document   : registroTrabajador
-    Created on : 25-dic-2015, 17:34:58
+    Created on : 30-dic-2015, 20:40:19
     Author     : antonio
 --%>
 
@@ -71,7 +71,7 @@
             </table>
             <br>
             <input type="hidden" name="accion" value="registroTrabajador"/>
-            <input type="submit" value="Acceder" />
+            <input type="submit" value="Crear" />
         </form>
     </center>
     </body>

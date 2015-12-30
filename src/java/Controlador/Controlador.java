@@ -77,7 +77,9 @@ public class Controlador extends HttpServlet {
             case "registroProyecto":
                 url = registroProyecto(request);
                 break;
-
+            case "creacionExito":
+                url = "/accesoAdmin.jsp";
+                break;
         }
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
         dispatcher.forward(request, response);
@@ -151,7 +153,7 @@ public class Controlador extends HttpServlet {
             if (semanas != 4 || fechaElegida.getDay() != 1 || fechaElegida.before(hoySql)) {
                 return "/vacacionesErroneas.jsp";
             } else {
-                despliegueTrabajador.reservaVacaciones(t, 1, fechaElegida, semanas);
+                despliegueTrabajador.reservaVacaciones(t, 1, fechaElegida.getYear(), fechaElegida, semanas);
             }
         } else {
             int semanas1 = Integer.parseInt(request.getParameter("semanas1"));
@@ -164,18 +166,14 @@ public class Controlador extends HttpServlet {
             Calendar c = Calendar.getInstance();
             c.setTime(fechaElegida1);
             c.add(Calendar.DATE, (semanas1 * 7) - 1);
-            Date fechaFin1 = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
-            System.out.println(fechaElegida1.toLocalDate());
-            System.out.println(fechaElegida2.toLocalDate());
-            System.out.println(fechaFin1.toLocalDate());
-            
+            Date fechaFin1 = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());            
             if (semanas1 + semanas2 != 4 || fechaElegida2.getDay() != 1 || fechaElegida1.getDay() != 1
                     || fechaElegida1.after(fechaElegida2) || fechaElegida2.before(fechaFin1)
                     || fechaElegida1.before(hoySql) || fechaElegida2.before(hoySql)) {
                 return "/vacacionesErroneas.jsp";
             } else {
-                despliegueTrabajador.reservaVacaciones(t, 1, fechaElegida1, semanas1);
-                despliegueTrabajador.reservaVacaciones(t, 2, fechaElegida2, semanas2);
+                despliegueTrabajador.reservaVacaciones(t, 1, fechaElegida1.getYear(), fechaElegida1, semanas1);
+                despliegueTrabajador.reservaVacaciones(t, 2, fechaElegida1.getYear(), fechaElegida2, semanas2);
             }
 
         }

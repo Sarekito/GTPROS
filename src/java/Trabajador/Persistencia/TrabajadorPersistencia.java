@@ -58,7 +58,7 @@ public class TrabajadorPersistencia {
         return vacaciones;
     }
 
-    public static void guardaVacaciones(String user, int year, int periodo, Date inicio, int semanas) throws SQLException {
+    public static void guardaVacaciones(String user, int periodo, int year, Date inicio, int semanas) throws SQLException {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception e) {

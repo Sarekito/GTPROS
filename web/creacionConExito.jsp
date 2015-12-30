@@ -18,7 +18,10 @@
         </font>
         <br>
         <br>
-        <a href ="accesoAdmin.jsp">Volver a tu pagina de inicio</a>
+        <form action="Controlador" method ="post">
+            <input type="hidden" name="accion" value="creacionExito"/>
+            <input type="submit" value="Volver al Index"/>
+        </form>
     </center>
     </body>
 </html>
