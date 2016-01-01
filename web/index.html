@@ -9,8 +9,14 @@ and open the template in the editor.
         <title>GTPROS</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script language="JavaScript">
+            
+            function confirmExit()
+            {
+                return "Ha intentado salir de esta pagina. Si ha realizado algun cambio en los campos sin hacer clic en el boton Guardar, los cambios se perderan. Seguro que desea salir de esta pagina? ";
+            }
+        </script>
     </head>
-    <body>
     <center>
         <font size ="5">Bienvenido a GTPROS</font>
         <br>
@@ -35,7 +41,7 @@ and open the template in the editor.
                     </td>
                 </tr>
             </table>
-             <br>
+            <br>
             <input type="hidden" name="accion" value="Acceso"/>
             <input type="submit" value="Entrar" />
         </form>

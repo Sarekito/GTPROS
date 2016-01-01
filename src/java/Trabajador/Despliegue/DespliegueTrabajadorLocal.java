@@ -7,6 +7,7 @@ package Trabajador.Despliegue;
 
 import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.ejb.Local;
 
@@ -28,5 +29,9 @@ public interface DespliegueTrabajadorLocal {
     public void registrarTrabajador(Trabajador tr);
 
     public boolean buscaTrabajador(String user);
+
+    public ArrayList<Trabajador> getTrabajadores();
+
+    public int getNumProyectosActivos(Trabajador t);
 
 }

@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
-import java.time.Instant;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -91,6 +90,38 @@ public class TrabajadorPersistencia {
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
         s.execute("Insert into Trabajador values('" + tr.getUser() + "', '" + tr.getPassword() + "', '" + tr.getTipoRol().getRol() + "', " + tr.getCategoria().getCategoria() + ")");
+    }
+
+    public static ArrayList<Trabajador> getTrabajadores() throws SQLException {
+        ArrayList<Trabajador> trabajadores = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("select * from Trabajador T");
+        while(rs.next()){
+            trabajadores.add(new Trabajador(rs.getString(1), rs.getString(2), new Rol(rs.getString(3)), new Categoria(rs.getInt(4))));
+        }
+        return trabajadores;
+    }
+
+    public static int getNumProyectos(Trabajador t) throws SQLException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("select * from (select P.nombre from Proyecto P where P.estado<>'finalizado') P, TrabajadoresProyecto TP where TP.nombre = P.nombre and TP.user='"+t.getUser()+"'");
+        int a = 0;
+        while(rs.next()){
+            a++;
+        }
+        return a;
     }
 
 }

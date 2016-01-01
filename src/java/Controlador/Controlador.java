@@ -45,8 +45,10 @@ public class Controlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     Trabajador t;
+    ArrayList<Trabajador> trabajadores;
     Administrador a;
     ArrayList<Proyecto> misProyectos;
+    Proyecto proyecto;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -86,6 +88,9 @@ public class Controlador extends HttpServlet {
                 break;
             case "verProyecto":
                 url = verProyecto(request);
+                break;
+            case "planificado":
+                url = planificado(request);
                 break;
         }
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
@@ -154,7 +159,7 @@ public class Controlador extends HttpServlet {
         if (request.getParameter("periodos") == null) {
             int semanas = Integer.parseInt(request.getParameter("semanas1"));
             Date fechaElegida = Date.valueOf(request.getParameter("fecha1"));
-            if(despliegueTrabajador.reservoVacaciones(t.getUser(), (int)(1900+fechaElegida.getYear()))){
+            if (despliegueTrabajador.reservoVacaciones(t.getUser(), (int) (1900 + fechaElegida.getYear()))) {
                 return "/vacacionesReservadas.jsp";
             }
             if (semanas != 4 || fechaElegida.getDay() != 1 || fechaElegida.before(hoySql)) {
@@ -167,13 +172,13 @@ public class Controlador extends HttpServlet {
             Date fechaElegida1 = Date.valueOf(request.getParameter("fecha1"));
             int semanas2 = Integer.parseInt(request.getParameter("semanas2"));
             Date fechaElegida2 = Date.valueOf(request.getParameter("fecha2"));
-             if(despliegueTrabajador.reservoVacaciones(t.getUser(), (int)(1900+fechaElegida1.getYear()))){
+            if (despliegueTrabajador.reservoVacaciones(t.getUser(), (int) (1900 + fechaElegida1.getYear()))) {
                 return "/vacacionesReservadas.jsp";
             }
             Calendar c = Calendar.getInstance();
             c.setTime(fechaElegida1);
             c.add(Calendar.DATE, (semanas1 * 7) - 1);
-            Date fechaFin1 = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());            
+            Date fechaFin1 = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
             if (semanas1 + semanas2 != 4 || fechaElegida2.getDay() != 1 || fechaElegida1.getDay() != 1
                     || fechaElegida1.after(fechaElegida2) || fechaElegida2.before(fechaFin1)
                     || fechaElegida1.before(hoySql) || fechaElegida2.before(hoySql)) {
@@ -244,8 +249,43 @@ public class Controlador extends HttpServlet {
 
     private String verProyecto(HttpServletRequest request) {
         int elegido = Integer.parseInt(request.getParameter("eleccion"));
-        System.out.print(misProyectos.get(elegido));
-        /*Ahora viene toda la logica en funcion del proyecto*/
-        //TODO 
+        proyecto = misProyectos.get(elegido);
+        if (proyecto.getEstado().equals("pendiente")) {
+            request.setAttribute("proyecto", proyecto);
+            request.setAttribute("fallo", "no");
+            return "/planificar.jsp";
+        }
+        if (proyecto.getEstado().equals("planificado")) {
+            //TODO pagina de error
+
+        }
+        if (proyecto.getEstado().equals("realizando")) {
+            //TODO pagina de informes
+
+        }
+        //TODO me planteo eliminar este return
+        return null;
+    }
+
+    private String planificado(HttpServletRequest request) {
+        java.util.Date hoy = new java.util.Date();
+        Date inicio = Date.valueOf(request.getParameter("inicio"));
+        Date fin = Date.valueOf(request.getParameter("fin"));
+        if (inicio.before(hoy) || fin.before(hoy) || inicio.after(fin) || inicio.getDay()!=1 || fin.getDay()!=1) {
+            request.setAttribute("proyecto", proyecto);
+            request.setAttribute("fallo", "si");
+            return "/planificar.jsp";
+        } else {
+            proyecto.setFechaInicio(inicio);
+            proyecto.setFechaFin(fin);
+            trabajadores = despliegueTrabajador.getTrabajadores();
+            for (int i = 0;i<trabajadores.size();i++){
+                if (despliegueTrabajador.getNumProyectosActivos(trabajadores.get(i))>1 || t.getUser().equals(trabajadores.get(i).getUser())){
+                    trabajadores.remove(i);
+                }
+            }
+            request.setAttribute("trabajadores", trabajadores);
+            return "/elegirTrabajadores.jsp";
+        }
     }
 }

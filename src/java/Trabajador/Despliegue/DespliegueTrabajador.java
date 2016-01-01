@@ -96,4 +96,27 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
             return true;
         }
     }
+
+    @Override
+    public ArrayList<Trabajador> getTrabajadores() {
+        ArrayList<Trabajador> trabajadores = null;
+        try {
+            trabajadores = TrabajadorPersistencia.getTrabajadores();
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return trabajadores;
+    }
+
+    @Override
+    public int getNumProyectosActivos(Trabajador t) {
+        int proyectos = 0;
+        try {
+            proyectos = TrabajadorPersistencia.getNumProyectos(t);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println(proyectos+" "+t.getUser());
+        return proyectos;
+    }
 }
