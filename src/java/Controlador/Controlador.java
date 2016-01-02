@@ -1,10 +1,5 @@
 package Controlador;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 import Proyecto.Despliegue.despliegueProyectoLocal;
 import Proyecto.Dominio.Proyecto;
 import Trabajador.Despliegue.DespliegueTrabajadorLocal;
@@ -22,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -44,17 +40,11 @@ public class Controlador extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    Trabajador t;
-    ArrayList<Trabajador> trabajadores;
-    Administrador a;
-    ArrayList<Proyecto> misProyectos;
-    Proyecto proyecto;
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
         String accion = request.getParameter("accion");
-        String url = null;
+        String url;
+
         switch (accion) {
             case "Acceso":
                 url = acceso(request);
@@ -91,6 +81,9 @@ public class Controlador extends HttpServlet {
                 break;
             case "planificado":
                 url = planificado(request);
+                break;
+            default:
+                url = "/error.jsp";
                 break;
         }
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(url);
@@ -137,15 +130,24 @@ public class Controlador extends HttpServlet {
     }// </editor-fold>
 
     private String acceso(HttpServletRequest request) {
-        t = despliegueTrabajador.getTrabajador(request.getParameter("usuario"));
-        if (t == null) {
+        String usuario = request.getParameter("usuario");
+        String clave = request.getParameter("clave");
+
+        if (usuario == null || clave == null) {
+            return "/error.jsp";
+        }
+
+        Trabajador trabajador = despliegueTrabajador.getTrabajador(usuario);
+        if (trabajador == null) {
+            return "/error.jsp";
+        }
+
+        if (!trabajador.getPassword().equals(clave)) {
             return "/error.jsp";
         } else {
-            if (!t.getPassword().equals(request.getParameter("clave"))) {
-                return "/error.jsp";
-            } else {
-                return "/accesoUsuario.jsp";
-            }
+            HttpSession sesion = request.getSession();
+            sesion.setAttribute("trabajador", trabajador);
+            return "/accesoUsuario.jsp";
         }
     }
 
@@ -154,25 +156,28 @@ public class Controlador extends HttpServlet {
     }
 
     private String reservaVacaiones(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        
         java.util.Date hoy = new java.util.Date();
         Date hoySql = new Date(hoy.getYear(), hoy.getMonth(), hoy.getDate());
         if (request.getParameter("periodos") == null) {
             int semanas = Integer.parseInt(request.getParameter("semanas1"));
             Date fechaElegida = Date.valueOf(request.getParameter("fecha1"));
-            if (despliegueTrabajador.reservoVacaciones(t.getUser(), (int) (1900 + fechaElegida.getYear()))) {
+            if (despliegueTrabajador.reservoVacaciones(trabajador.getUser(), (int) (1900 + fechaElegida.getYear()))) {
                 return "/vacacionesReservadas.jsp";
             }
             if (semanas != 4 || fechaElegida.getDay() != 1 || fechaElegida.before(hoySql)) {
                 return "/vacacionesErroneas.jsp";
             } else {
-                despliegueTrabajador.reservaVacaciones(t, 1, fechaElegida.getYear(), fechaElegida, semanas);
+                despliegueTrabajador.reservaVacaciones(trabajador, 1, fechaElegida.getYear(), fechaElegida, semanas);
             }
         } else {
             int semanas1 = Integer.parseInt(request.getParameter("semanas1"));
             Date fechaElegida1 = Date.valueOf(request.getParameter("fecha1"));
             int semanas2 = Integer.parseInt(request.getParameter("semanas2"));
             Date fechaElegida2 = Date.valueOf(request.getParameter("fecha2"));
-            if (despliegueTrabajador.reservoVacaciones(t.getUser(), (int) (1900 + fechaElegida1.getYear()))) {
+            if (despliegueTrabajador.reservoVacaciones(trabajador.getUser(), (int) (1900 + fechaElegida1.getYear()))) {
                 return "/vacacionesReservadas.jsp";
             }
             Calendar c = Calendar.getInstance();
@@ -184,8 +189,8 @@ public class Controlador extends HttpServlet {
                     || fechaElegida1.before(hoySql) || fechaElegida2.before(hoySql)) {
                 return "/vacacionesErroneas.jsp";
             } else {
-                despliegueTrabajador.reservaVacaciones(t, 1, fechaElegida1.getYear(), fechaElegida1, semanas1);
-                despliegueTrabajador.reservaVacaciones(t, 2, fechaElegida1.getYear(), fechaElegida2, semanas2);
+                despliegueTrabajador.reservaVacaciones(trabajador, 1, fechaElegida1.getYear(), fechaElegida1, semanas1);
+                despliegueTrabajador.reservaVacaciones(trabajador, 2, fechaElegida1.getYear(), fechaElegida2, semanas2);
             }
 
         }
@@ -193,13 +198,22 @@ public class Controlador extends HttpServlet {
     }
 
     private String entrarAdmin(HttpServletRequest request) {
-        a = despliegueTrabajador.getAdministrador(request.getParameter("usuario"));
+        String usuario = request.getParameter("usuario");
+        String clave = request.getParameter("clave");
+
+        if (usuario == null || clave == null) {
+            return "/error.jsp";
+        }
+
+        Administrador a = despliegueTrabajador.getAdministrador(usuario);
         if (a == null) {
             return "/error.jsp";
         } else {
-            if (!a.getPassword().equals(request.getParameter("clave"))) {
+            if (!a.getPassword().equals(clave)) {
                 return "/error.jsp";
             } else {
+                HttpSession sesion = request.getSession();
+                sesion.setAttribute("administrador", a);
                 return "/accesoAdmin.jsp";
             }
         }
@@ -229,7 +243,7 @@ public class Controlador extends HttpServlet {
             return "/errorNoPuedeSerJefe.jsp";
         }
         ArrayList<Proyecto> proyectosDeJefe = despliegueProyecto.getMisProyectos(jefe);
-        if (proyectosDeJefe.size() != 0) {
+        if (!proyectosDeJefe.isEmpty()) {
             return "/errorProyectoJefe.jsp";
         }
         Proyecto p = despliegueProyecto.getProyecto(nombreProyecto);
@@ -241,15 +255,26 @@ public class Controlador extends HttpServlet {
     }
 
     private String verMisProyectos(HttpServletRequest request) {
-        misProyectos = despliegueProyecto.getMisProyectos(t.getUser());
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+
+        if (trabajador == null) {
+            return "/index.html";
+        }
+        ArrayList<Proyecto> misProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
         request.setAttribute("misProyectos", misProyectos);
+        sesion.setAttribute("misProyectos", misProyectos);
         System.out.println(misProyectos);
         return "/verProyectos.jsp";
     }
 
     private String verProyecto(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) sesion.getAttribute("misProyectos");
+        
         int elegido = Integer.parseInt(request.getParameter("eleccion"));
-        proyecto = misProyectos.get(elegido);
+        Proyecto proyecto = misProyectos.get(elegido);
+        sesion.setAttribute("proyecto", proyecto);
         if (proyecto.getEstado().equals("pendiente")) {
             request.setAttribute("proyecto", proyecto);
             request.setAttribute("fallo", "no");
@@ -268,19 +293,24 @@ public class Controlador extends HttpServlet {
     }
 
     private String planificado(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+        
         java.util.Date hoy = new java.util.Date();
         Date inicio = Date.valueOf(request.getParameter("inicio"));
         Date fin = Date.valueOf(request.getParameter("fin"));
-        if (inicio.before(hoy) || fin.before(hoy) || inicio.after(fin) || inicio.getDay()!=1 || fin.getDay()!=1) {
+        if (inicio.before(hoy) || fin.before(hoy) || inicio.after(fin) || inicio.getDay() != 1 || fin.getDay() != 1) {
             request.setAttribute("proyecto", proyecto);
             request.setAttribute("fallo", "si");
             return "/planificar.jsp";
         } else {
             proyecto.setFechaInicio(inicio);
             proyecto.setFechaFin(fin);
-            trabajadores = despliegueTrabajador.getTrabajadores();
-            for (int i = 0;i<trabajadores.size();i++){
-                if (despliegueTrabajador.getNumProyectosActivos(trabajadores.get(i))>1 || t.getUser().equals(trabajadores.get(i).getUser())){
+            
+            ArrayList<Trabajador> trabajadores = despliegueTrabajador.getTrabajadores();
+            for (int i = 0; i < trabajadores.size(); i++) {
+                if (despliegueTrabajador.getNumProyectosActivos(trabajadores.get(i)) > 1 || trabajador.getUser().equals(trabajadores.get(i).getUser())) {
                     trabajadores.remove(i);
                 }
             }
