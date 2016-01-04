@@ -2,6 +2,7 @@ package Controlador;
 
 import Proyecto.Despliegue.despliegueProyectoLocal;
 import Proyecto.Dominio.Proyecto;
+import Proyecto.Dominio.TrabajadoresProyecto;
 import Trabajador.Despliegue.DespliegueTrabajadorLocal;
 import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Rol;
@@ -40,6 +41,14 @@ public class Controlador extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    Trabajador t;
+    ArrayList<Trabajador> trabajadores;
+    Administrador a;
+    ArrayList<Proyecto> misProyectos;
+    Proyecto proyecto;
+    ArrayList<TrabajadoresProyecto> tp;
+    ArrayList<Trabajador> elegidos;
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String accion = request.getParameter("accion");
@@ -81,6 +90,12 @@ public class Controlador extends HttpServlet {
                 break;
             case "planificado":
                 url = planificado(request);
+                break;
+            case "tomarDatos":
+                url = tomarDatos(request);
+                break;
+            case "elegirEtapas":
+                url = "/elegirEtapas.jsp";
                 break;
             default:
                 url = "/error.jsp";
@@ -202,7 +217,7 @@ public class Controlador extends HttpServlet {
 
     private String entrarAdmin(HttpServletRequest request) {
         final String errorCredenciales = "Credenciales incorrectas.";
-        
+
         String usuario = request.getParameter("usuario");
         String clave = request.getParameter("clave");
 
@@ -211,12 +226,12 @@ public class Controlador extends HttpServlet {
             return "/indexAdministrador.jsp";
         }
 
-        Administrador a = despliegueTrabajador.getAdministrador(usuario);
+        a = despliegueTrabajador.getAdministrador(usuario);
         if (a == null || !a.getPassword().equals(clave)) {
             request.setAttribute("error", errorCredenciales);
             return "/indexAdministrador.jsp";
         }
-        
+
         HttpSession sesion = request.getSession();
         sesion.setAttribute("administrador", a);
         return "/accesoAdmin.jsp";
@@ -265,7 +280,7 @@ public class Controlador extends HttpServlet {
         if (trabajador == null) {
             return "/index.html";
         }
-        ArrayList<Proyecto> misProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
+        misProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
         request.setAttribute("misProyectos", misProyectos);
         sesion.setAttribute("misProyectos", misProyectos);
         System.out.println(misProyectos);
@@ -274,10 +289,10 @@ public class Controlador extends HttpServlet {
 
     private String verProyecto(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-        ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) sesion.getAttribute("misProyectos");
+        misProyectos = (ArrayList<Proyecto>) sesion.getAttribute("misProyectos");
 
         int elegido = Integer.parseInt(request.getParameter("eleccion"));
-        Proyecto proyecto = misProyectos.get(elegido);
+        proyecto = misProyectos.get(elegido);
         sesion.setAttribute("proyecto", proyecto);
         if (proyecto.getEstado().equals("pendiente")) {
             request.setAttribute("proyecto", proyecto);
@@ -297,10 +312,6 @@ public class Controlador extends HttpServlet {
     }
 
     private String planificado(HttpServletRequest request) {
-        HttpSession sesion = request.getSession();
-        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
-
         java.util.Date hoy = new java.util.Date();
         Date inicio = Date.valueOf(request.getParameter("inicio"));
         Date fin = Date.valueOf(request.getParameter("fin"));
@@ -311,15 +322,68 @@ public class Controlador extends HttpServlet {
         } else {
             proyecto.setFechaInicio(inicio);
             proyecto.setFechaFin(fin);
-
-            ArrayList<Trabajador> trabajadores = despliegueTrabajador.getTrabajadores();
+            trabajadores = despliegueTrabajador.getTrabajadores();
             for (int i = 0; i < trabajadores.size(); i++) {
-                if (despliegueTrabajador.getNumProyectosActivos(trabajadores.get(i)) > 1 || trabajador.getUser().equals(trabajadores.get(i).getUser())) {
+                ArrayList<Proyecto> proyActuales = despliegueProyecto.getMisProyectosActuales(trabajadores.get(i));
+                for (int j = 0; j < proyActuales.size(); j++) {
+                    Proyecto p1 = proyecto;
+                    Proyecto p2 = proyActuales.get(j);
+                    if (p1.getFechaInicio().after(p2.getFechaInicio()) && p1.getFechaInicio().before(p2.getFechaFin())
+                            || p1.getFechaFin().after(p2.getFechaInicio()) && p1.getFechaFin().before(p2.getFechaFin())
+                            || p2.getFechaInicio().after(p1.getFechaInicio()) && p2.getFechaInicio().before(p1.getFechaFin())
+                            || p2.getFechaFin().after(p1.getFechaInicio()) && p2.getFechaFin().before(p1.getFechaFin())) {
+
+                    } else {
+                        proyActuales.remove(j);
+                    }
+                }
+                if (proyActuales.size() > 1) {
                     trabajadores.remove(i);
                 }
             }
+            elegidos = new ArrayList<>();
             request.setAttribute("trabajadores", trabajadores);
             return "/elegirTrabajadores.jsp";
         }
+    }
+
+    private String tomarDatos(HttpServletRequest request) {
+        Trabajador tr = trabajadores.get(Integer.parseInt(request.getParameter("eleccion")));
+        ArrayList<Proyecto> proyActuales = despliegueProyecto.getMisProyectosActuales(tr);
+        int dedicacion = Integer.parseInt(request.getParameter("dedicacion"));
+        for (int j = 0; j < proyActuales.size(); j++) {
+            Proyecto p1 = proyecto;
+            Proyecto p2 = proyActuales.get(j);
+            if (p1.getFechaInicio().after(p2.getFechaInicio()) && p1.getFechaInicio().before(p2.getFechaFin())
+                    || p1.getFechaFin().after(p2.getFechaInicio()) && p1.getFechaFin().before(p2.getFechaFin())
+                    || p2.getFechaInicio().after(p1.getFechaInicio()) && p2.getFechaInicio().before(p1.getFechaFin())
+                    || p2.getFechaFin().after(p1.getFechaInicio()) && p2.getFechaFin().before(p1.getFechaFin())) {
+
+            } else {
+                proyActuales.remove(j);
+            }
+        }
+        if (!proyActuales.isEmpty()) {
+            TrabajadoresProyecto tp2 = despliegueProyecto.dameTrabajadorProyecto(tr.getUser(), proyActuales.get(0).getNombre());
+            if (tp2.getDedicacion() + dedicacion > 100) {
+                request.setAttribute("trabajadores", trabajadores);
+                if (elegidos.isEmpty()) {
+                    return "/elegirTrabajadoresExceso.jsp";
+                } else {
+                    return "/elegirTrabajadoresExceso2.jsp";
+                }
+            } else {
+                elegidos.add(tr);
+                trabajadores.remove(Integer.parseInt(request.getParameter("eleccion")));
+                request.setAttribute("trabajadores", trabajadores);
+                return "/elegirTrabajadores2.jsp";
+            }
+        } else {
+            elegidos.add(tr);
+            trabajadores.remove(Integer.parseInt(request.getParameter("eleccion")));
+            request.setAttribute("trabajadores", trabajadores);
+            return "/elegirTrabajadores2.jsp";
+        }
+
     }
 }
