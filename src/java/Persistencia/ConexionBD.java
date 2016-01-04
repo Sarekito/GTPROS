@@ -29,10 +29,10 @@ public class ConexionBD {
     public Statement createStatement() throws SQLException {
         return conexion.createStatement();
     }
-    
+
     public <T> void insert(ObjectConverter<T> converter, T object) throws SQLException {
         String sql = converter.createInsertQuery(object);
-        
+
         execute(sql);
     }
 
@@ -59,11 +59,18 @@ public class ConexionBD {
 
         return list;
     }
-    
+
     public boolean execute(String sql) throws SQLException {
         Statement statement = createStatement();
-        
+
         return statement.execute(sql);
+    }
+
+    public boolean existe(String sql) throws SQLException {
+        Statement statement = createStatement();
+        ResultSet result = statement.executeQuery(sql);
+
+        return result.next();
     }
 
     public int count(String sql) throws SQLException {

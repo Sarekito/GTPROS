@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Proyecto.Despliegue;
 
+import Proyecto.Dominio.InformeSeguimiento;
 import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
 import Trabajador.Dominio.Trabajador;
@@ -31,5 +27,13 @@ public interface despliegueProyectoLocal {
     public ArrayList<Proyecto> getMisProyectosActuales(Trabajador get);
 
     public TrabajadoresProyecto dameTrabajadorProyecto(String user, String nombre);
-    
+
+    java.util.ArrayList<InformeSeguimiento> getInformesProyecto(String nombreProyecto);
+
+    void aprobarInforme(InformeSeguimiento informe);
+
+    void rechazarInforme(InformeSeguimiento informe);
+
+    java.util.ArrayList<InformeSeguimiento> getInformesPendientesProyecto(String nombreProyecto);
+
 }
