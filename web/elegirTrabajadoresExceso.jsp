@@ -16,6 +16,7 @@
     </head>
     <body>
     <center>
+        <h2>Ese trabajador excede las horas en esa fecha</h2>
         <%ArrayList<Trabajador> tr = (ArrayList<Trabajador>) request.getAttribute("trabajadores");%>
         <h1>Elige el equipo del proyecto</h1>
         <p>Introducir el porcentaje del trabajador y pulsar elegir</p>

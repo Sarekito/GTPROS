@@ -3,7 +3,7 @@ package Proyecto.Persistencia;
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Actividad;
-import Trabajador.Dominio.RolEnum;
+import Trabajador.Dominio.Rol;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -35,7 +35,7 @@ public class ActividadPersistencia {
             actividad.setFechaFin(result.getDate("fechaFin"));
             actividad.setFechaFinReal(result.getDate("fechaFinReal"));
             actividad.setEstado(result.getString("estado"));
-            actividad.setTipoRol(RolEnum.get(result.getString("tipoRol")));
+            actividad.setTipoRol(new Rol(result.getString("tipoRol")));
 
             return actividad;
         }

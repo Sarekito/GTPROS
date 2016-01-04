@@ -3,8 +3,13 @@ package Proyecto.Persistencia;
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Proyecto;
+import Proyecto.Dominio.TrabajadoresProyecto;
+import Trabajador.Dominio.Trabajador;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -40,15 +45,15 @@ public class PersistenciaProyecto {
             throw new SQLException(ex);
         }
     }
-    
+
     public static ArrayList<Proyecto> getProyectosActuales(String usuario) throws SQLException {
         try {
             String sql = "SELECT P.* FROM Proyecto P, TrabajadoresProyecto T WHERE P.nombre = T.nombre AND T.user = '" + usuario + "'";
-            
+
             ConexionBD conexion = new ConexionBD();
             ArrayList<Proyecto> proyectos = conexion.searchAll(proyectoConverter, sql);
             conexion.close();
-            
+
             return proyectos;
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);
@@ -104,5 +109,39 @@ public class PersistenciaProyecto {
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);
         }
+    }
+
+    public static ArrayList<Proyecto> getMisProyectosActuales(Trabajador tr) throws SQLException {
+        ArrayList<Proyecto> misProyectos = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("Select P.* FROM (select * from TrabajadoresProyecto "
+                + "TP where TP.user = '" + tr.getUser() + "')TP, Proyecto P where "
+                + "P.nombre = TP.nombre and P.estado = 'realizando'");
+        while (rs.next()) {
+            misProyectos.add(new Proyecto(rs.getString(1), rs.getDate(2), rs.getDate(3), rs.getString(4), rs.getString(5)));
+        }
+        return misProyectos;
+
+    }
+
+    public static TrabajadoresProyecto getTrabajadorProyecto(String user, String nombre) throws SQLException {
+        TrabajadoresProyecto tp;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("Select * from TrabajadoresProyecto TP where TP.user = '"+user+"' and TP.nombre = '"+nombre+"'");
+        rs.next();
+        tp = new TrabajadoresProyecto(rs.getString("nombre"), rs.getString("user"), rs.getInt("porcentaje"));
+        return tp;
     }
 }

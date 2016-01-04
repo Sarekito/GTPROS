@@ -1,6 +1,6 @@
 package Proyecto.Dominio;
 
-import Trabajador.Dominio.RolEnum;
+import Trabajador.Dominio.Rol;
 import java.util.Date;
 
 /**
@@ -19,12 +19,12 @@ public class Actividad {
     private Date fechaFin;
     private Date fechaFinReal;
     private String estado;
-    private RolEnum tipoRol;
+    private Rol tipoRol;
 
     public Actividad() {
     }
 
-    public Actividad(String nombre, int numero, int id, String descripcion, int duracion, Integer duracionReal, Date fechaComienzo, Date fechaFin, Date fechaFinReal, String estado, RolEnum tipoRol) {
+    public Actividad(String nombre, int numero, int id, String descripcion, int duracion, Integer duracionReal, Date fechaComienzo, Date fechaFin, Date fechaFinReal, String estado, Rol tipoRol) {
         this.nombre = nombre;
         this.numero = numero;
         this.id = id;
@@ -118,11 +118,11 @@ public class Actividad {
         this.estado = estado;
     }
 
-    public RolEnum getTipoRol() {
+    public Rol getTipoRol() {
         return tipoRol;
     }
 
-    public void setTipoRol(RolEnum tipoRol) {
+    public void setTipoRol(Rol tipoRol) {
         this.tipoRol = tipoRol;
     }
 }

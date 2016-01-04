@@ -62,6 +62,12 @@
             </form>
             <%}%>
         </table>
+        <br>
+        <br>
+        <form action="Contolador" method="POST">
+            <input type="hidden" name="accion" value="elegirEtapas" readonly="readonly" />
+            <input type="submit" value="A elegir etapas" />
+        </form>
     </center>
 </body>
 </html>

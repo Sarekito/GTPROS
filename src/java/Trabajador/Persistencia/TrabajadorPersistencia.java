@@ -2,11 +2,14 @@ package Trabajador.Persistencia;
 
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
+import Proyecto.Dominio.Proyecto;
 import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Categoria;
 import Trabajador.Dominio.Rol;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -125,4 +128,6 @@ public class TrabajadorPersistencia {
             throw new SQLException(ex);
         }
     }
+    
+ 
 }

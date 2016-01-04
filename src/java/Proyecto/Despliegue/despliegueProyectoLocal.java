@@ -6,6 +6,8 @@
 package Proyecto.Despliegue;
 
 import Proyecto.Dominio.Proyecto;
+import Proyecto.Dominio.TrabajadoresProyecto;
+import Trabajador.Dominio.Trabajador;
 import java.util.ArrayList;
 import javax.ejb.Local;
 
@@ -25,5 +27,9 @@ public interface despliegueProyectoLocal {
     boolean cerrarProyecto(String nombreProyecto);
 
     boolean cerrarEtapa(String nombreProyecto, int numero);
+
+    public ArrayList<Proyecto> getMisProyectosActuales(Trabajador get);
+
+    public TrabajadoresProyecto dameTrabajadorProyecto(String user, String nombre);
     
 }
