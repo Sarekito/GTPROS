@@ -5,7 +5,6 @@ import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Proyecto;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -41,6 +40,20 @@ public class PersistenciaProyecto {
             throw new SQLException(ex);
         }
     }
+    
+    public static ArrayList<Proyecto> getProyectosActuales(String usuario) throws SQLException {
+        try {
+            String sql = "SELECT P.* FROM Proyecto P, TrabajadoresProyecto T WHERE P.nombre = T.nombre AND T.user = '" + usuario + "'";
+            
+            ConexionBD conexion = new ConexionBD();
+            ArrayList<Proyecto> proyectos = conexion.searchAll(proyectoConverter, sql);
+            conexion.close();
+            
+            return proyectos;
+        } catch (ClassNotFoundException ex) {
+            throw new SQLException(ex);
+        }
+    }
 
     public static Proyecto getProyecto(String nombreProyecto) throws SQLException {
         try {
@@ -54,13 +67,39 @@ public class PersistenciaProyecto {
         }
     }
 
+    public static ArrayList<Proyecto> getProyectosFinalizados() throws SQLException {
+        try {
+            String sql = "SELECT * FROM Proyecto WHERE estado = 'cerrado'";
+
+            ConexionBD conexion = new ConexionBD();
+
+            ArrayList<Proyecto> proyectos = conexion.searchAll(proyectoConverter, sql);
+
+            conexion.close();
+
+            return proyectos;
+        } catch (ClassNotFoundException ex) {
+            throw new SQLException(ex);
+        }
+    }
+
     public static void generar(String nombreProyecto, String jefe) throws SQLException {
         try {
             ConexionBD conexion = new ConexionBD();
 
-            Statement s = conexion.createStatement();
-            s.execute("insert into Proyecto(nombre, jefeProyecto, estado) values ('" + nombreProyecto + "', '" + jefe + "', 'pendiente')");
+            conexion.execute("insert into Proyecto(nombre, jefeProyecto, estado) values ('" + nombreProyecto + "', '" + jefe + "', 'pendiente')");
 
+            conexion.close();
+        } catch (ClassNotFoundException ex) {
+            throw new SQLException(ex);
+        }
+    }
+
+    public static void cerrarProyecto(String nombreProyecto) throws SQLException {
+        try {
+            String sql = "UPDATE Proyecto SET estado = 'cerrado' WHERE nombre = '" + nombreProyecto + "'";
+            ConexionBD conexion = new ConexionBD();
+            conexion.execute(sql);
             conexion.close();
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);

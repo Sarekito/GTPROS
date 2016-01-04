@@ -7,8 +7,6 @@ import Trabajador.Dominio.Categoria;
 import Trabajador.Dominio.Rol;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -49,16 +47,16 @@ public class TrabajadorPersistencia {
     public static ArrayList<Vacaciones> getVacaciones(String user, int year) throws SQLException {
         try {
             ConexionBD conexion = new ConexionBD();
-            
+
             Statement s = conexion.createStatement();
             ResultSet rs = s.executeQuery("select * from Vacaciones V where V.user='" + user + "' and V.ano = " + year);
-            
+
             ArrayList<Vacaciones> vacaciones = new ArrayList<>();
             while (rs.next()) {
                 vacaciones.add(new Vacaciones(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getDate(4), rs.getInt(5)));
             }
             conexion.close();
-            
+
             return vacaciones;
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);
@@ -67,13 +65,12 @@ public class TrabajadorPersistencia {
 
     public static void guardaVacaciones(String user, int periodo, int year, Date inicio, int semanas) throws SQLException {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (Exception e) {
-
+            ConexionBD conexion = new ConexionBD();
+            conexion.execute("INSERT INTO Vacaciones VALUES ('" + user + "'," + periodo + ", " + (int) (year + 1900) + ", '" + (int) (inicio.getYear() + 1900) + "-" + (int) (inicio.getMonth() + 1) + "-" + inicio.getDate() + "', " + semanas + ")");
+            conexion.close();
+        } catch (ClassNotFoundException ex) {
+            throw new SQLException(ex);
         }
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
-        Statement s = conexion.createStatement();
-        s.execute("INSERT INTO Vacaciones VALUES ('" + user + "'," + periodo + ", " + (int) (year + 1900) + ", '" + (int) (inicio.getYear() + 1900) + "-" + (int) (inicio.getMonth() + 1) + "-" + inicio.getDate() + "', " + semanas + ")");
     }
 
     public static Administrador getAdministrador(String user) throws SQLException {

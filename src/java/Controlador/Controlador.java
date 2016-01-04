@@ -53,7 +53,7 @@ public class Controlador extends HttpServlet {
                 url = vacaciones(request);
                 break;
             case "reservaVacaciones":
-                url = reservaVacaiones(request);
+                url = reservaVacaciones(request);
                 break;
             case "entrarAdmin":
                 url = entrarAdmin(request);
@@ -133,32 +133,35 @@ public class Controlador extends HttpServlet {
         String usuario = request.getParameter("usuario");
         String clave = request.getParameter("clave");
 
-        if (usuario == null || clave == null) {
-            return "/error.jsp";
+        if (usuario == null || usuario.equals("") || clave == null || clave.equals("")) {
+            request.setAttribute("error", "No se han introducido todos los parametros.");
+            return "/index.jsp";
         }
 
         Trabajador trabajador = despliegueTrabajador.getTrabajador(usuario);
         if (trabajador == null) {
-            return "/error.jsp";
+            request.setAttribute("error", "No existe un trabajador con ese identificador.");
+            return "/index.jsp";
         }
 
         if (!trabajador.getPassword().equals(clave)) {
-            return "/error.jsp";
-        } else {
-            HttpSession sesion = request.getSession();
-            sesion.setAttribute("trabajador", trabajador);
-            return "/accesoUsuario.jsp";
+            request.setAttribute("error", "La contraseña introducida es incorrecta.");
+            return "/index.jsp";
         }
+
+        HttpSession sesion = request.getSession();
+        sesion.setAttribute("trabajador", trabajador);
+        return "/accesoUsuario.jsp";
     }
 
     private String vacaciones(HttpServletRequest request) {
         return "/reservarVacaciones.jsp";
     }
 
-    private String reservaVacaiones(HttpServletRequest request) {
+    private String reservaVacaciones(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        
+
         java.util.Date hoy = new java.util.Date();
         Date hoySql = new Date(hoy.getYear(), hoy.getMonth(), hoy.getDate());
         if (request.getParameter("periodos") == null) {
@@ -198,25 +201,25 @@ public class Controlador extends HttpServlet {
     }
 
     private String entrarAdmin(HttpServletRequest request) {
+        final String errorCredenciales = "Credenciales incorrectas.";
+        
         String usuario = request.getParameter("usuario");
         String clave = request.getParameter("clave");
 
-        if (usuario == null || clave == null) {
-            return "/error.jsp";
+        if (usuario == null || usuario.equals("") || clave == null || clave.equals("")) {
+            request.setAttribute("error", "No se han introducido todos los parametros.");
+            return "/indexAdministrador.jsp";
         }
 
         Administrador a = despliegueTrabajador.getAdministrador(usuario);
-        if (a == null) {
-            return "/error.jsp";
-        } else {
-            if (!a.getPassword().equals(clave)) {
-                return "/error.jsp";
-            } else {
-                HttpSession sesion = request.getSession();
-                sesion.setAttribute("administrador", a);
-                return "/accesoAdmin.jsp";
-            }
+        if (a == null || !a.getPassword().equals(clave)) {
+            request.setAttribute("error", errorCredenciales);
+            return "/indexAdministrador.jsp";
         }
+        
+        HttpSession sesion = request.getSession();
+        sesion.setAttribute("administrador", a);
+        return "/accesoAdmin.jsp";
     }
 
     private String registroTrabajador(HttpServletRequest request) {
@@ -234,11 +237,12 @@ public class Controlador extends HttpServlet {
     private String registroProyecto(HttpServletRequest request) {
         String jefe = request.getParameter("jefe");
         String nombreProyecto = request.getParameter("nombre");
-        boolean existe = despliegueTrabajador.buscaTrabajador(jefe);
-        if (!existe) {
+
+        Trabajador tr = despliegueTrabajador.getTrabajador(jefe);
+        if (tr == null) {
             return "/errorProyectoNoJefe.jsp";
         }
-        Trabajador tr = despliegueTrabajador.getTrabajador(jefe);
+
         if (tr.getCategoria().getCategoria() != 1) {
             return "/errorNoPuedeSerJefe.jsp";
         }
@@ -271,7 +275,7 @@ public class Controlador extends HttpServlet {
     private String verProyecto(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) sesion.getAttribute("misProyectos");
-        
+
         int elegido = Integer.parseInt(request.getParameter("eleccion"));
         Proyecto proyecto = misProyectos.get(elegido);
         sesion.setAttribute("proyecto", proyecto);
@@ -296,7 +300,7 @@ public class Controlador extends HttpServlet {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
-        
+
         java.util.Date hoy = new java.util.Date();
         Date inicio = Date.valueOf(request.getParameter("inicio"));
         Date fin = Date.valueOf(request.getParameter("fin"));
@@ -307,7 +311,7 @@ public class Controlador extends HttpServlet {
         } else {
             proyecto.setFechaInicio(inicio);
             proyecto.setFechaFin(fin);
-            
+
             ArrayList<Trabajador> trabajadores = despliegueTrabajador.getTrabajadores();
             for (int i = 0; i < trabajadores.size(); i++) {
                 if (despliegueTrabajador.getNumProyectosActivos(trabajadores.get(i)) > 1 || trabajador.getUser().equals(trabajadores.get(i).getUser())) {

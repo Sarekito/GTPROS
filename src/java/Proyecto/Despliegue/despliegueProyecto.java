@@ -1,11 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Proyecto.Despliegue;
 
 import Proyecto.Dominio.Proyecto;
+import Proyecto.Persistencia.ActividadPersistencia;
+import Proyecto.Persistencia.EtapaPersistencia;
 import Proyecto.Persistencia.PersistenciaProyecto;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -48,6 +45,36 @@ public class despliegueProyecto implements despliegueProyectoLocal {
             PersistenciaProyecto.generar(nombreProyecto, jefe);
         } catch (SQLException ex) {
             Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public boolean cerrarProyecto(String nombreProyecto) {
+        try {
+            if (EtapaPersistencia.numeroEtapasAbiertas(nombreProyecto) > 0) {
+                return false;
+            }
+            
+            PersistenciaProyecto.cerrarProyecto(nombreProyecto);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean cerrarEtapa(String nombreProyecto, int numero) {
+        try {
+            if (ActividadPersistencia.numeroActividadesAbiertas(nombreProyecto, numero) > 0) {
+                return false;
+            }
+            
+            EtapaPersistencia.cerrarEtapa(nombreProyecto, numero);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
 }

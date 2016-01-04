@@ -8,7 +8,7 @@
     </head>
     <body>
     <center>
-        <font size ="5">Bienvenido a GTPROS. Solo administradores</font>
+        <font size ="5">Bienvenido a GTPROS</font>
         <br/>
         <%
             String error = (String) request.getAttribute("error");
@@ -22,32 +22,24 @@
         </table>
         <%
             }
-        %>      
+        %>
         <br/>
         <form action="Controlador" method ="post">
             <table>
                 <tr>
-                    <td>
-                        Usuario
-                    </td>
-                    <td>
-                        <input type="text" name="usuario" size="50" />
-                    </td>
+                    <td>Usuario</td>
+                    <td><input type="text" name="usuario" size="50" /></td>
                 </tr>
                 <tr>
-                    <td>
-                        Contraseña
-                    </td>
-
-                    <td>
-                        <input type="password" name="clave" size="50" />
-                    </td>
+                    <td>Contraseña</td>
+                    <td><input type="password" name="clave" size="50" /></td>
                 </tr>
             </table>
             <br/>
-            <input type="hidden" name="accion" value="entrarAdmin"/>
-            <input type="submit" value="Acceder" />
+            <input type="hidden" name="accion" value="Acceso"/>
+            <input type="submit" value="Entrar" />
         </form>
+        <a href="indexAdministrador.jsp">Entrar como administrador</a>
     </center>
 </body>
 </html>

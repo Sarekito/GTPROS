@@ -21,5 +21,9 @@ public interface despliegueProyectoLocal {
     public Proyecto getProyecto(String nombreProyecto);
 
     public void generar(String nombreProyecto, String jefe);
+
+    boolean cerrarProyecto(String nombreProyecto);
+
+    boolean cerrarEtapa(String nombreProyecto, int numero);
     
 }

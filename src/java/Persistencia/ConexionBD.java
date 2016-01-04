@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class ConexionBD {
 
-    private Connection conexion;
+    private final Connection conexion;
 
     private static final String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
 
@@ -33,8 +33,7 @@ public class ConexionBD {
     public <T> void insert(ObjectConverter<T> converter, T object) throws SQLException {
         String sql = converter.createInsertQuery(object);
         
-        Statement statement = createStatement();
-        statement.execute(sql);
+        execute(sql);
     }
 
     public <T> T search(ObjectConverter<T> converter, String sql) throws SQLException {
@@ -59,6 +58,12 @@ public class ConexionBD {
         }
 
         return list;
+    }
+    
+    public boolean execute(String sql) throws SQLException {
+        Statement statement = createStatement();
+        
+        return statement.execute(sql);
     }
 
     public int count(String sql) throws SQLException {
