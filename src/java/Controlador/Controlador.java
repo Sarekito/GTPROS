@@ -110,6 +110,9 @@ public class Controlador extends HttpServlet {
             case "rechazarInforme":
                 url = rechazarInforme(request);
                 break;
+            case "mostrarInformesNoEnviados":
+                url = mostrarInformesNoEnviados(request);
+                break;
             default:
                 url = "/error.jsp";
                 break;
@@ -403,7 +406,7 @@ public class Controlador extends HttpServlet {
     public String mostrarInformes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+        proyecto = (Proyecto) sesion.getAttribute("proyecto");
 
         if (trabajador == null) {
             return "/index.jsp";
@@ -417,28 +420,27 @@ public class Controlador extends HttpServlet {
         ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesProyecto(proyecto.getNombre());
         request.setAttribute("informes", informes);
 
-        //TODO Falta la vista
-        return null;
+        return "/informes.jsp";
     }
 
     public String aprobarInforme(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
-        
+        proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
         if (trabajador == null) {
             return "/index.jsp";
         }
-        
+
         if (proyecto.getJefe().equals(trabajador.getUser())) {
             request.setAttribute("error", "No puedes aprobar informes de proyectos que no lideras");
             return "/accesoUsuario.jsp";
         }
         //TODO Asignar instancia concreta
         InformeSeguimiento informe = null;
-        
+
         despliegueProyecto.aprobarInforme(informe);
-        
+
         //TODO Falta la vista
         return null;
     }
@@ -446,21 +448,21 @@ public class Controlador extends HttpServlet {
     public String rechazarInforme(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
-        
+        proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
         if (trabajador == null) {
             return "/index.jsp";
         }
-        
+
         if (proyecto.getJefe().equals(trabajador.getUser())) {
             request.setAttribute("error", "No puedes rechazar informes de proyectos que no lideras");
             return "/accesoUsuario.jsp";
         }
         //TODO Asignar instancia concreta
         InformeSeguimiento informe = null;
-        
+
         despliegueProyecto.rechazarInforme(informe);
-        
+
         //TODO Falta la vista
         return null;
     }
@@ -468,7 +470,7 @@ public class Controlador extends HttpServlet {
     public String mostrarInformesPendientes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+        proyecto = (Proyecto) sesion.getAttribute("proyecto");
 
         if (trabajador == null) {
             return "/index.jsp";
@@ -482,7 +484,26 @@ public class Controlador extends HttpServlet {
         ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesPendientesProyecto(proyecto.getNombre());
         request.setAttribute("informes", informes);
 
-        //TODO Falta la vista
-        return null;
+        return "/informesPendientes.jsp";
+    }
+
+    public String mostrarInformesNoEnviados(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+
+        if (!trabajador.getUser().equals(proyecto.getJefe())) {
+            request.setAttribute("error", "No puedes acceder a un proyecto que no es tuyo");
+            return "/accesoUsuario.jsp";
+        }
+
+        ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesNoEnviadosProyecto(proyecto.getNombre());
+        request.setAttribute("informes", informes);
+
+        return "/informesNoEnviados.jsp";
     }
 }

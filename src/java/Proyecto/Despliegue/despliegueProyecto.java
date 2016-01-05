@@ -143,4 +143,14 @@ public class despliegueProyecto implements despliegueProyectoLocal {
             return null;
         }
     }
+
+    @Override
+    public java.util.ArrayList<InformeSeguimiento> getInformesNoEnviadosProyecto(String nombreProyecto) {
+        try {
+            return InformeSeguimientoPersistencia.getInformesNoEnviados(nombreProyecto);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 }

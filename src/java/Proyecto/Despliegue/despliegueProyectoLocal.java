@@ -36,4 +36,6 @@ public interface despliegueProyectoLocal {
 
     java.util.ArrayList<InformeSeguimiento> getInformesPendientesProyecto(String nombreProyecto);
 
+    java.util.ArrayList<InformeSeguimiento> getInformesNoEnviadosProyecto(String nombreProyecto);
+
 }

@@ -92,4 +92,18 @@ public class InformeSeguimientoPersistencia {
             throw new SQLDataException(ex);
         }
     }
+    
+    public static ArrayList<InformeSeguimiento> getInformesNoEnviados(String nombreProyecto) throws SQLException {
+        try {
+            String sql = "SELECT * FROM InformeSeguimiento WHERE nombreProyecto = '" + nombreProyecto + "' AND estado = 'noEnviado'";
+
+            ConexionBD conexion = new ConexionBD();
+            ArrayList<InformeSeguimiento> informes = conexion.searchAll(informeSeguimientoConverter, sql);
+            conexion.close();
+
+            return informes;
+        } catch (ClassNotFoundException ex) {
+            throw new SQLException(ex);
+        }
+    }
 }
