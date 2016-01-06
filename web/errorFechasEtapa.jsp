@@ -11,8 +11,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
     </head>
-    <body>
+    <body> 
     <center>
+        <h2>Las fechas son incorrectas</h2>
         <h1>Introducir datos de la etapa</h1>
         <table>
             <form action="Controlador" method="POST">
@@ -32,12 +33,13 @@
                         <input type="date" name="fin"/>
                     </td>
                 </tr>
+            </form>
         </table>
         <br>
         <br>
-        <input type="hidden" name="accion" value="planificarActividades" />
-        <input type="submit" value="Planificar Actividades" />
-    </form>
-</center>
+            <input type="hidden" name="accion" value="planificarActividades" />
+            <input type="submit" value="Planificar Actividades" />
+        </form>
+    </center>
 </body>
 </html>

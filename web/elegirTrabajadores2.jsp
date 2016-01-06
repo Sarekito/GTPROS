@@ -64,7 +64,7 @@
         </table>
         <br>
         <br>
-        <form action="Contolador" method="POST">
+        <form action="Controlador" method="POST">
             <input type="hidden" name="accion" value="elegirEtapas" readonly="readonly" />
             <input type="submit" value="A elegir etapas" />
         </form>
