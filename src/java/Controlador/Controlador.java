@@ -436,13 +436,21 @@ public class Controlador extends HttpServlet {
             request.setAttribute("error", "No puedes aprobar informes de proyectos que no lideras");
             return "/accesoUsuario.jsp";
         }
-        //TODO Asignar instancia concreta
-        InformeSeguimiento informe = null;
+
+        InformeSeguimiento informe = new InformeSeguimiento();
+        informe.setNombreProyecto(request.getParameter("nombreProyecto"));
+        informe.setNumeroEtapa(Integer.parseInt(request.getParameter("numeroEtapa")));
+        informe.setIdActividad(Integer.parseInt(request.getParameter("idActividad")));
+        informe.setTrabajador(request.getParameter("trabajador"));
+        informe.setNumTarea(Integer.parseInt(request.getParameter("numTarea")));
+        informe.setSemana(java.sql.Date.valueOf(request.getParameter("semana")));
 
         despliegueProyecto.aprobarInforme(informe);
 
-        //TODO Falta la vista
-        return null;
+        ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesPendientesProyecto(proyecto.getNombre());
+        request.setAttribute("informes", informes);
+
+        return "/informesPendientes.jsp";
     }
 
     public String rechazarInforme(HttpServletRequest request) {
@@ -458,13 +466,21 @@ public class Controlador extends HttpServlet {
             request.setAttribute("error", "No puedes rechazar informes de proyectos que no lideras");
             return "/accesoUsuario.jsp";
         }
-        //TODO Asignar instancia concreta
-        InformeSeguimiento informe = null;
+
+        InformeSeguimiento informe = new InformeSeguimiento();
+        informe.setNombreProyecto(request.getParameter("nombreProyecto"));
+        informe.setNumeroEtapa(Integer.parseInt(request.getParameter("numeroEtapa")));
+        informe.setIdActividad(Integer.parseInt(request.getParameter("idActividad")));
+        informe.setTrabajador(request.getParameter("trabajador"));
+        informe.setNumTarea(Integer.parseInt(request.getParameter("numTarea")));
+        informe.setSemana(java.sql.Date.valueOf(request.getParameter("semana")));
 
         despliegueProyecto.rechazarInforme(informe);
 
-        //TODO Falta la vista
-        return null;
+        ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesPendientesProyecto(proyecto.getNombre());
+        request.setAttribute("informes", informes);
+
+        return "/informesPendientes.jsp";
     }
 
     public String mostrarInformesPendientes(HttpServletRequest request) {
