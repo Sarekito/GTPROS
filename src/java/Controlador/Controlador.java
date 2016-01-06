@@ -1,6 +1,8 @@
 package Controlador;
 
 import Proyecto.Despliegue.despliegueProyectoLocal;
+import Proyecto.Dominio.Actividad;
+import Proyecto.Dominio.Etapa;
 import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
 import Trabajador.Despliegue.DespliegueTrabajadorLocal;
@@ -48,6 +50,9 @@ public class Controlador extends HttpServlet {
     Proyecto proyecto;
     ArrayList<TrabajadoresProyecto> tp;
     ArrayList<Trabajador> elegidos;
+    ArrayList<Etapa> etapas;
+    int contadorActividades;
+    ArrayList<Actividad> actividades;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -96,6 +101,12 @@ public class Controlador extends HttpServlet {
                 break;
             case "elegirEtapas":
                 url = "/elegirEtapas.jsp";
+                break;
+            case "planificarActividades":
+                url = planificarActividades(request);
+                break;
+            case "asignarTrabajador":
+                url = asignarTrabajador(request);
                 break;
             default:
                 url = "/error.jsp";
@@ -348,6 +359,8 @@ public class Controlador extends HttpServlet {
     }
 
     private String tomarDatos(HttpServletRequest request) {
+        etapas = new ArrayList<>();
+        actividades = new ArrayList<>();
         Trabajador tr = trabajadores.get(Integer.parseInt(request.getParameter("eleccion")));
         ArrayList<Proyecto> proyActuales = despliegueProyecto.getMisProyectosActuales(tr);
         int dedicacion = Integer.parseInt(request.getParameter("dedicacion"));
@@ -383,6 +396,34 @@ public class Controlador extends HttpServlet {
             trabajadores.remove(Integer.parseInt(request.getParameter("eleccion")));
             request.setAttribute("trabajadores", trabajadores);
             return "/elegirTrabajadores2.jsp";
+        }
+
+    }
+
+    private String planificarActividades(HttpServletRequest request) {
+        Date inicio = Date.valueOf(request.getParameter("inicio"));
+        Date fin = Date.valueOf(request.getParameter("fin"));
+        if (inicio.after(fin) || inicio.before(proyecto.getFechaInicio()) || fin.after(proyecto.getFechaFin()) || inicio.getDay() != 1 || fin.getDay() != 1) {
+            return "/errorFechasEtapa.jsp";
+        } else {
+            contadorActividades = 0;
+            etapas.add(new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null));
+            return "/actividades.jsp";
+        }
+    }
+
+    private String asignarTrabajador(HttpServletRequest request) {
+        Date inicio = Date.valueOf(request.getParameter("inicio"));
+        Date fin = Date.valueOf(request.getParameter("fin"));
+        String descripcion = request.getParameter("descripcion");
+        Rol rolActividad = new Rol(request.getParameter("Rol"));
+        int duracion = Integer.parseInt(request.getParameter("duracion"));
+        if (inicio.after(fin) || inicio.before(etapas.get(etapas.size() - 1).getFechaInicio()) || fin.after(etapas.get(etapas.size() - 1).getFechaFin()) || inicio.getDay() != 1 || fin.getDay() != 1) {
+            return "/actividadesError.jsp";
+        } else {
+            contadorActividades++;
+            actividades.add(new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), contadorActividades, descripcion, duracion, null, inicio, fin, null, "planificado", rolActividad));
+            return "/seleccionarTrabajador.jsp";
         }
 
     }
