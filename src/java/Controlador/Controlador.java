@@ -1,8 +1,12 @@
 package Controlador;
 
 import Proyecto.Despliegue.despliegueProyectoLocal;
+
 import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.Etapa;
+import Proyecto.Dominio.InformeSeguimiento;
+
+
 import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
 import Trabajador.Despliegue.DespliegueTrabajadorLocal;
@@ -107,6 +111,22 @@ public class Controlador extends HttpServlet {
                 break;
             case "asignarTrabajador":
                 url = asignarTrabajador(request);
+
+            case "mostrarInformes":
+                url = mostrarInformes(request);
+                break;
+            case "mostrarInformesPendientes":
+                url = mostrarInformesPendientes(request);
+                break;
+            case "aprobarInforme":
+                url = aprobarInforme(request);
+                break;
+            case "rechazarInforme":
+                url = rechazarInforme(request);
+                break;
+            case "mostrarInformesNoEnviados":
+                url = mostrarInformesNoEnviados(request);
+
                 break;
             default:
                 url = "/error.jsp";
@@ -400,6 +420,7 @@ public class Controlador extends HttpServlet {
 
     }
 
+
     private String planificarActividades(HttpServletRequest request) {
         Date inicio = Date.valueOf(request.getParameter("inicio"));
         Date fin = Date.valueOf(request.getParameter("fin"));
@@ -425,6 +446,125 @@ public class Controlador extends HttpServlet {
             actividades.add(new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), contadorActividades, descripcion, duracion, null, inicio, fin, null, "planificado", rolActividad));
             return "/seleccionarTrabajador.jsp";
         }
+    }
+    public String mostrarInformes(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+
+        if (!trabajador.getUser().equals(proyecto.getJefe())) {
+            request.setAttribute("error", "No puedes acceder a un proyecto que no es tuyo");
+            return "/accesoUsuario.jsp";
+        }
+
+        ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesProyecto(proyecto.getNombre());
+        request.setAttribute("informes", informes);
+
+        return "/informes.jsp";
+    }
+
+    public String aprobarInforme(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+
+        if (proyecto.getJefe().equals(trabajador.getUser())) {
+            request.setAttribute("error", "No puedes aprobar informes de proyectos que no lideras");
+            return "/accesoUsuario.jsp";
+        }
+
+        InformeSeguimiento informe = new InformeSeguimiento();
+        informe.setNombreProyecto(request.getParameter("nombreProyecto"));
+        informe.setNumeroEtapa(Integer.parseInt(request.getParameter("numeroEtapa")));
+        informe.setIdActividad(Integer.parseInt(request.getParameter("idActividad")));
+        informe.setTrabajador(request.getParameter("trabajador"));
+        informe.setNumTarea(Integer.parseInt(request.getParameter("numTarea")));
+        informe.setSemana(java.sql.Date.valueOf(request.getParameter("semana")));
+
+        despliegueProyecto.aprobarInforme(informe);
+
+        ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesPendientesProyecto(proyecto.getNombre());
+        request.setAttribute("informes", informes);
+
+        return "/informesPendientes.jsp";
+    }
+
+    public String rechazarInforme(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+
+        if (proyecto.getJefe().equals(trabajador.getUser())) {
+            request.setAttribute("error", "No puedes rechazar informes de proyectos que no lideras");
+            return "/accesoUsuario.jsp";
+        }
+
+        InformeSeguimiento informe = new InformeSeguimiento();
+        informe.setNombreProyecto(request.getParameter("nombreProyecto"));
+        informe.setNumeroEtapa(Integer.parseInt(request.getParameter("numeroEtapa")));
+        informe.setIdActividad(Integer.parseInt(request.getParameter("idActividad")));
+        informe.setTrabajador(request.getParameter("trabajador"));
+        informe.setNumTarea(Integer.parseInt(request.getParameter("numTarea")));
+        informe.setSemana(java.sql.Date.valueOf(request.getParameter("semana")));
+
+        despliegueProyecto.rechazarInforme(informe);
+
+        ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesPendientesProyecto(proyecto.getNombre());
+        request.setAttribute("informes", informes);
+
+        return "/informesPendientes.jsp";
+    }
+
+    public String mostrarInformesPendientes(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+
+        if (!trabajador.getUser().equals(proyecto.getJefe())) {
+            request.setAttribute("error", "No puedes acceder a un proyecto que no es tuyo");
+            return "/accesoUsuario.jsp";
+        }
+
+        ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesPendientesProyecto(proyecto.getNombre());
+        request.setAttribute("informes", informes);
+
+        return "/informesPendientes.jsp";
+    }
+
+    public String mostrarInformesNoEnviados(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+
+        if (!trabajador.getUser().equals(proyecto.getJefe())) {
+            request.setAttribute("error", "No puedes acceder a un proyecto que no es tuyo");
+            return "/accesoUsuario.jsp";
+        }
+
+        ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesNoEnviadosProyecto(proyecto.getNombre());
+        request.setAttribute("informes", informes);
+
+        return "/informesNoEnviados.jsp";
 
     }
 }

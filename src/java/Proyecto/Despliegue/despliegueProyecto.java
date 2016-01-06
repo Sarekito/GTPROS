@@ -1,9 +1,11 @@
 package Proyecto.Despliegue;
 
+import Proyecto.Dominio.InformeSeguimiento;
 import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
 import Proyecto.Persistencia.ActividadPersistencia;
 import Proyecto.Persistencia.EtapaPersistencia;
+import Proyecto.Persistencia.InformeSeguimientoPersistencia;
 import Proyecto.Persistencia.PersistenciaProyecto;
 import Trabajador.Dominio.Trabajador;
 import java.sql.SQLException;
@@ -102,5 +104,53 @@ public class despliegueProyecto implements despliegueProyectoLocal {
             Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tp;
+    }
+
+    @Override
+    public ArrayList<InformeSeguimiento> getInformesProyecto(String nombreProyecto) {
+        try {
+            return InformeSeguimientoPersistencia.getInformesProyecto(nombreProyecto);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    @Override
+    public void aprobarInforme(InformeSeguimiento informe) {
+        try {
+            InformeSeguimientoPersistencia.aprobarInforme(informe);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void rechazarInforme(InformeSeguimiento informe) {
+        try {
+            InformeSeguimientoPersistencia.rechazarInforme(informe);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public ArrayList<InformeSeguimiento> getInformesPendientesProyecto(String nombreProyecto) {
+        try {
+            return InformeSeguimientoPersistencia.getInformesPendientesProyecto(nombreProyecto);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    @Override
+    public java.util.ArrayList<InformeSeguimiento> getInformesNoEnviadosProyecto(String nombreProyecto) {
+        try {
+            return InformeSeguimientoPersistencia.getInformesNoEnviados(nombreProyecto);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 }
