@@ -3,9 +3,9 @@ package Controlador;
 import Proyecto.Despliegue.despliegueProyectoLocal;
 
 import Proyecto.Dominio.Actividad;
+import Proyecto.Dominio.ActividadTrabajador;
 import Proyecto.Dominio.Etapa;
 import Proyecto.Dominio.InformeSeguimiento;
-
 
 import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
@@ -53,25 +53,38 @@ public class Controlador extends HttpServlet {
     ArrayList<Proyecto> misProyectos;
     Proyecto proyecto;
     ArrayList<TrabajadoresProyecto> tp;
+    ArrayList<TrabajadoresProyecto> restantes;
     ArrayList<Trabajador> elegidos;
     ArrayList<Etapa> etapas;
-    int contadorActividades;
     ArrayList<Actividad> actividades;
+    ArrayList<Actividad> actEtapa;
+    ArrayList<ActividadTrabajador> actividadTrabajador;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String accion = request.getParameter("accion");
         String url;
-
         switch (accion) {
+            case "generaActividadTrabajador":
+                url = otroTrabajador(request);
+                break;
             case "Acceso":
                 url = acceso(request);
+                break;
+            case "actividadConPredecesoras":
+                url = actividadConPredecesoras(request);
                 break;
             case "vacaciones":
                 url = vacaciones(request);
                 break;
             case "reservaVacaciones":
                 url = reservaVacaciones(request);
+                break;
+            case "finalizarPlanActividad":
+                url = finalizarPlanActividad(request);
+                break;
+            case "volverAPlanificar":
+                url = volverAPlanificar(request);
                 break;
             case "entrarAdmin":
                 url = entrarAdmin(request);
@@ -111,7 +124,7 @@ public class Controlador extends HttpServlet {
                 break;
             case "asignarTrabajador":
                 url = asignarTrabajador(request);
-
+                break;
             case "mostrarInformes":
                 url = mostrarInformes(request);
                 break;
@@ -126,7 +139,9 @@ public class Controlador extends HttpServlet {
                 break;
             case "mostrarInformesNoEnviados":
                 url = mostrarInformesNoEnviados(request);
-
+                break;
+            case "finalizarActividad":
+                url = finalizarActividad(request);
                 break;
             default:
                 url = "/error.jsp";
@@ -343,6 +358,7 @@ public class Controlador extends HttpServlet {
     }
 
     private String planificado(HttpServletRequest request) {
+        tp = new ArrayList<>();
         java.util.Date hoy = new java.util.Date();
         Date inicio = Date.valueOf(request.getParameter("inicio"));
         Date fin = Date.valueOf(request.getParameter("fin"));
@@ -379,6 +395,7 @@ public class Controlador extends HttpServlet {
     }
 
     private String tomarDatos(HttpServletRequest request) {
+        actividadTrabajador = new ArrayList<>();
         etapas = new ArrayList<>();
         actividades = new ArrayList<>();
         Trabajador tr = trabajadores.get(Integer.parseInt(request.getParameter("eleccion")));
@@ -409,44 +426,43 @@ public class Controlador extends HttpServlet {
                 elegidos.add(tr);
                 trabajadores.remove(Integer.parseInt(request.getParameter("eleccion")));
                 request.setAttribute("trabajadores", trabajadores);
+                tp.add(new TrabajadoresProyecto(proyecto.getNombre(), tr.getUser(), dedicacion));
                 return "/elegirTrabajadores2.jsp";
             }
         } else {
             elegidos.add(tr);
             trabajadores.remove(Integer.parseInt(request.getParameter("eleccion")));
             request.setAttribute("trabajadores", trabajadores);
+            tp.add(new TrabajadoresProyecto(proyecto.getNombre(), tr.getUser(), dedicacion));
             return "/elegirTrabajadores2.jsp";
         }
 
     }
 
-
     private String planificarActividades(HttpServletRequest request) {
+
         Date inicio = Date.valueOf(request.getParameter("inicio"));
         Date fin = Date.valueOf(request.getParameter("fin"));
         if (inicio.after(fin) || inicio.before(proyecto.getFechaInicio()) || fin.after(proyecto.getFechaFin()) || inicio.getDay() != 1 || fin.getDay() != 1) {
             return "/errorFechasEtapa.jsp";
         } else {
-            contadorActividades = 0;
+            actEtapa = new ArrayList<>();
             etapas.add(new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null));
             return "/actividades.jsp";
         }
     }
 
     private String asignarTrabajador(HttpServletRequest request) {
-        Date inicio = Date.valueOf(request.getParameter("inicio"));
-        Date fin = Date.valueOf(request.getParameter("fin"));
-        String descripcion = request.getParameter("descripcion");
-        Rol rolActividad = new Rol(request.getParameter("Rol"));
-        int duracion = Integer.parseInt(request.getParameter("duracion"));
-        if (inicio.after(fin) || inicio.before(etapas.get(etapas.size() - 1).getFechaInicio()) || fin.after(etapas.get(etapas.size() - 1).getFechaFin()) || inicio.getDay() != 1 || fin.getDay() != 1) {
-            return "/actividadesError.jsp";
-        } else {
-            contadorActividades++;
-            actividades.add(new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), contadorActividades, descripcion, duracion, null, inicio, fin, null, "planificado", rolActividad));
-            return "/seleccionarTrabajador.jsp";
+        actividades.add(new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", new Rol(request.getParameter("Rol"))));
+        actEtapa.add(new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", new Rol(request.getParameter("Rol"))));
+        restantes = new ArrayList<>();
+        for (int i = 0; i < tp.size(); i++) {
+            restantes.add(tp.get(i));
         }
+        request.setAttribute("trabajadoresProyecto", restantes);
+        return "/seleccionarTrabajadores.jsp";
     }
+
     public String mostrarInformes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
@@ -566,5 +582,69 @@ public class Controlador extends HttpServlet {
 
         return "/informesNoEnviados.jsp";
 
+    }
+
+    private String otroTrabajador(HttpServletRequest request) {
+        int elegido = Integer.parseInt(request.getParameter("eleccion"));
+        TrabajadoresProyecto tptmp = tp.get(elegido);
+        restantes.remove(elegido);
+        int tiempo = Integer.parseInt(request.getParameter("horasActividad"));
+        actividadTrabajador.add(new ActividadTrabajador(actividades.get(actividades.size() - 1), tptmp, tiempo));
+        request.setAttribute("trabajadoresProyecto", restantes);
+        return "/otroTrabajador.jsp";
+    }
+
+    private String finalizarActividad(HttpServletRequest request) {
+        Actividad ac = actEtapa.get(actEtapa.size() - 1);
+        int numSemanas = (ac.getFechaFin().compareTo(ac.getFechaComienzo()) / 7) + 1;
+        int horasActividades = 0;
+        for (int i = 0; i < actividadTrabajador.size(); i++) {
+            if (actividadTrabajador.get(i).getNumeroEtapa() == ac.getNumero() && actividadTrabajador.get(i).getIdActividad() == ac.getId()) {
+                horasActividades += actividadTrabajador.get(i).getHoras() * numSemanas;
+            }
+        }
+        if (ac.getDuracion() == horasActividades) {
+            request.setAttribute("posiblesPredecesoras", actEtapa);
+            return "/actividadesFinalizar.jsp";
+
+        } else {
+            return "/actividadConDesigualdad.jsp";
+        }
+    }
+
+    private String volverAPlanificar(HttpServletRequest request) {
+        for (int i = 0; i < tp.size() - restantes.size(); i++) {
+            actividadTrabajador.remove(actividadTrabajador.size() - 1);
+        }
+        restantes = new ArrayList<>();
+        for (int i = 0; i < tp.size(); i++) {
+            restantes.add(tp.get(i));
+        }
+        request.setAttribute("trabajadoresProyecto", restantes);
+        return "/seleccionarTrabajadores.jsp";
+    }
+
+    private String finalizarPlanActividad(HttpServletRequest request) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private String actividadConPredecesoras(HttpServletRequest request) {
+        Actividad ac = new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(),
+                actEtapa.size(), request.getParameter("descripcion"),
+                Integer.parseInt(request.getParameter("duracion")), null,
+                Date.valueOf(request.getParameter("inicio")),
+                Date.valueOf(request.getParameter("fin")), null, "planifcada",
+                new Rol(request.getParameter("Rol")));
+        for (int i = 0; i < actEtapa.size(); i++) {
+            if (request.getParameter("" + i) != null) {
+                if (!actEtapa.get(i).getFechaFin().before(ac.getFechaComienzo())) {
+                    request.setAttribute("posiblesPredecesoras", actEtapa);
+                    request.setAttribute("predecesora", actEtapa.get(i));
+                    return "/actividadesFinalizarNoPredecesora.jsp";
+                }
+            }
+        }
+        request.setAttribute("posiblesPredecesoras", actEtapa);
+        return "/actividadesFinalizar.jsp";
     }
 }

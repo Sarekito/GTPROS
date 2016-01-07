@@ -226,6 +226,21 @@ CREATE TABLE Actividad (
 
 ALTER TABLE Actividad ADD CONSTRAINT PK_Actividad PRIMARY KEY (nombre,numero,id);
 
+create table ActividadTrabajador (
+
+ nombreProyecto Varchar(100), 
+ 
+ numeroEtapa INT, 
+ 
+ idActividad INT, 
+ 
+ nombreTrabajador Varchar(100), 
+ 
+ horas int, 
+ 
+ primary key(nombreProyecto, numeroEtapa, idActividad, nombreTrabajador), 
+ 
+);
 
 
 
