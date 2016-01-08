@@ -180,7 +180,9 @@ public class PersistenciaProyecto {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        s.execute("insert into TrabajadoresProyecto values('" + get.getNombreProyecto()+ "', "
+        System.out.println("insert into ActividadTrabajador values('" + get.getNombreProyecto()+ "', "
+                + get.getNumeroEtapa()+ ", " + get.getIdActividad() + ", '"+get.getNombreTrabajador()+"', "+get.getHoras()+")");
+        s.execute("insert into ActividadTrabajador values('" + get.getNombreProyecto()+ "', "
                 + get.getNumeroEtapa()+ ", " + get.getIdActividad() + ", '"+get.getNombreTrabajador()+"', "+get.getHoras()+")");
     }
     

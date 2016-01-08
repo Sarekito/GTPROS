@@ -682,7 +682,7 @@ public class Controlador extends HttpServlet {
         despliegueProyecto.guardarEtapas(etapas);
         despliegueProyecto.guardarActividades(actividades);
         despliegueProyecto.guardarTrabajadores(tp); 
-//        despliegueProyecto.guardarAsignaciones(actividadTrabajador);
+        despliegueProyecto.guardarAsignaciones(actividadTrabajador);
         return "/accesoUsuario.jsp";
     }
 }
