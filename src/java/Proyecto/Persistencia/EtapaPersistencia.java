@@ -59,9 +59,12 @@ public class EtapaPersistencia {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
+        System.out.println("insert into Etapa values('"+etapa.getNombre()+"', "+
+                etapa.getNumero()+", '"+etapa.getFechaInicio()+"', '"+
+                etapa.getFechaFin()+"', null, '"+etapa.getEstado()+"')");;
         s.execute("insert into Etapa values('"+etapa.getNombre()+"', "+
                 etapa.getNumero()+", '"+etapa.getFechaInicio()+"', '"+
-                etapa.getFechaFin()+"', '"+etapa.getFechaFinReal()+"', '"+etapa.getEstado()+"')");
+                etapa.getFechaFin()+"', null, '"+etapa.getEstado()+"')");
     }
 
     public ArrayList<Etapa> getEtapasProyecto(String nombreProyecto) throws SQLException {

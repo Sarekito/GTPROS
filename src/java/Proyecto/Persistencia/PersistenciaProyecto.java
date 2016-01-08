@@ -154,10 +154,10 @@ public class PersistenciaProyecto {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        s.execute("delete from Proyecto P where P.nombre = '" + proyecto.getNombre() + "'");
-        s.execute("insert into Proyecto values('" + proyecto.getNombre() + "', '"
-                + proyecto.getFechaInicio() + "', '" + proyecto.getFechaFin() + "', '"
-                + proyecto.getFechaFinReal() + "', '" + proyecto.getJefe() + "', 'realizando')");
+        System.out.println("update Proyecto P set P.fechaComienzo = '"+proyecto.getFechaInicio()+"' where P.nombre='"+proyecto.getNombre()+"'");
+        s.execute("update Proyecto P set fechaInicio = '"+proyecto.getFechaInicio()+"' where P.nombre='"+proyecto.getNombre()+"'");
+        s.execute("update Proyecto P set fechaFin = '"+proyecto.getFechaFin()+"' where P.nombre='"+proyecto.getNombre()+"'");
+        //s.execute("update Proyecto P set estado = 'realizando' where P.nombre='"+proyecto.getNombre()+"'");
     }
 
     public static void guardarTrabajadores(TrabajadoresProyecto get) throws SQLException {

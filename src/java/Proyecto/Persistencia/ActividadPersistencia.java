@@ -87,7 +87,7 @@ public class ActividadPersistencia {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        s.execute("insert into Etapa values('"+actividad.getNombre()+"', "+
+        s.execute("insert into Actividad values('"+actividad.getNombre()+"', "+
                 actividad.getNumero()+", "+actividad.getId()+", '"+
                 actividad.getDescripcion()+"', "+actividad.getDuracion()+", null, '"+
                 actividad.getFechaComienzo()+"', '"+actividad.getFechaFin()+
@@ -96,7 +96,7 @@ public class ActividadPersistencia {
             for (int i =0;i<actividad.getPredecesoras().size();i++){
                 s.execute("insert into Antecesora values('"+actividad.getNombre()+"', "+
                 actividad.getNumero()+", "+actividad.getId()+", '"+actividad.getPredecesoras().get(i).getNombre()+"', "+
-                actividad.getPredecesoras().get(i).getNumero()+", "+actividad.getPredecesoras().get(i).getId());
+                actividad.getPredecesoras().get(i).getNumero()+", "+actividad.getPredecesoras().get(i).getId()+")");
             }
         }
     }

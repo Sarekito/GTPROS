@@ -630,7 +630,6 @@ public class Controlador extends HttpServlet {
         return "/seleccionarTrabajadores.jsp";
     }
 
-
     private String actividadConPredecesoras(HttpServletRequest request) {
         Actividad ac = new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(),
                 actEtapa.size(), request.getParameter("descripcion"),
@@ -644,11 +643,11 @@ public class Controlador extends HttpServlet {
                     request.setAttribute("posiblesPredecesoras", actEtapa);
                     request.setAttribute("predecesora", actEtapa.get(i));
                     return "/actividadesFinalizarNoPredecesora.jsp";
+                } else {
+                    ac.addPredecesora(actEtapa.get(i));
                 }
             }
-            else{
-                ac.addPredecesora(actEtapa.get(i));
-            }
+
         }
         actividades.add(ac);
         actEtapa.add(ac);
@@ -668,14 +667,13 @@ public class Controlador extends HttpServlet {
         } else {
             actEtapa = new ArrayList<>();
             Etapa etapa = new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null, "pendiente");
-            if (etapas.get(etapas.size()-1).getFechaFin().before(etapa.getFechaInicio())){
+            if (etapas.get(etapas.size() - 1).getFechaFin().before(etapa.getFechaInicio())) {
                 etapas.add(etapa);
                 return "/actividades.jsp";
-            }
-            else{
+            } else {
                 return "/errorEtapa.jsp";
             }
-            
+
         }
     }
 
@@ -684,7 +682,7 @@ public class Controlador extends HttpServlet {
         despliegueProyecto.guardarEtapas(etapas);
         despliegueProyecto.guardarActividades(actividades);
         despliegueProyecto.guardarTrabajadores(tp); 
-        despliegueProyecto.guardarAsignaciones(actividadTrabajador);
+//        despliegueProyecto.guardarAsignaciones(actividadTrabajador);
         return "/accesoUsuario.jsp";
-   }
+    }
 }
