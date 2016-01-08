@@ -1,6 +1,7 @@
 package Proyecto.Dominio;
 
 import Trabajador.Dominio.Rol;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -20,6 +21,7 @@ public class Actividad {
     private Date fechaFinReal;
     private String estado;
     private Rol tipoRol;
+    private ArrayList<Actividad> predecesoras;
 
     public Actividad() {
     }
@@ -36,6 +38,7 @@ public class Actividad {
         this.fechaFinReal = fechaFinReal;
         this.estado = estado;
         this.tipoRol = tipoRol;
+        this.predecesoras = new ArrayList<>();
     }
 
     public String getNombre() {
@@ -124,5 +127,13 @@ public class Actividad {
 
     public void setTipoRol(Rol tipoRol) {
         this.tipoRol = tipoRol;
+    }
+
+    public ArrayList<Actividad> getPredecesoras() {
+        return predecesoras;
+    }
+    
+    public void addPredecesora(Actividad a){
+        predecesoras.add(a);
     }
 }

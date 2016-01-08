@@ -1,5 +1,8 @@
 package Proyecto.Despliegue;
 
+import Proyecto.Dominio.Actividad;
+import Proyecto.Dominio.ActividadTrabajador;
+import Proyecto.Dominio.Etapa;
 import Proyecto.Dominio.InformeSeguimiento;
 import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
@@ -8,6 +11,7 @@ import Proyecto.Persistencia.EtapaPersistencia;
 import Proyecto.Persistencia.InformeSeguimientoPersistencia;
 import Proyecto.Persistencia.PersistenciaProyecto;
 import Trabajador.Dominio.Trabajador;
+import java.util.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -151,6 +155,65 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         } catch (SQLException ex) {
             Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             return null;
+        }
+    }
+
+    @Override
+    public void guardarProyecto(Proyecto proyecto) {
+        try {
+            PersistenciaProyecto.guardarProyecto(proyecto);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void guardarEtapas(ArrayList<Etapa> etapas) {
+        etapas.get(0).setEstado("realizando");
+        for (int i = 0;i<etapas.size();i++){
+            try {
+                EtapaPersistencia.guardarEtapa(etapas.get(i));
+            } catch (SQLException ex) {
+                Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    @Override
+    public void guardarActividades(ArrayList<Actividad> actividades) {
+        
+        Date inicio = actividades.get(0).getFechaComienzo();   
+        for (int i =0;i<actividades.size();i++){
+            if (actividades.get(i).getFechaComienzo() == inicio){
+                actividades.get(i).setEstado("realizando");
+            }
+            try {   
+                ActividadPersistencia.guardaActividad(actividades.get(i));
+            } catch (SQLException ex) {
+                Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    @Override
+    public void guardarTrabajadores(ArrayList<TrabajadoresProyecto> tp) {
+        for(int i =0;i<tp.size();i++){
+            try {
+                PersistenciaProyecto.guardarTrabajadores(tp.get(i));
+            } catch (SQLException ex) {
+                Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    @Override
+    public void guardarAsignaciones(ArrayList<ActividadTrabajador> actividadTrabajador) {
+        for(int i =0;i<actividadTrabajador.size();i++){
+            try {
+                PersistenciaProyecto.guardarAsignaciones(actividadTrabajador.get(i));
+            } catch (SQLException ex) {
+                Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }

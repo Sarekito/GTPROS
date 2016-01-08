@@ -2,6 +2,7 @@ package Proyecto.Persistencia;
 
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
+import Proyecto.Dominio.ActividadTrabajador;
 import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
 import Trabajador.Dominio.Trabajador;
@@ -139,9 +140,48 @@ public class PersistenciaProyecto {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        ResultSet rs = s.executeQuery("Select * from TrabajadoresProyecto TP where TP.user = '"+user+"' and TP.nombre = '"+nombre+"'");
+        ResultSet rs = s.executeQuery("Select * from TrabajadoresProyecto TP where TP.user = '" + user + "' and TP.nombre = '" + nombre + "'");
         rs.next();
         tp = new TrabajadoresProyecto(rs.getString("nombre"), rs.getString("user"), rs.getInt("porcentaje"));
         return tp;
     }
+
+    public static void guardarProyecto(Proyecto proyecto) throws SQLException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        s.execute("delete from Proyecto P where P.nombre = '" + proyecto.getNombre() + "'");
+        s.execute("insert into Proyecto values('" + proyecto.getNombre() + "', '"
+                + proyecto.getFechaInicio() + "', '" + proyecto.getFechaFin() + "', '"
+                + proyecto.getFechaFinReal() + "', '" + proyecto.getJefe() + "', 'realizando')");
+    }
+
+    public static void guardarTrabajadores(TrabajadoresProyecto get) throws SQLException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        s.execute("insert into TrabajadoresProyecto values('" + get.getNombre() + "', '"
+                + get.getUser() + "', " + get.getDedicacion() + ")");
+    }
+
+    public static void guardarAsignaciones(ActividadTrabajador get) throws SQLException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        s.execute("insert into TrabajadoresProyecto values('" + get.getNombreProyecto()+ "', "
+                + get.getNumeroEtapa()+ ", " + get.getIdActividad() + ", '"+get.getNombreTrabajador()+"', "+get.getHoras()+")");
+    }
+    
 }

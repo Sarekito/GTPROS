@@ -81,7 +81,7 @@ public class Controlador extends HttpServlet {
                 url = reservaVacaciones(request);
                 break;
             case "finalizarPlanActividad":
-                url = finalizarPlanActividad(request);
+                url = "/elegirSigsEtapas.jsp";
                 break;
             case "volverAPlanificar":
                 url = volverAPlanificar(request);
@@ -142,6 +142,12 @@ public class Controlador extends HttpServlet {
                 break;
             case "finalizarActividad":
                 url = finalizarActividad(request);
+                break;
+            case "planificarSigsEtapas":
+                url = planificarSigsEtapas(request);
+                break;
+            case "finalizarPlanProyecto":
+                url = finalizarPlanProyecto(request);
                 break;
             default:
                 url = "/error.jsp";
@@ -329,7 +335,7 @@ public class Controlador extends HttpServlet {
         misProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
         request.setAttribute("misProyectos", misProyectos);
         sesion.setAttribute("misProyectos", misProyectos);
-        System.out.println(misProyectos);
+
         return "/verProyectos.jsp";
     }
 
@@ -447,7 +453,7 @@ public class Controlador extends HttpServlet {
             return "/errorFechasEtapa.jsp";
         } else {
             actEtapa = new ArrayList<>();
-            etapas.add(new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null));
+            etapas.add(new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null, "pendiente"));
             return "/actividades.jsp";
         }
     }
@@ -624,9 +630,6 @@ public class Controlador extends HttpServlet {
         return "/seleccionarTrabajadores.jsp";
     }
 
-    private String finalizarPlanActividad(HttpServletRequest request) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
     private String actividadConPredecesoras(HttpServletRequest request) {
         Actividad ac = new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(),
@@ -643,8 +646,45 @@ public class Controlador extends HttpServlet {
                     return "/actividadesFinalizarNoPredecesora.jsp";
                 }
             }
+            else{
+                ac.addPredecesora(actEtapa.get(i));
+            }
         }
-        request.setAttribute("posiblesPredecesoras", actEtapa);
-        return "/actividadesFinalizar.jsp";
+        actividades.add(ac);
+        actEtapa.add(ac);
+        restantes = new ArrayList<>();
+        for (int i = 0; i < tp.size(); i++) {
+            restantes.add(tp.get(i));
+        }
+        request.setAttribute("trabajadoresProyecto", restantes);
+        return "/seleccionarTrabajadores.jsp";
     }
+
+    private String planificarSigsEtapas(HttpServletRequest request) {
+        Date inicio = Date.valueOf(request.getParameter("inicio"));
+        Date fin = Date.valueOf(request.getParameter("fin"));
+        if (inicio.after(fin) || inicio.before(proyecto.getFechaInicio()) || fin.after(proyecto.getFechaFin()) || inicio.getDay() != 1 || fin.getDay() != 1) {
+            return "/errorFechasEtapa.jsp";
+        } else {
+            actEtapa = new ArrayList<>();
+            Etapa etapa = new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null, "pendiente");
+            if (etapas.get(etapas.size()-1).getFechaFin().before(etapa.getFechaInicio())){
+                etapas.add(etapa);
+                return "/actividades.jsp";
+            }
+            else{
+                return "/errorEtapa.jsp";
+            }
+            
+        }
+    }
+
+    private String finalizarPlanProyecto(HttpServletRequest request) {
+        despliegueProyecto.guardarProyecto(proyecto);
+        despliegueProyecto.guardarEtapas(etapas);
+        despliegueProyecto.guardarActividades(actividades);
+        despliegueProyecto.guardarTrabajadores(tp); 
+        despliegueProyecto.guardarAsignaciones(actividadTrabajador);
+        return "/accesoUsuario.jsp";
+   }
 }

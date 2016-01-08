@@ -3,8 +3,11 @@ package Proyecto.Persistencia;
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Etapa;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -46,6 +49,19 @@ public class EtapaPersistencia {
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);
         }
+    }
+
+    public static void guardarEtapa(Etapa etapa) throws SQLException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        s.execute("insert into Etapa values('"+etapa.getNombre()+"', "+
+                etapa.getNumero()+", '"+etapa.getFechaInicio()+"', '"+
+                etapa.getFechaFin()+"', '"+etapa.getFechaFinReal()+"', '"+etapa.getEstado()+"')");
     }
 
     public ArrayList<Etapa> getEtapasProyecto(String nombreProyecto) throws SQLException {

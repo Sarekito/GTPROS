@@ -4,8 +4,11 @@ import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Actividad;
 import Trabajador.Dominio.Rol;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  *
@@ -73,6 +76,28 @@ public class ActividadPersistencia {
             return count;
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);
+        }
+    }
+
+    public static void guardaActividad(Actividad actividad) throws SQLException {
+         try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        s.execute("insert into Etapa values('"+actividad.getNombre()+"', "+
+                actividad.getNumero()+", "+actividad.getId()+", '"+
+                actividad.getDescripcion()+"', "+actividad.getDuracion()+", null, '"+
+                actividad.getFechaComienzo()+"', '"+actividad.getFechaFin()+
+                "', null, '"+actividad.getEstado()+"', '"+actividad.getTipoRol().getRol()+"')");
+        if (!actividad.getPredecesoras().isEmpty()){
+            for (int i =0;i<actividad.getPredecesoras().size();i++){
+                s.execute("insert into Antecesora values('"+actividad.getNombre()+"', "+
+                actividad.getNumero()+", "+actividad.getId()+", '"+actividad.getPredecesoras().get(i).getNombre()+"', "+
+                actividad.getPredecesoras().get(i).getNumero()+", "+actividad.getPredecesoras().get(i).getId());
+            }
         }
     }
 }

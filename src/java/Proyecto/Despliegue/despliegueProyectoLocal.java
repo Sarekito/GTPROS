@@ -1,5 +1,8 @@
 package Proyecto.Despliegue;
 
+import Proyecto.Dominio.Actividad;
+import Proyecto.Dominio.ActividadTrabajador;
+import Proyecto.Dominio.Etapa;
 import Proyecto.Dominio.InformeSeguimiento;
 import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
@@ -37,5 +40,15 @@ public interface despliegueProyectoLocal {
     java.util.ArrayList<InformeSeguimiento> getInformesPendientesProyecto(String nombreProyecto);
 
     java.util.ArrayList<InformeSeguimiento> getInformesNoEnviadosProyecto(String nombreProyecto);
+
+    public void guardarProyecto(Proyecto proyecto);
+
+    public void guardarEtapas(ArrayList<Etapa> etapas);
+
+    public void guardarActividades(ArrayList<Actividad> actividades);
+
+    public void guardarTrabajadores(ArrayList<TrabajadoresProyecto> tp);
+
+    public void guardarAsignaciones(ArrayList<ActividadTrabajador> actividadTrabajador);
 
 }
