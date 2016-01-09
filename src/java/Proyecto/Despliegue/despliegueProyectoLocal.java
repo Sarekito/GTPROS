@@ -51,4 +51,6 @@ public interface despliegueProyectoLocal {
 
     public void guardarAsignaciones(ArrayList<ActividadTrabajador> actividadTrabajador);
 
+    public ArrayList<Actividad> misActividadesFecha(String user);
+
 }

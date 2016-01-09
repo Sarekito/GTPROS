@@ -216,4 +216,15 @@ public class despliegueProyecto implements despliegueProyectoLocal {
             }
         }
     }
+
+    @Override
+    public ArrayList<Actividad> misActividadesFecha(String user) {
+        ArrayList<Actividad> at = null;
+        try {
+            at = PersistenciaProyecto.getMisActividadesActuales(user);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return at;
+    }
 }

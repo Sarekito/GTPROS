@@ -351,10 +351,6 @@ public class Controlador extends HttpServlet {
             request.setAttribute("fallo", "no");
             return "/planificar.jsp";
         }
-        if (proyecto.getEstado().equals("planificado")) {
-            //TODO pagina de error
-
-        }
         if (proyecto.getEstado().equals("realizando")) {
             //TODO pagina de informes
 
@@ -459,14 +455,32 @@ public class Controlador extends HttpServlet {
     }
 
     private String asignarTrabajador(HttpServletRequest request) {
-        actividades.add(new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", new Rol(request.getParameter("Rol"))));
-        actEtapa.add(new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", new Rol(request.getParameter("Rol"))));
+        Actividad actividad = (new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", new Rol(request.getParameter("Rol"))));
+        actividades.add(actividad);
+        actEtapa.add(actividad);
         restantes = new ArrayList<>();
+        ArrayList<Actividad> simultaneas;
         for (int i = 0; i < tp.size(); i++) {
             restantes.add(tp.get(i));
+            simultaneas = new ArrayList<>();
+            simultaneas = despliegueProyecto.misActividadesFecha(tp.get(i).getUser());
+            System.out.println(simultaneas);
+            for (int k = 0; k < simultaneas.size(); k++) {
+                if ((actividad.getFechaComienzo().before(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaComienzo().after(simultaneas.get(k).getFechaFin()))
+                        || (actividad.getFechaFin().after(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaFin().before(simultaneas.get(k).getFechaFin()))
+                        || (simultaneas.get(k).getFechaComienzo().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaComienzo().before(actividad.getFechaFin()))
+                        || (simultaneas.get(k).getFechaFin().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaFin().before(actividad.getFechaFin()))) {
+                    simultaneas.remove(k);
+                }
+            }
+            System.out.println(simultaneas);
+            if (simultaneas.size() > 3) {
+                restantes.remove(i);
+            }
         }
         request.setAttribute("trabajadoresProyecto", restantes);
         return "/seleccionarTrabajadores.jsp";
+
     }
 
     public String mostrarInformes(HttpServletRequest request) {
@@ -631,7 +645,7 @@ public class Controlador extends HttpServlet {
     }
 
     private String actividadConPredecesoras(HttpServletRequest request) {
-        Actividad ac = new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(),
+        Actividad actividad = new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(),
                 actEtapa.size(), request.getParameter("descripcion"),
                 Integer.parseInt(request.getParameter("duracion")), null,
                 Date.valueOf(request.getParameter("inicio")),
@@ -639,21 +653,54 @@ public class Controlador extends HttpServlet {
                 new Rol(request.getParameter("Rol")));
         for (int i = 0; i < actEtapa.size(); i++) {
             if (request.getParameter("" + i) != null) {
-                if (!actEtapa.get(i).getFechaFin().before(ac.getFechaComienzo())) {
+                if (!actEtapa.get(i).getFechaFin().before(actividad.getFechaComienzo())) {
                     request.setAttribute("posiblesPredecesoras", actEtapa);
                     request.setAttribute("predecesora", actEtapa.get(i));
                     return "/actividadesFinalizarNoPredecesora.jsp";
                 } else {
-                    ac.addPredecesora(actEtapa.get(i));
+                    actividad.addPredecesora(actEtapa.get(i));
                 }
             }
 
         }
-        actividades.add(ac);
-        actEtapa.add(ac);
+
         restantes = new ArrayList<>();
+        ArrayList<Actividad> simultaneas;
         for (int i = 0; i < tp.size(); i++) {
             restantes.add(tp.get(i));
+            simultaneas = new ArrayList<>();
+            simultaneas = despliegueProyecto.misActividadesFecha(tp.get(i).getUser());
+            System.out.println(simultaneas);
+            for (int k = 0; k < simultaneas.size(); k++) {
+                if ((actividad.getFechaComienzo().before(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaComienzo().after(simultaneas.get(k).getFechaFin()))
+                        || (actividad.getFechaFin().after(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaFin().before(simultaneas.get(k).getFechaFin()))
+                        || (simultaneas.get(k).getFechaComienzo().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaComienzo().before(actividad.getFechaFin()))
+                        || (simultaneas.get(k).getFechaFin().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaFin().before(actividad.getFechaFin()))) {
+                    simultaneas.remove(k);
+                }
+            }
+            for (int k = 0; k < actividadTrabajador.size(); k++) {
+                if (actividadTrabajador.get(k).getNombreTrabajador().equals(tp.get(i).getUser())) {
+                    for (int j = 0; j < actividades.size(); j++) {
+                        if (actividades.get(j).getNumero() == actividadTrabajador.get(k).getNumeroEtapa()
+                                && actividades.get(j).getId() == actividadTrabajador.get(k).getIdActividad()) {
+                            if (!(actividad.getFechaComienzo().before(actividades.get(j).getFechaComienzo())) && !(actividad.getFechaComienzo().after(actividades.get(j).getFechaFin()))
+                                    || !(actividad.getFechaFin().after(actividades.get(j).getFechaComienzo())) && !(actividad.getFechaFin().before(actividades.get(j).getFechaFin()))
+                                    || !(actividades.get(j).getFechaComienzo().after(actividad.getFechaComienzo())) && !(actividades.get(j).getFechaComienzo().before(actividad.getFechaFin()))
+                                    || !(actividades.get(j).getFechaFin().after(actividad.getFechaComienzo())) && !(actividades.get(j).getFechaFin().before(actividad.getFechaFin()))) {
+
+                                simultaneas.add(actividades.get(j));
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println(simultaneas);
+            if (simultaneas.size() > 3) {
+                restantes.remove(i);
+            }
+            actividades.add(actividad);
+            actEtapa.add(actividad);
         }
         request.setAttribute("trabajadoresProyecto", restantes);
         return "/seleccionarTrabajadores.jsp";
@@ -681,7 +728,7 @@ public class Controlador extends HttpServlet {
         despliegueProyecto.guardarProyecto(proyecto);
         despliegueProyecto.guardarEtapas(etapas);
         despliegueProyecto.guardarActividades(actividades);
-        despliegueProyecto.guardarTrabajadores(tp); 
+        despliegueProyecto.guardarTrabajadores(tp);
         despliegueProyecto.guardarAsignaciones(actividadTrabajador);
         return "/accesoUsuario.jsp";
     }

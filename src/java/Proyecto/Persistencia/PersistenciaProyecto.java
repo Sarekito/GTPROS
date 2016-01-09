@@ -2,6 +2,7 @@ package Proyecto.Persistencia;
 
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
+import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.ActividadTrabajador;
 import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
@@ -180,10 +181,26 @@ public class PersistenciaProyecto {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        System.out.println("insert into ActividadTrabajador values('" + get.getNombreProyecto()+ "', "
-                + get.getNumeroEtapa()+ ", " + get.getIdActividad() + ", '"+get.getNombreTrabajador()+"', "+get.getHoras()+")");
         s.execute("insert into ActividadTrabajador values('" + get.getNombreProyecto()+ "', "
                 + get.getNumeroEtapa()+ ", " + get.getIdActividad() + ", '"+get.getNombreTrabajador()+"', "+get.getHoras()+")");
     }
-    
+
+    public static ArrayList<Actividad> getMisActividadesActuales(String user) throws SQLException {
+        ArrayList<Actividad> actuales = new ArrayList<>();                
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("Select A.nombre, A.numero, A.id, A.fechaComienzo, A.fechaFin"
+                + " from ActividadTrabajador AP, Actividad A, Proyecto P where AP.nombreProyecto = A.nombre and AP.numeroEtapa = A.numero and AP.idActividad = A.id and P.nombre = A.nombre and P.estado = 'realizando' and AP.nombreTrabajador = '"+user+"'");
+        while(rs.next()){
+            actuales.add(new Actividad(rs.getString(1), rs.getInt(2),  rs.getInt(3), null, 0, null,  rs.getDate(4), rs.getDate(5), null, null, null));
+        }
+        return actuales;
+    }
+
+   
 }
