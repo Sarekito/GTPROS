@@ -128,6 +128,17 @@ public class TrabajadorPersistencia {
             throw new SQLException(ex);
         }
     }
+
+    public static ArrayList<Vacaciones> dameVacaciones(String user) throws SQLException, ClassNotFoundException {
+        ArrayList<Vacaciones> vc = new ArrayList<>();
+        ConexionBD conexion = new ConexionBD();
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("Select * from Vacaciones where user = '"+user+"'");
+        while (rs.next()){
+            vc.add(new Vacaciones(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getDate(4), rs.getInt(5)));
+        }
+        return vc;
+    }
     
  
 }

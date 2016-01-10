@@ -3,12 +3,14 @@ package Proyecto.Persistencia;
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Actividad;
+import Proyecto.Dominio.Etapa;
 import Trabajador.Dominio.Rol;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  *
@@ -80,24 +82,78 @@ public class ActividadPersistencia {
     }
 
     public static void guardaActividad(Actividad actividad) throws SQLException {
-         try {
+        try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception e) {
 
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        s.execute("insert into Actividad values('"+actividad.getNombre()+"', "+
-                actividad.getNumero()+", "+actividad.getId()+", '"+
-                actividad.getDescripcion()+"', "+actividad.getDuracion()+", null, '"+
-                actividad.getFechaComienzo()+"', '"+actividad.getFechaFin()+
-                "', null, '"+actividad.getEstado()+"', '"+actividad.getTipoRol().getRol()+"')");
-        if (!actividad.getPredecesoras().isEmpty()){
-            for (int i =0;i<actividad.getPredecesoras().size();i++){
-                s.execute("insert into Antecesora values('"+actividad.getNombre()+"', "+
-                actividad.getNumero()+", "+actividad.getId()+", '"+actividad.getPredecesoras().get(i).getNombre()+"', "+
-                actividad.getPredecesoras().get(i).getNumero()+", "+actividad.getPredecesoras().get(i).getId()+")");
+        s.execute("insert into Actividad values('" + actividad.getNombre() + "', "
+                + actividad.getNumero() + ", " + actividad.getId() + ", '"
+                + actividad.getDescripcion() + "', " + actividad.getDuracion() + ", null, '"
+                + actividad.getFechaComienzo() + "', '" + actividad.getFechaFin()
+                + "', null, '" + actividad.getEstado() + "', '" + actividad.getTipoRol().getRol() + "')");
+        if (!actividad.getPredecesoras().isEmpty()) {
+            for (int i = 0; i < actividad.getPredecesoras().size(); i++) {
+                s.execute("insert into Antecesora values('" + actividad.getNombre() + "', "
+//                        + actividad.getNumero() + ", " + actividad.getId() + ", '" + actividad.getPredecesoras().get(i).getNombre() + "', "
+                        + actividad.getPredecesoras().get(i).getNumero() + ", " + actividad.getPredecesoras().get(i).getId() + ")");
             }
         }
+    }
+
+    public static ArrayList<Actividad> sobreesfuerzo(String user) throws SQLException{
+        ArrayList<Actividad> actuales = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("Select * from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'finalizado' and A.duracion<A.duracionReal");
+        while (rs.next()) {
+            actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7), rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
+        }
+        rs = s.executeQuery("Select * from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'realizando' and A.duracion<A.duracionReal and P.jefeProyecto = '"+user+"'");
+        while (rs.next()) {
+            actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7), rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
+        }
+        return actuales;
+    }
+
+    public static ArrayList<Actividad> getCerrados(String nombre, int numero) throws SQLException {
+        ArrayList<Actividad> actuales = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("Select * from Actividad where nombre = '"+nombre+"' and numero = "+numero);
+        while (rs.next()) {
+            actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7),
+            rs.getDate(8),rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
+        }
+        return actuales;
+    }
+
+    public static ArrayList<Actividad> getAbiertosNoJefe(String nombre, int numero, String idTrabajador) throws SQLException {
+        ArrayList<Actividad> actuales = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("Select A.* from Actividad A, ActividadTrabajador AP "
+                + "where A.nombre = '"+nombre+"' and A.numero = "+numero+" and"
+                + " AP.nombreProyecto=A.nombre and AP.numeroEtapa = A.numero and AP.idActividad = A.id and AP.nombreTrabajador = '"+idTrabajador+"'");
+        while (rs.next()) {
+            actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7),
+            rs.getDate(8),rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
+        }
+        return actuales;
     }
 }

@@ -22,6 +22,19 @@
             <input type="hidden" name="accion" value="misProyectos" readonly="readonly" />
             <input type="submit" value=" Ver mis proyectos en curso" />
         </form>
+        <br>
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="sobreesfuerzo" readonly="readonly" />
+            <input type="submit" value=" Ver actividades con sobreesfuerzo" />
+        </form>
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="proyectosCerrados" readonly="readonly" />
+            <input type="submit" value="Obtener informes sobre proyectos cerrados" />
+        </form>
+         <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="proyectosAbiertos" readonly="readonly" />
+            <input type="submit" value="Obtener informes sobre proyectos abiertos" />
+        </form>
     </center>
     </body>
 </html>

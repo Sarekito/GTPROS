@@ -5,8 +5,10 @@
  */
 package Trabajador.Despliegue;
 
+import Proyecto.Dominio.TrabajadoresProyecto;
 import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
+import Trabajador.Dominio.Vacaciones;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.ejb.Local;
@@ -33,5 +35,7 @@ public interface DespliegueTrabajadorLocal {
     public ArrayList<Trabajador> getTrabajadores();
 
     public int getNumProyectosActivos(Trabajador t);
+
+    public ArrayList<Vacaciones> getVacaciones(String user);
 
 }

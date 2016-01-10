@@ -53,4 +53,16 @@ public interface despliegueProyectoLocal {
 
     public ArrayList<Actividad> misActividadesFecha(String user);
 
+    public ArrayList<Actividad> getSobreesfuerzo(String user);
+
+    public ArrayList<Proyecto> getProyectosCerrados();
+
+    public ArrayList<Etapa> getEtapas(String nombre);
+
+    public ArrayList<Actividad> getActividadesCerrados(String nombre, int numero);
+
+    public ArrayList<Actividad> getActividadesAbiertasNoJefe(String nombre, int numero, String idTrabajador);
+    
+    
+
 }

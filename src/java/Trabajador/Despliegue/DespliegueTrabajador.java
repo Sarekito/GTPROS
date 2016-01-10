@@ -119,4 +119,17 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
         System.out.println(proyectos+" "+t.getUser());
         return proyectos;
     }
+
+    @Override
+    public ArrayList<Vacaciones> getVacaciones(String user) {
+        ArrayList<Vacaciones> vc = new ArrayList<>();
+        try {
+            vc = TrabajadorPersistencia.dameVacaciones(user);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return vc;
+    }
 }

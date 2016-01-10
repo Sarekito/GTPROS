@@ -1,4 +1,4 @@
-Drop table InformeSeguimiento;
+/*Drop table InformeSeguimiento;
 
 Drop table Tarea;
 
@@ -23,7 +23,7 @@ Drop table RolCat;
 Drop table Rol;
 
 Drop table Categoria;
-
+*/
  
 
 

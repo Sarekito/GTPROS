@@ -155,9 +155,9 @@ public class PersistenciaProyecto {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        System.out.println("update Proyecto P set P.fechaComienzo = '"+proyecto.getFechaInicio()+"' where P.nombre='"+proyecto.getNombre()+"'");
-        s.execute("update Proyecto P set fechaInicio = '"+proyecto.getFechaInicio()+"' where P.nombre='"+proyecto.getNombre()+"'");
-        s.execute("update Proyecto P set fechaFin = '"+proyecto.getFechaFin()+"' where P.nombre='"+proyecto.getNombre()+"'");
+        System.out.println("update Proyecto P set P.fechaComienzo = '" + proyecto.getFechaInicio() + "' where P.nombre='" + proyecto.getNombre() + "'");
+        s.execute("update Proyecto P set fechaInicio = '" + proyecto.getFechaInicio() + "' where P.nombre='" + proyecto.getNombre() + "'");
+        s.execute("update Proyecto P set fechaFin = '" + proyecto.getFechaFin() + "' where P.nombre='" + proyecto.getNombre() + "'");
         //s.execute("update Proyecto P set estado = 'realizando' where P.nombre='"+proyecto.getNombre()+"'");
     }
 
@@ -181,12 +181,12 @@ public class PersistenciaProyecto {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        s.execute("insert into ActividadTrabajador values('" + get.getNombreProyecto()+ "', "
-                + get.getNumeroEtapa()+ ", " + get.getIdActividad() + ", '"+get.getNombreTrabajador()+"', "+get.getHoras()+")");
+        s.execute("insert into ActividadTrabajador values('" + get.getNombreProyecto() + "', "
+                + get.getNumeroEtapa() + ", " + get.getIdActividad() + ", '" + get.getNombreTrabajador() + "', " + get.getHoras() + ")");
     }
 
     public static ArrayList<Actividad> getMisActividadesActuales(String user) throws SQLException {
-        ArrayList<Actividad> actuales = new ArrayList<>();                
+        ArrayList<Actividad> actuales = new ArrayList<>();
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception e) {
@@ -195,12 +195,29 @@ public class PersistenciaProyecto {
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
         ResultSet rs = s.executeQuery("Select A.nombre, A.numero, A.id, A.fechaComienzo, A.fechaFin"
-                + " from ActividadTrabajador AP, Actividad A, Proyecto P where AP.nombreProyecto = A.nombre and AP.numeroEtapa = A.numero and AP.idActividad = A.id and P.nombre = A.nombre and P.estado = 'realizando' and AP.nombreTrabajador = '"+user+"'");
-        while(rs.next()){
-            actuales.add(new Actividad(rs.getString(1), rs.getInt(2),  rs.getInt(3), null, 0, null,  rs.getDate(4), rs.getDate(5), null, null, null));
+                + " from ActividadTrabajador AP, Actividad A, Proyecto P where AP.nombreProyecto = A.nombre and AP.numeroEtapa = A.numero and AP.idActividad = A.id and P.nombre = A.nombre and P.estado = 'realizando' and AP.nombreTrabajador = '" + user + "'");
+        while (rs.next()) {
+            actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), null, 0, null, rs.getDate(4), rs.getDate(5), null, null, null));
         }
         return actuales;
     }
 
-   
+    public static ArrayList<Proyecto> getCerrados() throws SQLException {
+        ArrayList<Proyecto> actuales = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("Select * from Proyecto where estado = 'finalizado'");
+        while (rs.next()) {
+            Proyecto p = new Proyecto(rs.getString(1), rs.getDate(2), rs.getDate(3), rs.getString(5), rs.getString(6));
+            p.setFechaFinReal(rs.getDate(4));
+            actuales.add(p);
+        }
+        return actuales;
+    }
+
 }

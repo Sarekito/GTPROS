@@ -170,7 +170,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
     @Override
     public void guardarEtapas(ArrayList<Etapa> etapas) {
         etapas.get(0).setEstado("realizando");
-        for (int i = 0;i<etapas.size();i++){
+        for (int i = 0; i < etapas.size(); i++) {
             try {
                 EtapaPersistencia.guardarEtapa(etapas.get(i));
             } catch (SQLException ex) {
@@ -181,13 +181,13 @@ public class despliegueProyecto implements despliegueProyectoLocal {
 
     @Override
     public void guardarActividades(ArrayList<Actividad> actividades) {
-        
-        Date inicio = actividades.get(0).getFechaComienzo();   
-        for (int i =0;i<actividades.size();i++){
-            if (actividades.get(i).getFechaComienzo() == inicio){
+
+        Date inicio = actividades.get(0).getFechaComienzo();
+        for (int i = 0; i < actividades.size(); i++) {
+            if (actividades.get(i).getFechaComienzo() == inicio) {
                 actividades.get(i).setEstado("realizando");
             }
-            try {   
+            try {
                 ActividadPersistencia.guardaActividad(actividades.get(i));
             } catch (SQLException ex) {
                 Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
@@ -197,7 +197,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
 
     @Override
     public void guardarTrabajadores(ArrayList<TrabajadoresProyecto> tp) {
-        for(int i =0;i<tp.size();i++){
+        for (int i = 0; i < tp.size(); i++) {
             try {
                 PersistenciaProyecto.guardarTrabajadores(tp.get(i));
             } catch (SQLException ex) {
@@ -208,7 +208,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
 
     @Override
     public void guardarAsignaciones(ArrayList<ActividadTrabajador> actividadTrabajador) {
-        for(int i =0;i<actividadTrabajador.size();i++){
+        for (int i = 0; i < actividadTrabajador.size(); i++) {
             try {
                 PersistenciaProyecto.guardarAsignaciones(actividadTrabajador.get(i));
             } catch (SQLException ex) {
@@ -227,4 +227,60 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         }
         return at;
     }
+
+    @Override
+    public ArrayList<Actividad> getSobreesfuerzo(String user) {
+        ArrayList<Actividad> at = null;
+        try {
+            at = ActividadPersistencia.sobreesfuerzo(user);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return at;
+    }
+
+    @Override
+    public ArrayList<Proyecto> getProyectosCerrados() {
+        ArrayList<Proyecto> cerrados = null;
+        try {
+            cerrados = PersistenciaProyecto.getCerrados();
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cerrados;
+    }
+
+    @Override
+    public ArrayList<Etapa> getEtapas(String nombre) {
+        ArrayList<Etapa> cerrados = null;
+        try {
+            cerrados = EtapaPersistencia.getCerrados(nombre);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cerrados;
+    }
+
+    @Override
+    public ArrayList<Actividad> getActividadesCerrados(String nombre, int numero) {
+        ArrayList<Actividad> cerrados = null;
+        try {
+            cerrados = ActividadPersistencia.getCerrados(nombre, numero);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cerrados;
+    }
+
+    @Override
+    public ArrayList<Actividad> getActividadesAbiertasNoJefe(String nombre, int numero, String idTrabajador) {
+        ArrayList<Actividad> cerrados = null;
+        try {
+            cerrados = ActividadPersistencia.getAbiertosNoJefe(nombre, numero, idTrabajador);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cerrados;
+    }
+
 }
