@@ -1,4 +1,4 @@
-/*Drop table InformeSeguimiento;
+Drop table InformeSeguimiento;
 
 Drop table Tarea;
 
@@ -23,7 +23,6 @@ Drop table RolCat;
 Drop table Rol;
 
 Drop table Categoria;
-*/
  
 
 
@@ -236,13 +235,12 @@ create table ActividadTrabajador (
  
  nombreTrabajador Varchar(100), 
  
- horas int, 
- 
- primary key(nombreProyecto, numeroEtapa, idActividad, nombreTrabajador), 
+ horas int 
  
 );
 
-
+ALTER TABLE ActividadTrabajador ADD CONSTRAINT Pk_ActividadTrabajador PRIMARY KEY (nombreProyecto, numeroEtapa, idActividad, nombreTrabajador);
+ 
 
 
 CREATE TABLE Tarea (

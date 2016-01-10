@@ -9,9 +9,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+    <script src="./js/jquery-1.12.0.js"></script>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>GTPROS</title>
     </head>
     <body>
     <center>

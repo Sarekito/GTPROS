@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>GTPROS</title>
     </head>
     <body>
         <h1>Ya has reservado las vacaciones para este año</h1>

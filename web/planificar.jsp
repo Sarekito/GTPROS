@@ -8,9 +8,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+    <script src="./js/jquery-1.12.0.js"></script>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>GTPROS</title>
     </head>
     <body>
     <center>        
@@ -20,7 +21,7 @@
         <h1>Planifique este proyecto</h1>
         <%}%>
         <%Proyecto proyecto = (Proyecto) request.getAttribute("proyecto");%>
-        <form action="Controlador" method ="post">
+        <form action="Controlador" method ="post" onsubmit="return comprueba();">
             <input type="hidden" name="accion" value="planificado" readonly="readonly" />
             <table border = "5">
                 <tr>
@@ -39,10 +40,10 @@
                         <%=proyecto.getNombre()%>
                     </td>
                     <td>
-                        <input type="date" name = "inicio">
+                        <input id="inicio" type="date" name = "inicio">
                     </td>
                     <td>
-                        <input type="date" name = "fin">
+                        <input id="fin" type="date" name = "fin">
                     </td>
                     <td>
                         <input type="submit" value="Guardar" />
@@ -52,4 +53,17 @@
         </form>
     </center>
 </body>
+<script>
+    function comprueba(){
+        if($('#inicio').val()==""){
+            return false;
+        }
+        if($('#fin').val()==""){
+            return false;
+        }
+        if(($('#fin').val()!="")&&($('#inicio').val()!="")){
+            return true;
+        }
+    }
+</script>
 </html>

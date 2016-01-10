@@ -7,9 +7,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+    <script src="./js/jquery-1.12.0.js"></script>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>GTPROS</title>
     </head>
     <body>
     <center>
@@ -17,14 +18,14 @@
         <font size ="5" color="red">Ese nombre de usuario ya esta asignado</font>
         <br>
         <br>
-        <form action="Controlador" method ="post">
+        <form action="Controlador" method ="post" onsubmit="return comprueba();">
             <table>
                 <tr>
                     <td>
                         Usuario
                     </td>
                     <td>
-                        <input type="text" name="usuario" size="50" />
+                        <input id="user" type="text" name="usuario" size="50" />
                     </td>
                 </tr>
                 <tr>
@@ -33,7 +34,7 @@
                     </td>
 
                     <td>
-                        <input type="text" name="clave" size="50" />
+                        <input id="pass" type="text" name="clave" size="50" />
                     </td>
                 </tr>
                  <tr>
@@ -79,4 +80,17 @@
         </form>
     </center>
     </body>
+    <script>
+        function comprueba(){
+            if($('#user').val()==""){
+                alert("Error en el usuario");
+                return false;
+            }
+            if($('#pass').val()==""){
+                alert("Error en la contraseña");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </html>

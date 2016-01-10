@@ -7,15 +7,16 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+    <script src="./js/jquery-1.12.0.js"></script>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>GTPROS</title>
     </head>
      <body>
     <center>
         <font size = "5" color="red">Los periodos vacacionales deben sumar cuatro semanas, empezar en lunes y no superponerse</font>
         <br><br>
-        <form name="Controlador" method ="post">
+        <form name="Controlador" method ="post" onsubmit="return comprueba();">
             <input type="checkbox" name="periodos" value="ON"/>Solicito las vacaciones en dos periodos
             <table>
                 <tr>
@@ -25,7 +26,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <input type="date" name ="fecha1">
+                        <input id="fecha1" type="date" name ="fecha1">
                     </td>
                 </tr>
                 <tr>
@@ -60,7 +61,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <input type="date" name ="fecha2">
+                        <input id="fecha2" type="date" name ="fecha2">
                     </td>
                 </tr>
                 <tr>
@@ -98,4 +99,13 @@
         </form>
     </center>
     </body>
+    <script>
+        function comprueba(){
+            if($('#fecha1').val()==""){
+                alert("Error en el periodo vacacional 1");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </html>

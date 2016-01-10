@@ -9,19 +9,19 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>GTPROS</title>
     </head>
     <body>
     <center>
         <h1>Introducir datos de la etapa</h1>
         <table>
-            <form action="Controlador" method="POST">
+            <form action="Controlador" method="POST" onsubmit="return checkitbra();">
                 <tr>
                     <td>
                         Fecha de inicio de la etapa:
                     </td>
                     <td>
-                        <input type="date" name="inicio"/>
+                        <input id="ini" type="date" name="inicio"/>
                     </td>
                 </tr>
                 <tr>
@@ -29,7 +29,7 @@
                         Fecha de fin de la etapa:   
                     </td>
                     <td>
-                        <input type="date" name="fin"/>
+                        <input id="fin" type="date" name="fin"/>
                     </td>
                 </tr>
         </table>
@@ -47,4 +47,17 @@
     </form>
 </center>
 </body>
+<script>
+    function checkitbra(){
+        if($('#ini').val()==""){
+            alert("Fecha de inicio incorrecta");
+            return false;
+        }
+        if($('#fin').val()==""){
+            alert("Fecha de fin incorrecta");
+            return false;
+        }
+        return true;
+    }
+</script>
 </html>

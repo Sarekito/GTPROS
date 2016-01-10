@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>GTPROS</title>
     </head>
     <body>
         <h1>Las horas totales asignadas a la actividad y las horas que suman los trabajadores en las semanas que dura el proyecto no coinciden</h1>

@@ -369,7 +369,7 @@ public class Controlador extends HttpServlet {
             //TODO pagina de informes
 
         }
-        //TODO me planteo eliminar este return
+        //TODO me planteo eliminar este return (ELIMINALO SI PONES UN ELSE FINAL O SIMILARES, SI NO, ESTA BIEN
         return null;
     }
 

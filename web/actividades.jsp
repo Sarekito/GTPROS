@@ -8,19 +8,20 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="./js/jquery-1.12.0.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>GTPROS>
     </head>
     <body>
         <h1>Introducir datos de la actividad</h1>
         <table>
-            <form action="Controlador" method="POST">
+            <form action="Controlador" method="POST" onsubmit="return check();">
                 <tr>
                     <td>
                         Fecha de inicio de la actividad:
                     </td>
                     <td>
-                        <input type="date" name="inicio"/>
+                        <input id="ini" type="date" name="inicio"/>
                     </td>
                 </tr>
                 <tr>
@@ -28,7 +29,7 @@
                         Fecha de fin de la actividad:
                     </td>
                     <td>
-                        <input type="date" name="fin"/>
+                        <input id="fin" type="date" name="fin"/>
                     </td>
                 </tr>
                 <tr>
@@ -36,7 +37,7 @@
                         Duracion:
                     </td>
                     <td>
-                        <input type="number" name="duracion" min="1"/>
+                        <input id="duracion" type="number" name="duracion" min="1"/>
                     </td>
                 </tr>
                     <tr>
@@ -78,7 +79,7 @@
                         Descripción:
                     </td>
                     <td>
-                        <textarea name="descripcion" rows="10" cols="60" >
+                        <textarea id="descripcion" name="descripcion" rows="10" cols="60" >
                         </textarea>
                     </td>
                 </tr>
@@ -89,4 +90,26 @@
         <input type="submit" value="Planificar Actividades" />
     </form>
 </body>
+<script>
+    function check(){
+        //Omitimos comprobacion en radios ya que hay un checkeado predeterminado
+        if($('#ini').val()==""){
+            alert("Error en fecha inicio");
+            return false;
+        }
+        if($('#fin').val()==""){
+            alert("Error en fecha fin");
+            return false;
+        }
+        if($('#duracion').val()==""){
+            alert("Error en la duracion");
+            return false;
+        }
+        if($('#descripcion').val()==""){
+            alert("Error en la descripcion");
+            return false;
+        }
+        return true;
+    }
+</script>
 </html>

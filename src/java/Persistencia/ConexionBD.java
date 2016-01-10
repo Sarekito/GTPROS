@@ -17,7 +17,7 @@ public class ConexionBD {
 
     private static final String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
 
-    private static final String DATABASE_URL = "jdbc:mysql://localhost/PGP_grupo11";
+    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/PGP_grupo11?zeroDateTimeBehavior=convertToNull";
     private static final String DATABASE_USER = "PGP_grupo11";
     private static final String DATABASE_PASSWORD = "P6AbQA8Z";
 

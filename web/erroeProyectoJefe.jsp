@@ -7,23 +7,24 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+    <script src="./js/jquery-1.12.0.js"></script>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>GTPROS</title>
     </head>
     <body>
     <center>
         <font size ="5" color="red">Ese jefe ya tiene un proyecto asignado</font>
         <br>
         <br>
-        <form action="Controlador" method ="post">
+        <form action="Controlador" method ="post" onsubmit="return asdf();">
             <table>
                 <tr>
                     <td>
                         Nombre del Proyecto
                     </td>
                     <td>
-                        <input type="text" name="nombre" />
+                        <input id="nombre" type="text" name="nombre" />
                     </td>
                 </tr>
                 <tr>
@@ -32,7 +33,7 @@
                     </td>
 
                     <td>
-                        <input type="text" name="jefe" />
+                        <input id="jefe" type="text" name="jefe" />
                     </td>
                 </tr>
             </table>
@@ -42,5 +43,17 @@
         </form>
     </center>
 </body>
-
+<script>
+    function asdf(){
+        if($('#nombre').val()==""){
+            alert("Nombre de proyecto incorrecto");
+            return false;
+        }
+        if($("#jefe").val() == ""){
+            alert("Nombre de Jefe de Proyecto incorrecto");
+            return false;
+        }
+        return true;
+    }
+</script>
 </html>

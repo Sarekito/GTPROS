@@ -7,22 +7,23 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+    <script src="./js/jquery-1.12.0.js"></script>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>GTPROS</title>
     </head>
     <body>
     <center>
         <h2>La etapa a planificar no puede acabar antes del fin de la anterior</h2>
         <h1>Introducir datos de la etapa</h1>
         <table>
-            <form action="Controlador" method="POST">
+            <form action="Controlador" method="POST" onsubmit="return checkeame();">
                 <tr>
                     <td>
                         Fecha de inicio de la etapa:
                     </td>
                     <td>
-                        <input type="date" name="inicio"/>
+                        <input id="ini" type="date" name="inicio"/>
                     </td>
                 </tr>
                 <tr>
@@ -30,7 +31,7 @@
                         Fecha de fin de la etapa:   
                     </td>
                     <td>
-                        <input type="date" name="fin"/>
+                        <input id="fin" type="date" name="fin"/>
                     </td>
                 </tr>
         </table>
@@ -48,4 +49,17 @@
     </form>
 </center>
 </body>
+<script>
+    function checkeame(){
+         if($('#ini').val()==""){
+            alert("Inicio no valido");
+            return false;
+        }
+        if($("#fin").val() == ""){
+            alert("Fin no valido");
+            return false;
+        }
+        return true;
+    }
+</script>
 </html>

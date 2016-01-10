@@ -11,9 +11,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+    <script src="./js/jquery-1.12.0.js"></script>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title></title>
+        <title>GTPROS</title>
     </head>
     <body>
     <center>
@@ -32,7 +33,7 @@
                     Horas disponibles para este proyecto 
                 </td>
                 <%for (int i = 0; i < tr.size(); i++) {%>
-            <form action="Controlador" method="POST">
+            <form action="Controlador" method="POST" onsubmit="return controla();">
                 </tr>
                 <tr>
                     <td>
@@ -45,7 +46,7 @@
                         <%=(tr.get(i).getDedicacion()*40)/100%>
                     </td>
                     <td>
-                        <input type="number" name="horasActividad" min="1" max="<%=(tr.get(i).getDedicacion()*40)/100%>"
+                        <input id="horas" type="number" name="horasActividad" min="1" max="<%=(tr.get(i).getDedicacion()*40)/100%>"
                     </td>
                     <td>
                         <input type="hidden" name="accion" value="generaActividadTrabajador" readonly="readonly" />
@@ -62,4 +63,14 @@
         </form>
     </center>
 </body>
+<script>
+    function controla(){
+        if($('#horas').val()==""){
+            alert("Error en las horas introducidas");
+            return false;
+        } else{
+            return true;
+        }
+    }
+</script>
 </html>

@@ -4,12 +4,14 @@
     Author     : antonio
 --%>
 
+<%@page import="java.lang.System.console()"%>
+<%@page import="Trabajador.Dominio.Trabajador"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>GTPROS</title>
     </head>
     <body>
     <center>
@@ -24,10 +26,6 @@
         </form>
         <br>
         <form name = "Controlador" method="POST">
-            <input type="hidden" name="accion" value="sobreesfuerzo" readonly="readonly" />
-            <input type="submit" value=" Ver actividades con sobreesfuerzo" />
-        </form>
-        <form name = "Controlador" method="POST">
             <input type="hidden" name="accion" value="proyectosCerrados" readonly="readonly" />
             <input type="submit" value="Obtener informes sobre proyectos cerrados" />
         </form>
@@ -35,6 +33,17 @@
             <input type="hidden" name="accion" value="proyectosAbiertos" readonly="readonly" />
             <input type="submit" value="Obtener informes sobre proyectos abiertos" />
         </form>
+        <%  HttpSession sesion = request.getSession();
+            Trabajador t = (Trabajador) sesion.getAttribute("trabajador");
+            if(Integer.parseInt(t.getCategoria().toString())==1){
+            %>
+         <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="sobreesfuerzo" readonly="readonly" />
+            <input type="submit" value=" Ver actividades con sobreesfuerzo" />
+        </form>
+         <%} else{
+                console.log("Error en mostrar sobreesfuerzo");
+            }%>
     </center>
     </body>
 </html>
