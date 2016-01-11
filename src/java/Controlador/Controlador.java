@@ -185,6 +185,12 @@ public class Controlador extends HttpServlet {
             case "aAcceso":
                 url = aAcceso(request);
                 break;
+            case "misProyectos2":
+                url = verMisProyectosUsuario(request);
+                break;
+            case "verEtapasProyectoUsuarioNoJefe":
+                url = verMisEtapasUsuario(request);
+                break;
             default:
                 url = "/error.jsp";
                 break;
@@ -390,10 +396,7 @@ public class Controlador extends HttpServlet {
         if (proyecto.getEstado().equals("realizando")) {
             //TODO pagina de informes (Ahora va a ser para profundizar en el proyecto)
             //Si no se planifica el proyecto, se profundiza, mostrando primeramente, las etapas
-            ArrayList<Etapa> misEtapas = (ArrayList<Etapa>) despliegueProyecto.getEtapas((String) proyecto.getNombre());
-            request.setAttribute("etapasP", misEtapas);
-            sesion.setAttribute("etapasP", misEtapas);
-            return "/verMisEtapas.jsp";
+            
         }
         //TODO me planteo eliminar este return (ELIMINALO SI PONES UN ELSE FINAL O SIMILARES, SI NO, ESTA BIEN
         return null;
@@ -928,6 +931,24 @@ public class Controlador extends HttpServlet {
         } else{
             return "/index.jsp";
         }
+    }
+    
+    private String verMisProyectosUsuario(HttpServletRequest request){
+        
+        HttpSession sesion = request.getSession();
+        ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) despliegueProyecto.getMisProyectosActuales(t);
+        sesion.setAttribute("misProyectosPP", misProyectos);
+        return "/verMisProyectosNoJefe.jsp";
+    }
+      
+    
+    private String verMisEtapasUsuario(HttpServletRequest request){
+        HttpSession sesion = request.getSession();
+        Proyecto p1 = (Proyecto) request.getAttribute("eleccion");
+        ArrayList<Etapa> misEtapas = (ArrayList<Etapa>) despliegueProyecto.getEtapas((String) proyecto.getNombre());
+        request.setAttribute("etapasP", misEtapas);
+        sesion.setAttribute("etapasP", misEtapas);
+        return "/verMisEtapas.jsp";
     }
 
 }
