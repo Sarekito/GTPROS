@@ -179,6 +179,12 @@ public class Controlador extends HttpServlet {
             case "elegirActividadD":
                 url = elegidaActividadDescribe(request);
                 break;
+            case "actividadesPentiendes":
+                url = verActividadesPendientes(request);
+                break;
+            case "aAcceso":
+                url = aAcceso(request);
+                break;
             default:
                 url = "/error.jsp";
                 break;
@@ -879,6 +885,7 @@ public class Controlador extends HttpServlet {
     private String elegidaActividadDescribe(HttpServletRequest request){
         return "/veamosAFondoActividades.jsp";
     }
+    
     /*
     private String introducirDatosActividad(HttpServletRequest request){
         //Devolvemos todos los proyectos para el trabajador dado, para a posteriori introducir los datos
@@ -895,5 +902,32 @@ public class Controlador extends HttpServlet {
         return "/introducirDatosActividad.jsp";
     }*/
     
+    private String verActividadesPendientes(HttpServletRequest request){
+        HttpSession sesion = request.getSession();
+        ArrayList<Actividad> actividadesTotales = new ArrayList<>(); 
+        ArrayList<Proyecto> misProyectos = despliegueProyecto.getMisProyectosActuales(t);
+        for(int i=0; i<misProyectos.size(); i++){
+            ArrayList<Etapa> misEtapas = despliegueProyecto.getEtapas(misProyectos.get(i).getNombre());
+            for(int j=0; j<misEtapas.size();j++){
+                ArrayList<Actividad> misActividades = despliegueProyecto.getActividadesAbiertasNoJefe(misProyectos.get(i).getNombre(), misEtapas.get(j).getNumero(), t.getUser());
+                for(int k=0; k<misActividades.size(); k++){
+                    actividadesTotales.add(misActividades.get(k));
+                }
+                misActividades=null;
+            }
+            misEtapas=null;
+        }
+        sesion.setAttribute("misActividadesPendientes", actividadesTotales);
+        return "/verActividadesPendientes.jsp";
+    }
+    
+    private String aAcceso(HttpServletRequest request){
+        HttpSession sesion = request.getSession();
+        if(sesion.getAttribute("trabajador")!=null){
+            return "/accesoUsuario.jsp";
+        } else{
+            return "/index.jsp";
+        }
+    }
 
 }

@@ -15,6 +15,10 @@
     <body>
     <center>
         <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="actividadesPentiendes" readonly="readonly" />
+            <input type="submit" value="Ver actividades pendientes" />
+        </form>
+        <form name = "Controlador" method="POST">
             <input type="hidden" name="accion" value="vacaciones" readonly="readonly" />
             <input type="submit" value="     Reservar Vacaciones     " />
         </form>
