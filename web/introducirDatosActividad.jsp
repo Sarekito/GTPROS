@@ -44,7 +44,7 @@
                     <input type="hidden" name="eleccion" value="<%=i%>" readonly="readonly" />
                     <input id="eligeP" type="button" value="Elegir" />
                 </td>
-            </tr>
+            </tr>asdfasdf
             <%}%>
         </table>
          </form>

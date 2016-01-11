@@ -173,12 +173,11 @@ public class Controlador extends HttpServlet {
             case "finalizarProyecto":
                 url = finalizarProyecto(request);
                 break;
-            case "introducirDatosActividad":
-                url = introducirDatosActividad(request);
+            case "elegirEtapaA":
+                url = elegidaEtapaDimeActividad(request);
                 break;
-            case "dameEtapas":
-                url = "";
-                dameEtapasProy(request, response);
+            case "elegirActividadD":
+                url = elegidaActividadDescribe(request);
                 break;
             default:
                 url = "/error.jsp";
@@ -383,8 +382,12 @@ public class Controlador extends HttpServlet {
             return "/planificar.jsp";
         }
         if (proyecto.getEstado().equals("realizando")) {
-            //TODO pagina de informes
-
+            //TODO pagina de informes (Ahora va a ser para profundizar en el proyecto)
+            //Si no se planifica el proyecto, se profundiza, mostrando primeramente, las etapas
+            ArrayList<Etapa> misEtapas = (ArrayList<Etapa>) despliegueProyecto.getEtapas((String) proyecto.getNombre());
+            request.setAttribute("etapasP", misEtapas);
+            sesion.setAttribute("etapasP", misEtapas);
+            return "/verMisEtapas.jsp";
         }
         //TODO me planteo eliminar este return (ELIMINALO SI PONES UN ELSE FINAL O SIMILARES, SI NO, ESTA BIEN
         return null;
@@ -860,6 +863,23 @@ public class Controlador extends HttpServlet {
         return "/verProyectoAFinalizar.jsp";
     }
     
+    private String elegidaEtapaDimeActividad(HttpServletRequest request){
+        HttpSession sesion = request.getSession();
+        proyecto = (Proyecto) request.getAttribute("proyecto");
+        ArrayList<Etapa> etapaP = (ArrayList<Etapa>) request.getAttribute("etapaP");
+        Etapa etapaChosen = etapaP.get((int)request.getAttribute("eleccion"));
+        int etapaX = etapaChosen.getNumero();
+        t = (Trabajador) sesion.getAttribute("trabajador");
+        ArrayList<Actividad> actividadesE = despliegueProyecto.getActividadesAbiertasNoJefe(proyecto.getNombre(), etapaX, t.getUser());
+        //Habria que comprobar que hay actividades pero lo suponemos
+        sesion.setAttribute("actividadesChosen", actividadesE);
+        return "/veamosActividades.jsp";
+    }
+    
+    private String elegidaActividadDescribe(HttpServletRequest request){
+        return "/veamosAFondoActividades.jsp";
+    }
+    /*
     private String introducirDatosActividad(HttpServletRequest request){
         //Devolvemos todos los proyectos para el trabajador dado, para a posteriori introducir los datos
         //de la actividad, eligiendo etapa previamente
@@ -873,22 +893,7 @@ public class Controlador extends HttpServlet {
         request.setAttribute("misProyectos", misProyectos);
         sesion.setAttribute("misProyectos", misProyectos);
         return "/introducirDatosActividad.jsp";
-    }
+    }*/
     
-    private void dameEtapasProy(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        HttpSession sesion = request.getSession();
-        String proyName = (String) request.getAttribute("proy");
-        ArrayList<Etapa> etapasProy = despliegueProyecto.getEtapas(proyName);
-        request.setAttribute("misEtapas", etapasProy);
-        sesion.setAttribute("misEtapas", etapasProy);
-        PrintWriter out = response.getWriter();
-        String respuesta = "<form action=\"Controlador\" method =\"post\"><table id='tabla2'>";
-        for(int i=0; i<etapasProy.size(); i++){
-            respuesta=respuesta+"<tr><td>"+etapasProy.get(i).getNombre()+"</td><td>"+etapasProy.get(i).getNumero()+"</td><td>"+etapasProy.get(i).getFechaInicio()+"</td><td>"+etapasProy.get(i).getFechaFin()+"</td><td>"+etapasProy.get(i).getFechaFinReal()+"</td><td>"+etapasProy.get(i).getEstado()+"</td><td><input type=\"hidden\" name=\"accion\" value=\"verActividadesEtapa\" readonly=\"readonly\" />" +
-"                    <input type=\"hidden\" name=\"eleccion\" value='"+i+"' readonly=\"readonly\" />" +
-"                    <input id=\"eligeE\" type=\"submit\" value=\"Elegir\" /></td></tr>";
-        }
-        respuesta = respuesta+"</table></form>";
-        out.write(respuesta);
-    }
+
 }

@@ -32,10 +32,6 @@
             <input type="hidden" name="accion" value="proyectosAbiertos" readonly="readonly" />
             <input type="submit" value="Obtener informes sobre proyectos abiertos" />
         </form>
-        <form name = "Controlador" method="POST">
-            <input type="hidden" name="accion" value="introducirDatosActividad" readonly="readonly" />
-            <input type="submit" value="Introducir datos sobre una actividad" />
-        </form>
         <%  HttpSession sesion = request.getSession();
             Trabajador t = (Trabajador) sesion.getAttribute("trabajador");
             if(t.getCategoria().toString().equals("1")){
