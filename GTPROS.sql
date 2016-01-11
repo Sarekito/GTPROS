@@ -193,8 +193,6 @@ ALTER TABLE Etapa ADD CONSTRAINT PK_etapa PRIMARY KEY (nombre,numero);
 
 
 
-
-
 CREATE TABLE Actividad (
 
  nombre VARCHAR(100) NOT NULL,
