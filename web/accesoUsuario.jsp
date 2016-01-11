@@ -4,7 +4,6 @@
     Author     : antonio
 --%>
 
-<%@page import="java.lang.System.console()"%>
 <%@page import="Trabajador.Dominio.Trabajador"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -33,16 +32,32 @@
             <input type="hidden" name="accion" value="proyectosAbiertos" readonly="readonly" />
             <input type="submit" value="Obtener informes sobre proyectos abiertos" />
         </form>
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="introducirDatosActividad" readonly="readonly" />
+            <input type="submit" value="Introducir datos sobre una actividad" />
+        </form>
         <%  HttpSession sesion = request.getSession();
             Trabajador t = (Trabajador) sesion.getAttribute("trabajador");
-            if(Integer.parseInt(t.getCategoria().toString())==1){
+            if(t.getCategoria().toString().equals("1")){
             %>
          <form name = "Controlador" method="POST">
             <input type="hidden" name="accion" value="sobreesfuerzo" readonly="readonly" />
             <input type="submit" value=" Ver actividades con sobreesfuerzo" />
         </form>
+         <form name="Controlador" method="POST">
+             <input type="hidden" name="accion" value="finalizarActividades" readonly="readonly"/>
+             <input type="submit" value="Finalizacion de actividades" />
+         </form>
+         <form name="Controlador" method="POST">
+             <input type="hidden" name="accion" value="finalizarEtapas" readonly="readonly"/>
+             <input type="submit" value="Finalizacion de etapas" />
+         </form>
+         <form name="Controlador" method="POST">
+             <input type="hidden" name="accion" value="finalizarProyecto" readonly="readonly"/>
+             <input type="submit" value="Finalizacion de proyecto" />
+         </form>
          <%} else{
-                console.log("Error en mostrar sobreesfuerzo");
+               
             }%>
     </center>
     </body>

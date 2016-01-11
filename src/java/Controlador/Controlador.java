@@ -16,6 +16,7 @@ import Trabajador.Dominio.RolCat;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -162,6 +163,22 @@ public class Controlador extends HttpServlet {
                 break;
             case "finalizarPlanProyecto":
                 url = finalizarPlanProyecto(request);
+                break;
+            case "finalizarActividades":
+                url = finalizarActividades(request);
+                break;
+            case "finalizarEtapas":
+                url = finalizarEtapas(request);
+                break;
+            case "finalizarProyecto":
+                url = finalizarProyecto(request);
+                break;
+            case "introducirDatosActividad":
+                url = introducirDatosActividad(request);
+                break;
+            case "dameEtapas":
+                url = "";
+                dameEtapasProy(request, response);
                 break;
             default:
                 url = "/error.jsp";
@@ -829,5 +846,49 @@ public class Controlador extends HttpServlet {
         cerrados = despliegueProyecto.getMisProyectosActuales(t);
         request.setAttribute("cerrados", cerrados);
         return "/cerrados.jsp";
+    }
+    
+    private String finalizarActividades(HttpServletRequest request){
+        return "/verActividadesAFinalizar.jsp";
+    }
+    
+    private String finalizarEtapas(HttpServletRequest request){
+        return "/verEtapasAFinalizar.jsp";
+    }
+    
+    private String finalizarProyecto(HttpServletRequest request){
+        return "/verProyectoAFinalizar.jsp";
+    }
+    
+    private String introducirDatosActividad(HttpServletRequest request){
+        //Devolvemos todos los proyectos para el trabajador dado, para a posteriori introducir los datos
+        //de la actividad, eligiendo etapa previamente
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        
+        if (trabajador == null) {
+            return "/index.html";
+        }
+        misProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
+        request.setAttribute("misProyectos", misProyectos);
+        sesion.setAttribute("misProyectos", misProyectos);
+        return "/introducirDatosActividad.jsp";
+    }
+    
+    private void dameEtapasProy(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        HttpSession sesion = request.getSession();
+        String proyName = (String) request.getAttribute("proy");
+        ArrayList<Etapa> etapasProy = despliegueProyecto.getEtapas(proyName);
+        request.setAttribute("misEtapas", etapasProy);
+        sesion.setAttribute("misEtapas", etapasProy);
+        PrintWriter out = response.getWriter();
+        String respuesta = "<form action=\"Controlador\" method =\"post\"><table id='tabla2'>";
+        for(int i=0; i<etapasProy.size(); i++){
+            respuesta=respuesta+"<tr><td>"+etapasProy.get(i).getNombre()+"</td><td>"+etapasProy.get(i).getNumero()+"</td><td>"+etapasProy.get(i).getFechaInicio()+"</td><td>"+etapasProy.get(i).getFechaFin()+"</td><td>"+etapasProy.get(i).getFechaFinReal()+"</td><td>"+etapasProy.get(i).getEstado()+"</td><td><input type=\"hidden\" name=\"accion\" value=\"verActividadesEtapa\" readonly=\"readonly\" />" +
+"                    <input type=\"hidden\" name=\"eleccion\" value='"+i+"' readonly=\"readonly\" />" +
+"                    <input id=\"eligeE\" type=\"submit\" value=\"Elegir\" /></td></tr>";
+        }
+        respuesta = respuesta+"</table></form>";
+        out.write(respuesta);
     }
 }
