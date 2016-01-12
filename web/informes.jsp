@@ -14,7 +14,7 @@
             List<InformeSeguimiento> informes = (List<InformeSeguimiento>) request.getAttribute("informes");
         %>
         <h1><%=proyecto.getNombre()%></h1>
-        <p>Informes sin enviar:</p>
+        <p>Informes de actividad:</p>
         <%
             if (!informes.isEmpty()) {
         %>

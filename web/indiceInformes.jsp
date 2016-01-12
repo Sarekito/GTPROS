@@ -20,13 +20,13 @@
         <form action="Controlador" method="POST">
             <input type="hidden" name="accion" value="mostrarInformesPendientes" readonly/>
             <input type="hidden" name="nombreProyecto" value="<%=proyecto.getNombre()%>" readonly/>
-            <input type="submit" value=" Informes de actividad" />
+            <input type="submit" value=" Informes de actividad pendientes" />
         </form>
         <br/>
         <form action="Controlador" method="POST">
             <input type="hidden" name="accion" value="mostrarInformes" readonly/>
             <input type="hidden" name="nombreProyecto" value="<%=proyecto.getNombre()%>" readonly/>
-            <input type="submit" value=" Informes de actividad" />
+            <input type="submit" value=" Informes de actividad No enviados" />
         </form>
     </body>
 </html>

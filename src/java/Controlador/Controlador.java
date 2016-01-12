@@ -603,6 +603,7 @@ public class Controlador extends HttpServlet {
 
         ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesProyecto(proyecto.getNombre());
         request.setAttribute("informes", informes);
+        request.setAttribute("proyecto", proyecto);
 
         return "/informes.jsp";
     }
@@ -644,6 +645,7 @@ public class Controlador extends HttpServlet {
 
         ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesPendientesProyecto(proyecto.getNombre());
         request.setAttribute("informes", informes);
+        request.setAttribute("proyecto", proyecto);
 
         return "/informesPendientes.jsp";
     }
@@ -685,6 +687,7 @@ public class Controlador extends HttpServlet {
 
         ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesPendientesProyecto(proyecto.getNombre());
         request.setAttribute("informes", informes);
+        request.setAttribute("proyecto", proyecto);
 
         return "/informesPendientes.jsp";
     }
@@ -716,6 +719,7 @@ public class Controlador extends HttpServlet {
 
         ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesPendientesProyecto(proyecto.getNombre());
         request.setAttribute("informes", informes);
+        request.setAttribute("proyecto", proyecto);
 
         return "/informesPendientes.jsp";
     }
@@ -747,6 +751,7 @@ public class Controlador extends HttpServlet {
 
         ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesNoEnviadosProyecto(proyecto.getNombre());
         request.setAttribute("informes", informes);
+        request.setAttribute("proyecto", proyecto);
 
         return "/informesNoEnviados.jsp";
 
