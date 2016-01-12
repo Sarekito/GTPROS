@@ -904,32 +904,9 @@ public class Controlador extends HttpServlet {
     
     private String verActividadesPendientes(HttpServletRequest request){
         HttpSession sesion = request.getSession();
-        ArrayList<Actividad> actividadesTotales = new ArrayList<>(); 
-        ArrayList<Proyecto> aaaProyectos = despliegueProyecto.getMisProyectosActuales(t);
-        for(int i=0; i<aaaProyectos.size(); i++){
-            System.out.println(aaaProyectos.get(i));
-        }
-        for(int i=0; i<aaaProyectos.size(); i++){
-            ArrayList<Etapa> misEtapas = despliegueProyecto.getEtapas(aaaProyectos.get(i).getNombre());
-            for(int j=0; j<misEtapas.size(); j++){
-            System.out.println(misEtapas.get(j));
-        }
-            for(int j=0; j<misEtapas.size();j++){
-                ArrayList<Actividad> misActividades = despliegueProyecto.getActividadesAbiertasNoJefe(aaaProyectos.get(i).getNombre(), misEtapas.get(j).getNumero(), t.getUser());
-                for(int k=0; k<misActividades.size(); k++){
-            System.out.println(misActividades.get(k));
-        }
-                for(int k=0; k<misActividades.size(); k++){
-                    actividadesTotales.add(misActividades.get(k));
-                }
-             
-            }
-  
-        }
-
+        ArrayList<Actividad> actividadesTotales = despliegueProyecto.misActividadesAbiertas(t.getUser());
         sesion.setAttribute("misActividadesPendientes", actividadesTotales);
-        //return "/verActividadesPendientes.jsp";
-        return null;
+        return "/verActividadesPendientes.jsp";
     }
     
     private String aAcceso(HttpServletRequest request){

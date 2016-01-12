@@ -156,4 +156,20 @@ public class ActividadPersistencia {
         }
         return actuales;
     }
+
+    public static ArrayList<Actividad> actividadesAbiertasDe(String user) throws SQLException {
+        ArrayList<Actividad> actuales = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery("Select A.* from Actividad A, ActividadTrabajador AP where A.estado = 'realizando' and AP.nombreTrabajador = '"+user+"' and A.nombre = AP.nombreProyecto and A.numero = AP.numeroEtapa and A.id = AP.idActividad");
+        while (rs.next()) {
+            actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7),
+            rs.getDate(8),rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
+        }
+        return actuales;
+    }
 }

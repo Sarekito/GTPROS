@@ -10,7 +10,7 @@
     <head>
         <script src="./js/jquery-1.12.0.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>GTPROS>
+        <title>GTPROS</title>
     </head>
     <body>
         <h1>Introducir datos de la actividad</h1>

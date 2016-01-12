@@ -283,4 +283,15 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         return cerrados;
     }
 
+    @Override
+    public ArrayList<Actividad> misActividadesAbiertas(String user) {
+        ArrayList<Actividad> actividades = null;
+        try {
+            actividades = ActividadPersistencia.actividadesAbiertasDe(user);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return actividades;
+    }
 }
+ 

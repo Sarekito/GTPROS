@@ -62,6 +62,10 @@ public interface despliegueProyectoLocal {
     public ArrayList<Actividad> getActividadesCerrados(String nombre, int numero);
 
     public ArrayList<Actividad> getActividadesAbiertasNoJefe(String nombre, int numero, String idTrabajador);
+
+    public ArrayList<Actividad> misActividadesAbiertas(String user);
+
+   
     
     
 
