@@ -18,23 +18,22 @@
     <center>
         <%ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) request.getAttribute("misProyectos");%>
         <h1>Tus proyectos abiertos</h1>
-         <form action="Controlador" method ="post">
         <table border="5">
             <tr>
                 <td>
-                   Nombre del Proyecto
+                    Nombre del Proyecto
                 </td>
-                
+
                 <td>
-                   Estado
+                    Estado
                 </td>
                 <td>
                     Gestor de Proyecto
                 </td>
                 <td>
-                  
+
                 </td>
-            <%for(int i = 0;i<misProyectos.size();i++){%>
+                <%for (int i = 0; i < misProyectos.size(); i++) {%>
             <tr>
                 <td>
                     <%=misProyectos.get(i).getNombre()%>
@@ -46,14 +45,22 @@
                     <%=misProyectos.get(i).getJefe()%>
                 </td>
                 <td>
-                    <input type="hidden" name="accion" value="verProyecto" readonly="readonly" />
-                    <input type="hidden" name="eleccion" value="<%=i%>" readonly="readonly" />
-                    <input type="submit" value="Elegir" />
+                    <form action="Controlador" method ="post">
+                        <input type="hidden" name="accion" value="verProyecto" readonly="readonly" />
+                        <input type="hidden" name="eleccion" value="<%=i%>" readonly="readonly" />
+                        <input type="submit" value="Elegir" />
+                    </form>
+                </td>
+                <td>
+                    <form action="Controlador" method ="post">
+                        <input type="hidden" name="accion" value="indiceInformes" readonly/>
+                        <input type="hidden" name="nombreProyecto" value="<%=misProyectos.get(i).getNombre()%>" readonly/>
+                        <input type="submit" value="Informes de actividades" />
+                    </form>
                 </td>
             </tr>
             <%}%>
         </table>
-         </form>
     </center>
 </body>
 </html>
