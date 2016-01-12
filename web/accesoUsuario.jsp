@@ -22,10 +22,14 @@
             <input type="hidden" name="accion" value="vacaciones" readonly="readonly" />
             <input type="submit" value="     Reservar Vacaciones     " />
         </form>
-        <br>
+        <br><!--
         <form name="Controlador" method="POST">
             <input type="hidden" name="accion" value="misProyectos2" readonly="readonly" />
             <input type="submit" value="Ver mis proyectos" />
+        </form>-->
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="misProyectos" readonly="readonly" />
+            <input type="submit" value=" Ver mis proyectos en curso" />
         </form>
         <br>
         <form name = "Controlador" method="POST">
@@ -40,10 +44,7 @@
             Trabajador t = (Trabajador) sesion.getAttribute("trabajador");
             if(t.getCategoria().toString().equals("1")){
             %>
-            <form name = "Controlador" method="POST">
-            <input type="hidden" name="accion" value="misProyectos" readonly="readonly" />
-            <input type="submit" value=" Ver mis proyectos en curso" />
-        </form>
+            
          <form name = "Controlador" method="POST">
             <input type="hidden" name="accion" value="sobreesfuerzo" readonly="readonly" />
             <input type="submit" value=" Ver actividades con sobreesfuerzo" />
