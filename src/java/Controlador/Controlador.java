@@ -16,7 +16,6 @@ import Trabajador.Dominio.RolCat;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -139,6 +138,9 @@ public class Controlador extends HttpServlet {
                 break;
             case "asignarTrabajador":
                 url = asignarTrabajador(request);
+                break;
+            case "indiceInformes":
+                url = indiceInformes(request);
                 break;
             case "mostrarInformes":
                 url = mostrarInformes(request);
@@ -544,13 +546,54 @@ public class Controlador extends HttpServlet {
 
     }
 
-    public String mostrarInformes(HttpServletRequest request) {
+    public String indiceInformes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        proyecto = (Proyecto) sesion.getAttribute("proyecto");
 
         if (trabajador == null) {
             return "/index.jsp";
+        }
+
+        String nombreProyecto = request.getParameter("nombreProyecto");
+        if (nombreProyecto == null) {
+            request.setAttribute("error", "No se ha indicado un nombre de proyecto.");
+            return "/accesoUsuario.jsp";
+        }
+
+        Proyecto proyecto = despliegueProyecto.getProyecto(nombreProyecto);
+        if (proyecto == null) {
+            request.setAttribute("error", "No existe un proyecto con el nombre '" + nombreProyecto + "'.");
+            return "/accesoUsuario.jsp";
+        }
+
+        if (!trabajador.getUser().equals(proyecto.getJefe())) {
+            request.setAttribute("error", "No puedes acceder a un proyecto que no es tuyo");
+            return "/accesoUsuario.jsp";
+        }
+        
+        request.setAttribute("proyecto", proyecto);
+        
+        return "/indiceInformes.jsp";
+    }
+
+    public String mostrarInformes(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+
+        String nombreProyecto = request.getParameter("nombreProyecto");
+        if (nombreProyecto == null) {
+            request.setAttribute("error", "No se ha indicado un nombre de proyecto.");
+            return "/accesoUsuario.jsp";
+        }
+
+        Proyecto proyecto = despliegueProyecto.getProyecto(nombreProyecto);
+        if (proyecto == null) {
+            request.setAttribute("error", "No existe un proyecto con el nombre '" + nombreProyecto + "'.");
+            return "/accesoUsuario.jsp";
         }
 
         if (!trabajador.getUser().equals(proyecto.getJefe())) {
@@ -567,10 +610,21 @@ public class Controlador extends HttpServlet {
     public String aprobarInforme(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        proyecto = (Proyecto) sesion.getAttribute("proyecto");
 
         if (trabajador == null) {
             return "/index.jsp";
+        }
+
+        String nombreProyecto = request.getParameter("nombreProyecto");
+        if (nombreProyecto == null) {
+            request.setAttribute("error", "No se ha indicado un nombre de proyecto.");
+            return "/accesoUsuario.jsp";
+        }
+
+        Proyecto proyecto = despliegueProyecto.getProyecto(nombreProyecto);
+        if (proyecto == null) {
+            request.setAttribute("error", "No existe un proyecto con el nombre '" + nombreProyecto + "'.");
+            return "/accesoUsuario.jsp";
         }
 
         if (proyecto.getJefe().equals(trabajador.getUser())) {
@@ -579,7 +633,7 @@ public class Controlador extends HttpServlet {
         }
 
         InformeSeguimiento informe = new InformeSeguimiento();
-        informe.setNombreProyecto(request.getParameter("nombreProyecto"));
+        informe.setNombreProyecto(nombreProyecto);
         informe.setNumeroEtapa(Integer.parseInt(request.getParameter("numeroEtapa")));
         informe.setIdActividad(Integer.parseInt(request.getParameter("idActividad")));
         informe.setTrabajador(request.getParameter("trabajador"));
@@ -597,10 +651,21 @@ public class Controlador extends HttpServlet {
     public String rechazarInforme(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        proyecto = (Proyecto) sesion.getAttribute("proyecto");
 
         if (trabajador == null) {
             return "/index.jsp";
+        }
+
+        String nombreProyecto = request.getParameter("nombreProyecto");
+        if (nombreProyecto == null) {
+            request.setAttribute("error", "No se ha indicado un nombre de proyecto.");
+            return "/accesoUsuario.jsp";
+        }
+
+        Proyecto proyecto = despliegueProyecto.getProyecto(nombreProyecto);
+        if (proyecto == null) {
+            request.setAttribute("error", "No existe un proyecto con el nombre '" + nombreProyecto + "'.");
+            return "/accesoUsuario.jsp";
         }
 
         if (proyecto.getJefe().equals(trabajador.getUser())) {
@@ -627,10 +692,21 @@ public class Controlador extends HttpServlet {
     public String mostrarInformesPendientes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        proyecto = (Proyecto) sesion.getAttribute("proyecto");
 
         if (trabajador == null) {
             return "/index.jsp";
+        }
+
+        String nombreProyecto = request.getParameter("nombreProyecto");
+        if (nombreProyecto == null) {
+            request.setAttribute("error", "No se ha indicado un nombre de proyecto.");
+            return "/accesoUsuario.jsp";
+        }
+
+        Proyecto proyecto = despliegueProyecto.getProyecto(nombreProyecto);
+        if (proyecto == null) {
+            request.setAttribute("error", "No existe un proyecto con el nombre '" + nombreProyecto + "'.");
+            return "/accesoUsuario.jsp";
         }
 
         if (!trabajador.getUser().equals(proyecto.getJefe())) {
@@ -647,10 +723,21 @@ public class Controlador extends HttpServlet {
     public String mostrarInformesNoEnviados(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        proyecto = (Proyecto) sesion.getAttribute("proyecto");
 
         if (trabajador == null) {
             return "/index.jsp";
+        }
+
+        String nombreProyecto = request.getParameter("nombreProyecto");
+        if (nombreProyecto == null) {
+            request.setAttribute("error", "No se ha indicado un nombre de proyecto.");
+            return "/accesoUsuario.jsp";
+        }
+
+        Proyecto proyecto = despliegueProyecto.getProyecto(nombreProyecto);
+        if (proyecto == null) {
+            request.setAttribute("error", "No existe un proyecto con el nombre '" + nombreProyecto + "'.");
+            return "/accesoUsuario.jsp";
         }
 
         if (!trabajador.getUser().equals(proyecto.getJefe())) {
@@ -835,11 +922,10 @@ public class Controlador extends HttpServlet {
         ArrayList<Actividad> actividadesC = new ArrayList<>();
         for (int i = 0; i < etapasC.size(); i++) {
             ArrayList<Actividad> tmp = new ArrayList<Actividad>();
-            if (t.getCategoria().getCategoria()==1){
-            tmp = despliegueProyecto.getActividadesCerrados(p.getNombre(), etapasC.get(i).getNumero());
-            }
-            else{
-                tmp= despliegueProyecto.getActividadesAbiertasNoJefe(p.getNombre(), etapasC.get(i).getNumero(), t.getUser());
+            if (t.getCategoria().getCategoria() == 1) {
+                tmp = despliegueProyecto.getActividadesCerrados(p.getNombre(), etapasC.get(i).getNumero());
+            } else {
+                tmp = despliegueProyecto.getActividadesAbiertasNoJefe(p.getNombre(), etapasC.get(i).getNumero(), t.getUser());
             }
             System.out.println(tmp);
             for (int j = 0; j < tmp.size(); j++) {
@@ -856,24 +942,24 @@ public class Controlador extends HttpServlet {
         request.setAttribute("cerrados", cerrados);
         return "/cerrados.jsp";
     }
-    
-    private String finalizarActividades(HttpServletRequest request){
+
+    private String finalizarActividades(HttpServletRequest request) {
         return "/verActividadesAFinalizar.jsp";
     }
-    
-    private String finalizarEtapas(HttpServletRequest request){
+
+    private String finalizarEtapas(HttpServletRequest request) {
         return "/verEtapasAFinalizar.jsp";
     }
-    
-    private String finalizarProyecto(HttpServletRequest request){
+
+    private String finalizarProyecto(HttpServletRequest request) {
         return "/verProyectoAFinalizar.jsp";
     }
-    
-    private String elegidaEtapaDimeActividad(HttpServletRequest request){
+
+    private String elegidaEtapaDimeActividad(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         proyecto = (Proyecto) request.getAttribute("proyecto");
         ArrayList<Etapa> etapaP = (ArrayList<Etapa>) request.getAttribute("etapaP");
-        Etapa etapaChosen = etapaP.get((int)request.getAttribute("eleccion"));
+        Etapa etapaChosen = etapaP.get((int) request.getAttribute("eleccion"));
         int etapaX = etapaChosen.getNumero();
         t = (Trabajador) sesion.getAttribute("trabajador");
         ArrayList<Actividad> actividadesE = despliegueProyecto.getActividadesAbiertasNoJefe(proyecto.getNombre(), etapaX, t.getUser());
@@ -881,62 +967,61 @@ public class Controlador extends HttpServlet {
         sesion.setAttribute("actividadesChosen", actividadesE);
         return "/veamosActividades.jsp";
     }
-    
-    private String elegidaActividadDescribe(HttpServletRequest request){
+
+    private String elegidaActividadDescribe(HttpServletRequest request) {
         return "/veamosAFondoActividades.jsp";
     }
-    
+
     /*
-    private String introducirDatosActividad(HttpServletRequest request){
-        //Devolvemos todos los proyectos para el trabajador dado, para a posteriori introducir los datos
-        //de la actividad, eligiendo etapa previamente
-        HttpSession sesion = request.getSession();
-        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+     private String introducirDatosActividad(HttpServletRequest request){
+     //Devolvemos todos los proyectos para el trabajador dado, para a posteriori introducir los datos
+     //de la actividad, eligiendo etapa previamente
+     HttpSession sesion = request.getSession();
+     Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         
-        if (trabajador == null) {
-            return "/index.html";
-        }
-        misProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
-        request.setAttribute("misProyectos", misProyectos);
-        sesion.setAttribute("misProyectos", misProyectos);
-        return "/introducirDatosActividad.jsp";
-    }*/
-    
-    private String verActividadesPendientes(HttpServletRequest request){
+     if (trabajador == null) {
+     return "/index.html";
+     }
+     misProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
+     request.setAttribute("misProyectos", misProyectos);
+     sesion.setAttribute("misProyectos", misProyectos);
+     return "/introducirDatosActividad.jsp";
+     }*/
+    private String verActividadesPendientes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-        ArrayList<Actividad> actividadesTotales = new ArrayList<>(); 
+        ArrayList<Actividad> actividadesTotales = new ArrayList<>();
         ArrayList<Proyecto> aaaProyectos = despliegueProyecto.getMisProyectosActuales(t);
-        for(int i=0; i<aaaProyectos.size(); i++){
+        for (int i = 0; i < aaaProyectos.size(); i++) {
             System.out.println(aaaProyectos.get(i));
         }
-        for(int i=0; i<aaaProyectos.size(); i++){
+        for (int i = 0; i < aaaProyectos.size(); i++) {
             ArrayList<Etapa> misEtapas = despliegueProyecto.getEtapas(aaaProyectos.get(i).getNombre());
-            for(int j=0; j<misEtapas.size(); j++){
-            System.out.println(misEtapas.get(j));
-        }
-            for(int j=0; j<misEtapas.size();j++){
+            for (int j = 0; j < misEtapas.size(); j++) {
+                System.out.println(misEtapas.get(j));
+            }
+            for (int j = 0; j < misEtapas.size(); j++) {
                 ArrayList<Actividad> misActividades = despliegueProyecto.getActividadesAbiertasNoJefe(aaaProyectos.get(i).getNombre(), misEtapas.get(j).getNumero(), t.getUser());
-                for(int k=0; k<misActividades.size(); k++){
-            System.out.println(misActividades.get(k));
-        }
-                for(int k=0; k<misActividades.size(); k++){
+                for (int k = 0; k < misActividades.size(); k++) {
+                    System.out.println(misActividades.get(k));
+                }
+                for (int k = 0; k < misActividades.size(); k++) {
                     actividadesTotales.add(misActividades.get(k));
                 }
-             
+
             }
-  
+
         }
 
         sesion.setAttribute("misActividadesPendientes", actividadesTotales);
         //return "/verActividadesPendientes.jsp";
         return null;
     }
-    
-    private String aAcceso(HttpServletRequest request){
+
+    private String aAcceso(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-        if(sesion.getAttribute("trabajador")!=null){
+        if (sesion.getAttribute("trabajador") != null) {
             return "/accesoUsuario.jsp";
-        } else{
+        } else {
             return "/index.jsp";
         }
     }
