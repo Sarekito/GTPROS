@@ -907,6 +907,9 @@ public class Controlador extends HttpServlet {
         ArrayList<Actividad> actividadesTotales = new ArrayList<>(); 
         ArrayList<Proyecto> misProyectos = despliegueProyecto.getMisProyectosActuales(t);
         for(int i=0; i<misProyectos.size(); i++){
+            System.out.println(misProyectos.get(i));
+        }
+        for(int i=0; i<misProyectos.size(); i++){
             ArrayList<Etapa> misEtapas = despliegueProyecto.getEtapas(misProyectos.get(i).getNombre());
             for(int j=0; j<misEtapas.size(); j++){
             System.out.println(misEtapas.get(j));
@@ -919,19 +922,14 @@ public class Controlador extends HttpServlet {
                 for(int k=0; k<misActividades.size(); k++){
                     actividadesTotales.add(misActividades.get(k));
                 }
-                misActividades=null;
+             
             }
-            misEtapas=null;
+  
         }
-        for(int i=0; i<misProyectos.size(); i++){
-            System.out.println(misProyectos.get(i));
-        }
-        
-        for(int i=0; i<misProyectos.size(); i++){
-            System.out.println(misProyectos.get(i));
-        }
+
         sesion.setAttribute("misActividadesPendientes", actividadesTotales);
-        return "/verActividadesPendientes.jsp";
+        //return "/verActividadesPendientes.jsp";
+        return null;
     }
     
     private String aAcceso(HttpServletRequest request){
