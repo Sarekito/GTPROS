@@ -39,16 +39,6 @@ public class Controlador extends HttpServlet {
     @EJB
     private DespliegueTrabajadorLocal despliegueTrabajador;
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    private Trabajador t;
     private ArrayList<Trabajador> trabajadores;
     private ArrayList<Proyecto> cerrados;
     private Administrador a;
@@ -62,6 +52,15 @@ public class Controlador extends HttpServlet {
     private ArrayList<Actividad> actEtapa;
     private ArrayList<ActividadTrabajador> actividadTrabajador;
 
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String accion = request.getParameter("accion");
@@ -243,19 +242,19 @@ public class Controlador extends HttpServlet {
             return "/index.jsp";
         }
 
-        t = despliegueTrabajador.getTrabajador(usuario);
-        if (t == null) {
+        Trabajador trabajador = despliegueTrabajador.getTrabajador(usuario);
+        if (trabajador == null) {
             request.setAttribute("error", "No existe un trabajador con ese identificador.");
             return "/index.jsp";
         }
 
-        if (!t.getPassword().equals(clave)) {
+        if (!trabajador.getPassword().equals(clave)) {
             request.setAttribute("error", "La contraseña introducida es incorrecta.");
             return "/index.jsp";
         }
 
         HttpSession sesion = request.getSession();
-        sesion.setAttribute("trabajador", t);
+        sesion.setAttribute("trabajador", trabajador);
         return "/accesoUsuario.jsp";
     }
 
@@ -570,9 +569,9 @@ public class Controlador extends HttpServlet {
             request.setAttribute("error", "No puedes acceder a un proyecto que no es tuyo");
             return "/accesoUsuario.jsp";
         }
-        
+
         request.setAttribute("proyecto", proyecto);
-        
+
         return "/indiceInformes.jsp";
     }
 
@@ -907,8 +906,15 @@ public class Controlador extends HttpServlet {
     }
 
     private String sobreesfuerzo(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+
         ArrayList<Actividad> sobreesfuerzo = new ArrayList<>();
-        sobreesfuerzo = despliegueProyecto.getSobreesfuerzo(t.getUser());
+        sobreesfuerzo = despliegueProyecto.getSobreesfuerzo(trabajador.getUser());
         System.out.println(sobreesfuerzo);
         request.setAttribute("sobreesfuerzo", sobreesfuerzo);
         return "/sobreesfuerzo.jsp";
@@ -921,16 +927,22 @@ public class Controlador extends HttpServlet {
     }
 
     private String infoProyectoCerrado(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
 
         Proyecto p = cerrados.get(Integer.parseInt(request.getParameter("eleccion")));
         ArrayList<Etapa> etapasC = despliegueProyecto.getEtapas(p.getNombre());
         ArrayList<Actividad> actividadesC = new ArrayList<>();
         for (int i = 0; i < etapasC.size(); i++) {
             ArrayList<Actividad> tmp = new ArrayList<Actividad>();
-            if (t.getCategoria().getCategoria() == 1) {
+            if (trabajador.getCategoria().getCategoria() == 1) {
                 tmp = despliegueProyecto.getActividadesCerrados(p.getNombre(), etapasC.get(i).getNumero());
             } else {
-                tmp = despliegueProyecto.getActividadesAbiertasNoJefe(p.getNombre(), etapasC.get(i).getNumero(), t.getUser());
+                tmp = despliegueProyecto.getActividadesAbiertasNoJefe(p.getNombre(), etapasC.get(i).getNumero(), trabajador.getUser());
             }
             System.out.println(tmp);
             for (int j = 0; j < tmp.size(); j++) {
@@ -943,7 +955,14 @@ public class Controlador extends HttpServlet {
     }
 
     private String proyectosAbiertos(HttpServletRequest request) {
-        cerrados = despliegueProyecto.getMisProyectosActuales(t);
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+
+        cerrados = despliegueProyecto.getMisProyectosActuales(trabajador);
         request.setAttribute("cerrados", cerrados);
         return "/cerrados.jsp";
     }
@@ -966,8 +985,8 @@ public class Controlador extends HttpServlet {
         ArrayList<Etapa> etapaP = (ArrayList<Etapa>) request.getAttribute("etapaP");
         Etapa etapaChosen = etapaP.get((int) request.getAttribute("eleccion"));
         int etapaX = etapaChosen.getNumero();
-        t = (Trabajador) sesion.getAttribute("trabajador");
-        ArrayList<Actividad> actividadesE = despliegueProyecto.getActividadesAbiertasNoJefe(proyecto.getNombre(), etapaX, t.getUser());
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        ArrayList<Actividad> actividadesE = despliegueProyecto.getActividadesAbiertasNoJefe(proyecto.getNombre(), etapaX, trabajador.getUser());
         //Habria que comprobar que hay actividades pero lo suponemos
         sesion.setAttribute("actividadesChosen", actividadesE);
         return "/veamosActividades.jsp";
@@ -994,7 +1013,13 @@ public class Controlador extends HttpServlet {
      }*/
     private String verActividadesPendientes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-        ArrayList<Actividad> actividadesTotales = despliegueProyecto.misActividadesAbiertas(t.getUser());
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+
+        ArrayList<Actividad> actividadesTotales = despliegueProyecto.misActividadesAbiertas(trabajador.getUser());
         sesion.setAttribute("misActividadesPendientes", actividadesTotales);
         return "/verActividadesPendientes.jsp";
     }
