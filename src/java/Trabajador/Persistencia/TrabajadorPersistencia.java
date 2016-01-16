@@ -105,10 +105,10 @@ public class TrabajadorPersistencia {
         }
     }
 
-    public static ArrayList<Trabajador> getTrabajadores() throws SQLException {
+    public static ArrayList<Trabajador> getTrabajadores(String jefe) throws SQLException {
         try {
             ConexionBD conexion = new ConexionBD();
-            ArrayList<Trabajador> trabajadores = conexion.searchAll(trabajadorConverter, "select * from Trabajador T");
+            ArrayList<Trabajador> trabajadores = conexion.searchAll(trabajadorConverter, "select * from Trabajador T where T.user<>'"+jefe+"'");
             conexion.close();
 
             return trabajadores;

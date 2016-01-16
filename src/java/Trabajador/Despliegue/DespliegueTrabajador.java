@@ -98,10 +98,10 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
     }
 
     @Override
-    public ArrayList<Trabajador> getTrabajadores() {
+    public ArrayList<Trabajador> getTrabajadores(String jefe) {
         ArrayList<Trabajador> trabajadores = null;
         try {
-            trabajadores = TrabajadorPersistencia.getTrabajadores();
+            trabajadores = TrabajadorPersistencia.getTrabajadores(jefe);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }

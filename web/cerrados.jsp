@@ -16,7 +16,7 @@
     <body>
     <center>
         <%ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) request.getAttribute("cerrados");%>
-        <h1>Tus proyectos abiertos</h1>
+        <h1>Proyectos</h1>
          <form action="Controlador" method ="post">
         <table border="5">
             <tr>

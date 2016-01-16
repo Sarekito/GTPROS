@@ -32,7 +32,7 @@ public interface DespliegueTrabajadorLocal {
 
     public boolean buscaTrabajador(String user);
 
-    public ArrayList<Trabajador> getTrabajadores();
+    public ArrayList<Trabajador> getTrabajadores(String jefe);
 
     public int getNumProyectosActivos(Trabajador t);
 

@@ -39,6 +39,7 @@ public class Controlador extends HttpServlet {
     @EJB
     private DespliegueTrabajadorLocal despliegueTrabajador;
 
+    private Trabajador trabajador;
     private ArrayList<Trabajador> trabajadores;
     private ArrayList<Proyecto> cerrados;
     private Administrador a;
@@ -242,7 +243,7 @@ public class Controlador extends HttpServlet {
             return "/index.jsp";
         }
 
-        Trabajador trabajador = despliegueTrabajador.getTrabajador(usuario);
+        trabajador = despliegueTrabajador.getTrabajador(usuario);
         if (trabajador == null) {
             request.setAttribute("error", "No existe un trabajador con ese identificador.");
             return "/index.jsp";
@@ -276,14 +277,57 @@ public class Controlador extends HttpServlet {
             }
             if (semanas != 4 || fechaElegida.getDay() != 1 || fechaElegida.before(hoySql)) {
                 return "/vacacionesErroneas.jsp";
-            } else {
-                despliegueTrabajador.reservaVacaciones(trabajador, 1, fechaElegida.getYear(), fechaElegida, semanas);
             }
+            ArrayList<Actividad> tmpAct = despliegueProyecto.misActividadesAbiertas(trabajador.getUser());
+            Date diaInicio = fechaElegida;
+            Calendar c = Calendar.getInstance();
+            c.setTime(fechaElegida);
+            c.add(Calendar.DATE, (semanas * 7) - 1);
+            Date fechaFin = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
+            for (int i = 0; i < tmpAct.size(); i++) {
+                if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
+                        || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
+                        || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
+                        || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
+                    return "/vacacionesErroneas.jsp";
+
+                }
+            }
+            despliegueTrabajador.reservaVacaciones(trabajador, 1, fechaElegida.getYear(), fechaElegida, semanas);
         } else {
+            ArrayList<Actividad> tmpAct = despliegueProyecto.misActividadesAbiertas(trabajador.getUser());
             int semanas1 = Integer.parseInt(request.getParameter("semanas1"));
             Date fechaElegida1 = Date.valueOf(request.getParameter("fecha1"));
+            Date diaInicio = fechaElegida1;
+            Calendar cd = Calendar.getInstance();
+            cd.setTime(fechaElegida1);
+            cd.add(Calendar.DATE, (semanas1 * 7) - 1);
+            Date fechaFin = new Date(cd.getTime().getYear(), cd.getTime().getMonth(), cd.getTime().getDate());
+            for (int i = 0; i < tmpAct.size(); i++) {
+                if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
+                        || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
+                        || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
+                        || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
+                    return "/vacacionesErroneas.jsp";
+
+                }
+            }
             int semanas2 = Integer.parseInt(request.getParameter("semanas2"));
             Date fechaElegida2 = Date.valueOf(request.getParameter("fecha2"));
+            diaInicio = fechaElegida1;
+            cd = Calendar.getInstance();
+            cd.setTime(fechaElegida1);
+            cd.add(Calendar.DATE, (semanas1 * 7) - 1);
+            fechaFin = new Date(cd.getTime().getYear(), cd.getTime().getMonth(), cd.getTime().getDate());
+            for (int i = 0; i < tmpAct.size(); i++) {
+                if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
+                        || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
+                        || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
+                        || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
+                    return "/vacacionesErroneas.jsp";
+
+                }
+            }
             if (despliegueTrabajador.reservoVacaciones(trabajador.getUser(), (int) (1900 + fechaElegida1.getYear()))) {
                 return "/vacacionesReservadas.jsp";
             }
@@ -359,6 +403,9 @@ public class Controlador extends HttpServlet {
             return "/errorExisteProyecto.jsp";
         }
         despliegueProyecto.generar(nombreProyecto, jefe);
+        ArrayList<TrabajadoresProyecto> tmpTP = new ArrayList<TrabajadoresProyecto>();
+        tmpTP.add(new TrabajadoresProyecto(nombreProyecto, jefe, 0));
+        despliegueProyecto.guardarTrabajadores(tmpTP);
         return "/creacionConExito.jsp";
     }
 
@@ -412,7 +459,7 @@ public class Controlador extends HttpServlet {
         } else {
             proyecto.setFechaInicio(inicio);
             proyecto.setFechaFin(fin);
-            trabajadores = despliegueTrabajador.getTrabajadores();
+            trabajadores = despliegueTrabajador.getTrabajadores(proyecto.getJefe());
             for (int i = 0; i < trabajadores.size(); i++) {
                 ArrayList<Proyecto> proyActuales = despliegueProyecto.getMisProyectosActuales(trabajadores.get(i));
                 for (int j = 0; j < proyActuales.size(); j++) {
