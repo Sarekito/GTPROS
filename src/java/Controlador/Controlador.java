@@ -193,6 +193,9 @@ public class Controlador extends HttpServlet {
             case "datosIntroducidosCorrectamente":
                 url = datosIntroducidosCorrectamente(request);
                 break;
+            case "finalizarActividadElegida":
+                url = finalizarActividadElegida(request);
+                break;
             default:
                 url = "/error.jsp";
                 break;
@@ -1021,6 +1024,16 @@ public class Controlador extends HttpServlet {
     }
 
     private String finalizarActividades(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        ArrayList<Proyecto> todosProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
+        ArrayList<Actividad> todasActividades = null;
+        for(int w=0; w<todosProyectos.size(); w++){
+            ArrayList<Etapa> todasEtapas = despliegueProyecto.getEtapas(todosProyectos.get(w).getNombre());
+            for(int ww=0; ww<todasEtapas.size(); ww++){
+                todasActividades = despliegueProyecto.getActividadesCerrados(todosProyectos.get(w).getNombre(), todasEtapas.get(ww).getNumero());
+            }
+        }
+        sesion.setAttribute("misActividadesFinal", todasActividades);
         return "/verActividadesAFinalizar.jsp";
     }
 
@@ -1049,21 +1062,12 @@ public class Controlador extends HttpServlet {
         return "/veamosAFondoActividades.jsp";
     }
 
-    /*
-     private String introducirDatosActividad(HttpServletRequest request){
-     //Devolvemos todos los proyectos para el trabajador dado, para a posteriori introducir los datos
-     //de la actividad, eligiendo etapa previamente
-     HttpSession sesion = request.getSession();
-     Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        
-     if (trabajador == null) {
-     return "/index.html";
-     }
-     misProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
-     request.setAttribute("misProyectos", misProyectos);
-     sesion.setAttribute("misProyectos", misProyectos);
-     return "/introducirDatosActividad.jsp";
-     }*/
+    private String finalizarActividadElegida(HttpServletRequest request){
+        String actividadElegida = (String) request.getAttribute("actividadElegida");
+        //despliegueProyecto.cerrarActividad(, actividadElegida, actividadElegida);
+        return null; //TODO
+    }
+    
     private String verActividadesPendientes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");

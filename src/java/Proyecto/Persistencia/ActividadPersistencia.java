@@ -172,4 +172,15 @@ public class ActividadPersistencia {
         }
         return actuales;
     }
+
+    public static void cerrarActividad(String proyecto, String etapa, String actividad) throws SQLException {
+        try {
+            String sql = "UPDATE Actividad SET estado = 'cerrado' WHERE nombre = '" + proyecto + "' AND numero = " + Integer.parseInt(etapa) + " AND id = "+ Integer.parseInt(actividad);
+            ConexionBD conexion = new ConexionBD();
+            conexion.execute(sql);
+            conexion.close();
+        } catch (ClassNotFoundException ex) {
+            throw new SQLException(ex);
+        }
+    }
 }

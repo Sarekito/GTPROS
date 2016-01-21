@@ -305,5 +305,14 @@ public class despliegueProyecto implements despliegueProyectoLocal {
             Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
      }
+     
+     @Override
+     public void cerrarActividad(String proyecto, String etapa, String actividad){
+        try {
+            ActividadPersistencia.cerrarActividad(proyecto, etapa, actividad);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     }
 }
  
