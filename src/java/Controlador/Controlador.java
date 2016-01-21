@@ -1064,13 +1064,19 @@ public class Controlador extends HttpServlet {
 
     private String finalizarActividadElegida(HttpServletRequest request){
         String actividadElegida = (String) request.getAttribute("actividadElegida");
-        //despliegueProyecto.cerrarActividad(, actividadElegida, actividadElegida);
-        return null; //TODO
+        String etapaElegida = (String) request.getAttribute("etapaElegida");
+        String proyectoElegido = (String) request.getAttribute("proyectoElegida");
+        try{
+            despliegueProyecto.cerrarActividad(proyectoElegido, etapaElegida, actividadElegida);
+            return "/actividadCerradaConExito.jsp";
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+       return "./index.jsp";
     }
     
     private String verActividadesPendientes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
 
         if (trabajador == null) {
             return "/index.jsp";
@@ -1099,11 +1105,12 @@ public class Controlador extends HttpServlet {
         String introEtapa = (String) request.getAttribute("chosenE");
         String introActividad = (String) request.getAttribute("chosenA");
         
-        if((introProyecto!="")&&(introEtapa!="")&&(introActividad!="")){
+        if((!"".equals(introProyecto))&&(!"".equals(introEtapa))&&(!"".equals(introActividad))){
             //Los pasamos a sesion para utilizarlos
             sesion.setAttribute("introDatosP", introProyecto);
             sesion.setAttribute("introDatosE", introEtapa);
             sesion.setAttribute("introDatosA", introActividad);
+            
             
             return "/introducirDatosActividad.jsp";
         } else{

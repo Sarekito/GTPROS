@@ -60,12 +60,13 @@
     </center>
 </body>
 <script>
-     $(document).ready(function (e) {
+     $(document).ready(function() {
          $('table').find('tr').each(function(){
             $(this).find('td:eq(11)').find('input').click(function(){
-                var miProyecto = $(this).parentsUntil('tr').find('td:eq(0)').html();
-                var miEtapa = $(this).parentsUntil('tr').find('td:eq(1)').html();
-                var miActividad = $(this).parentsUntil('tr').find('td:eq(2)').html();
+                var miProyecto = $(this).parentsUntil('tr').parent().find('td:eq(0)').html();
+                var miEtapa = $(this).parentsUntil('tr').parent().find('td:eq(1)').html();
+                var miActividad = $(this).parentsUntil('tr').parent().find('td:eq(2)').html();
+                alert("mi proyecto es: "+miProyecto+", mi etapa es: "+miEtapa+" y mi actividad elegida es: "+miActividad);
                 $('#chosenP').val(miProyecto);
                 $('#chosenE').val(miEtapa);
                 $('#chosenA').val(miActividad);
