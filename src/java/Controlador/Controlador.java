@@ -1077,7 +1077,7 @@ public class Controlador extends HttpServlet {
     
     private String verActividadesPendientes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-
+Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         if (trabajador == null) {
             return "/index.jsp";
         }
@@ -1098,6 +1098,7 @@ public class Controlador extends HttpServlet {
     
     private String aIntroducirDatosActividad(HttpServletRequest request){
         HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         if (trabajador == null) {
             return "/index.jsp";
         }

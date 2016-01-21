@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="./js/jquery-1.12.0.js"></script>
         <title>GTPROS</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
