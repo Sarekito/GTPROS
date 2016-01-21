@@ -8,6 +8,7 @@ import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
 import Trabajador.Dominio.Trabajador;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.ejb.Local;
 
 /**
@@ -65,7 +66,7 @@ public interface despliegueProyectoLocal {
 
     public ArrayList<Actividad> misActividadesAbiertas(String user);
 
-   
+    public void guardarTareaIntroducida(String proyecto, String etapa, String actividad, String user, int numTarea, Date semana, String tipoTarea, int duracion);
     
     
 

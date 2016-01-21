@@ -187,6 +187,12 @@ public class Controlador extends HttpServlet {
             case "aAcceso":
                 url = aAcceso(request);
                 break;
+            case "aIntroducirDatosActividad":
+                url = aIntroducirDatosActividad(request);
+                break;
+            case "datosIntroducidosCorrectamente":
+                url = datosIntroducidosCorrectamente(request);
+                break;
             default:
                 url = "/error.jsp";
                 break;
@@ -1079,5 +1085,47 @@ public class Controlador extends HttpServlet {
             return "/index.jsp";
         }
     }
-
+    
+    private String aIntroducirDatosActividad(HttpServletRequest request){
+        HttpSession sesion = request.getSession();
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+        String introProyecto = (String) request.getAttribute("chosenP");
+        String introEtapa = (String) request.getAttribute("chosenE");
+        String introActividad = (String) request.getAttribute("chosenA");
+        
+        if((introProyecto!="")&&(introEtapa!="")&&(introActividad!="")){
+            //Los pasamos a sesion para utilizarlos
+            sesion.setAttribute("introDatosP", introProyecto);
+            sesion.setAttribute("introDatosE", introEtapa);
+            sesion.setAttribute("introDatosA", introActividad);
+            
+            return "/introducirDatosActividad.jsp";
+        } else{
+            //Error en la recepcion de datos
+            return "/verActividadesPendientes.jsp";
+        }
+    }
+    
+    private String datosIntroducidosCorrectamente(HttpServletRequest request){
+        HttpSession sesion = request.getSession();
+        String tarea = (String) request.getAttribute("mitarea");
+        int numTarea = Integer.parseInt(tarea);
+        Date semana = (Date) request.getAttribute("misemana");
+        String tipoTarea = (String) request.getAttribute("mitipoTarea");
+        String duracionNuestra = (String) request.getAttribute("miduracion");
+        int duracion = Integer.parseInt(duracionNuestra);
+        String user = trabajador.getUser();
+        String proyectoNuestro = (String) sesion.getAttribute("introDatosP");
+        String etapa = (String) sesion.getAttribute("introDatosE");
+        String actividad = (String) sesion.getAttribute("introDatosA");
+        
+        try{
+            despliegueProyecto.guardarTareaIntroducida(proyectoNuestro, etapa, actividad, user, numTarea, semana, tipoTarea, duracion);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return "/accesoUsuario.jsp";
+    }
 }

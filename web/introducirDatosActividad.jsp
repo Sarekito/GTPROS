@@ -9,69 +9,84 @@
         <title>GTPROS</title>
     </head>
     <body>
-        <center>
-        <%ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) request.getAttribute("misProyectos");%>
-        <h1>Tus proyectos abiertos</h1>
-        <form action="Controlador" method ="post">
+    <center>
+        <%
+            HttpSession sesion = request.getSession();
+            String miProyecto = (String) sesion.getAttribute("introDatosP");
+            String miEtapa = (String) sesion.getAttribute("introDatosE");
+            String miActividad = (String) sesion.getAttribute("introDatosA");
+        %>
+        <h1>Va a introducir datos sobre:</h1>
+        <label><%=miProyecto%></label>
+        <label><%=miEtapa%></label>
+        <label><%=miActividad%></label>
         <table id="tabla1" border="5">
             <tr>
                 <td>
-                   Nombre del Proyecto
-                </td>
-                
-                <td>
-                   Estado
+                    Numero tarea
                 </td>
                 <td>
-                    Gestor de Proyecto
+                    <input id="numeroTarea">
                 </td>
-                <td>
-                  
-                </td>
-            <%for(int i = 0;i<misProyectos.size();i++){%>
+            </tr>
             <tr>
                 <td>
-                    <%=misProyectos.get(i).getNombre()%>
+                    Semana
                 </td>
                 <td>
-                    <%=misProyectos.get(i).getEstado()%>
+                    <input type="date" id="semana">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tipo tarea
                 </td>
                 <td>
-                    <%=misProyectos.get(i).getJefe()%>
+                    <input id="tipoTarea">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Duracion
                 </td>
                 <td>
-                    <!--<input type="hidden" name="accion" value="verProyecto" readonly="readonly" />-->
-                    <input type="hidden" name="eleccion" value="<%=i%>" readonly="readonly" />
-                    <input id="eligeP" type="button" value="Elegir" />
+                    <input id="duracion">
                 </td>
-            </tr>asdfasdf
-            <%}%>
+            </tr>
         </table>
-         </form>
-        <div id="exxxpecial">
-            
-        </div>
-        </center>
-        
-    </body>
-    <script>
-        $(document).ready(function(){
-           $("#tabla1").find('tr').each(function{
-              $(this).find("td:eq(3)").find("input").click(function(){
-                  proy = $(this).parent().find("td:eq(0)").html();
-                  alert("Antonio, esto es una prueba de que el proyecto que has seleccionado es: "+proy);
-                  $.ajax({
-                      type: "POST",
-                      url: "Controlador",
-                      data: {accion: "dameEtapas", proy: proy},
-                      success: function(response){
-                          //Ocultamos la tabla 1 y append de lo recibido.
-                          $('#tabla1').hide();
-                          $('#exxxpecial').append(response);
-                      }
-                  });
-              }); 
-           }); 
+    </form>
+    <input type="button" id="guardarTarea" value="Guardar">
+    <div id="error">
+    </div>
+</center>
+<form id="formulario" action="Controlador" method ="post">
+    <input type="hidden" name="accion" value="datosIntroducidosCorrectamente">
+    <input type="hidden" id="mitarea" name="mitarea">
+    <input type="hidden" id="misemana" name="misemana">
+    <input type="hidden" id="mitipoTarea" name="mitipoTarea">
+    <input type="hidden" id="miduracion" name="miduracion">
+</form>
+</body>
+<script>
+    $(document).ready(function () {
+        $('#guardarTarea').click(function () {
+            var tarea = $('#numeroTarea').val();
+            var semana = $('#semana').val();
+            var tipoTarea = $('#tipoTarea').val();
+            var duracion = $('#duracion').val();
+
+            if ((tarea != "") && (semana != "") && (tipoTarea != "") && (duracion != "")) {
+                $('#mitarea').val(tarea);
+                $('#semana').val(semana);
+                $('#tipoTarea').val(tipoTarea);
+                $('#duracion').val(duracion);
+
+                $('#formulario').submit();
+            }
+            else {
+                $('#error').append("<font size =\"5\" color=\"red\">Por favor, reyene todos los campos para completar la tarea</font>");
+            }
         });
-    </script>
+    });
+</script>
 </html>

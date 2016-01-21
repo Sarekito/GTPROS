@@ -3,9 +3,12 @@ package Proyecto.Despliegue;
 import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.ActividadTrabajador;
 import Proyecto.Dominio.Etapa;
+import Proyecto.Dominio.Tarea;
+import Proyecto.Dominio.TipoTarea;
 import Proyecto.Dominio.InformeSeguimiento;
 import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
+import Proyecto.Persistencia.TareaPersistencia;
 import Proyecto.Persistencia.ActividadPersistencia;
 import Proyecto.Persistencia.EtapaPersistencia;
 import Proyecto.Persistencia.InformeSeguimientoPersistencia;
@@ -293,5 +296,14 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         }
         return actividades;
     }
+    
+    @Override
+     public void guardarTareaIntroducida(String proyecto, String etapa, String actividad, String user, int numTarea, Date semana, String tipoTarea, int duracion){
+        try {
+            TareaPersistencia.guardarTareaIntroducida(proyecto, etapa, actividad, user, numTarea, semana, tipoTarea, duracion);
+        } catch (SQLException ex) {
+            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     }
 }
  
