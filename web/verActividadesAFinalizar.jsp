@@ -27,7 +27,7 @@
                 <td><%= actividades.get(i).getNumero()%></td>
                 <td><%= actividades.get(i).getId()%></td>
                 <td><%= actividades.get(i).getEstado()%></td>
-                <td><input type="button" value="Finalizar actividad" <% if(actividades.get(i).getEstado()!="realizando"){%> disabled="disabled" <% } %>></td>
+                <td><input type="button" value="Finalizar actividad" <% if(!actividades.get(i).getEstado().equalsIgnoreCase("realizando")){%> disabled="disabled" <% } %>></td>
             </tr>
             <%}%>
         </table>

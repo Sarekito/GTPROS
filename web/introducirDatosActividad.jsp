@@ -54,17 +54,18 @@
                 </td>
             </tr>
         </table>
-    </form>
-    <input type="button" id="guardarTarea" value="Guardar">
+    
+   
     <div id="error">
     </div>
 </center>
 <form id="formulario" action="Controlador" method ="post">
     <input type="hidden" name="accion" value="datosIntroducidosCorrectamente">
     <input type="hidden" id="mitarea" name="mitarea">
-    <input type="hidden" id="misemana" name="misemana">
+    <input type="date" hidden="hidden" id="misemana" name="misemana">
     <input type="hidden" id="mitipoTarea" name="mitipoTarea">
     <input type="hidden" id="miduracion" name="miduracion">
+    <input type="submit" id="guardarTarea" value="Guardar">
 </form>
 </body>
 <script>
@@ -74,7 +75,7 @@
             var semana = $('#semana').val();
             var tipoTarea = $('#tipoTarea').val();
             var duracion = $('#duracion').val();
-
+            
             if ((tarea != "") && (semana != "") && (tipoTarea != "") && (duracion != "")) {
                 $('#mitarea').val(tarea);
                 $('#semana').val(semana);

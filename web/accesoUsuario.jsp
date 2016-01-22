@@ -27,43 +27,43 @@
             <input type="hidden" name="accion" value="misProyectos2" readonly="readonly" />
             <input type="submit" value="Ver mis proyectos" />
         </form>-->
+
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="proyectosCerrados" readonly="readonly" />
+            <input type="submit" value="Obtener informes sobre proyectos cerrados" />
+        </form>
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="proyectosAbiertos" readonly="readonly" />
+            <input type="submit" value="Obtener informes sobre proyectos abiertos" />
+        </form>
+        <%  HttpSession sesion = request.getSession();
+            Trabajador t = (Trabajador) sesion.getAttribute("trabajador");
+            if (t.getCategoria().getCategoria()==1) {
+        %>
         <form name = "Controlador" method="POST">
             <input type="hidden" name="accion" value="misProyectos" readonly="readonly" />
             <input type="submit" value=" Ver mis proyectos en curso" />
         </form>
         <br>
         <form name = "Controlador" method="POST">
-            <input type="hidden" name="accion" value="proyectosCerrados" readonly="readonly" />
-            <input type="submit" value="Obtener informes sobre proyectos cerrados" />
-        </form>
-         <form name = "Controlador" method="POST">
-            <input type="hidden" name="accion" value="proyectosAbiertos" readonly="readonly" />
-            <input type="submit" value="Obtener informes sobre proyectos abiertos" />
-        </form>
-        <%  HttpSession sesion = request.getSession();
-            Trabajador t = (Trabajador) sesion.getAttribute("trabajador");
-            if(t.getCategoria().toString().equals("1")){
-            %>
-            
-         <form name = "Controlador" method="POST">
             <input type="hidden" name="accion" value="sobreesfuerzo" readonly="readonly" />
             <input type="submit" value=" Ver actividades con sobreesfuerzo" />
         </form>
-         <form name="Controlador" method="POST">
-             <input type="hidden" name="accion" value="finalizarActividades" readonly="readonly"/>
-             <input type="submit" value="Finalizacion de actividades" />
-         </form>
-         <form name="Controlador" method="POST">
-             <input type="hidden" name="accion" value="finalizarEtapas" readonly="readonly"/>
-             <input type="submit" value="Finalizacion de etapas" />
-         </form>
-         <form name="Controlador" method="POST">
-             <input type="hidden" name="accion" value="finalizarProyecto" readonly="readonly"/>
-             <input type="submit" value="Finalizacion de proyecto" />
-         </form>
-         <%} else{
-               
-            }%>
+        <form name="Controlador" method="POST">
+            <input type="hidden" name="accion" value="finalizarActividades" readonly="readonly"/>
+            <input type="submit" value="Finalizacion de actividades" />
+        </form>
+        <form name="Controlador" method="POST">
+            <input type="hidden" name="accion" value="finalizarEtapas" readonly="readonly"/>
+            <input type="submit" value="Finalizacion de etapas" />
+        </form>
+        <form name="Controlador" method="POST">
+            <input type="hidden" name="accion" value="finalizarProyecto" readonly="readonly"/>
+            <input type="submit" value="Finalizacion de proyecto" />
+        </form>
+        <%} else {
+
+             }%>
     </center>
-    </body>
+</body>
 </html>

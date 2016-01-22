@@ -48,9 +48,9 @@
         
         <form id="formulario" method="post" action="Controlador">
             <input type="hidden" name="accion" value="aIntroducirDatosActividad">
-            <input type="hidden" name="chosenP" id="chosenP">
-            <input type="hidden" name="chosenE" id="chosenE">
-            <input type="hidden" name="chosenA" id="chosenA">
+            <input type="hidden" name="chosenProject" id="chosenP">
+            <input type="hidden" name="chosenEtapa" id="chosenE">
+            <input type="hidden" name="chosenActividad" id="chosenA">
         </form>
         
         <form action="Controlador"  method ="post">

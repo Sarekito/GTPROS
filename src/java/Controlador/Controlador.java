@@ -1072,7 +1072,7 @@ public class Controlador extends HttpServlet {
         }catch(Exception e){
             e.printStackTrace();
         }
-       return "./index.jsp";
+       return "/index.jsp";
     }
     
     private String verActividadesPendientes(HttpServletRequest request) {
@@ -1102,12 +1102,13 @@ Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         if (trabajador == null) {
             return "/index.jsp";
         }
-        String introProyecto = (String) request.getAttribute("chosenP");
-        String introEtapa = (String) request.getAttribute("chosenE");
-        String introActividad = (String) request.getAttribute("chosenA");
+        String introProyecto = request.getParameter("chosenProject");
+        String introEtapa = request.getParameter("chosenEtapa");
+        String introActividad =  request.getParameter("chosenActividad");
         
         if((!"".equals(introProyecto))&&(!"".equals(introEtapa))&&(!"".equals(introActividad))){
-            //Los pasamos a sesion para utilizarlos
+            
+            
             sesion.setAttribute("introDatosP", introProyecto);
             sesion.setAttribute("introDatosE", introEtapa);
             sesion.setAttribute("introDatosA", introActividad);
@@ -1122,14 +1123,15 @@ Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
     
     private String datosIntroducidosCorrectamente(HttpServletRequest request){
         HttpSession sesion = request.getSession();
-        String tarea = (String) request.getAttribute("mitarea");
+        String tarea = request.getParameter("mitarea");
         int numTarea = Integer.parseInt(tarea);
-        Date semana = (Date) request.getAttribute("misemana");
-        String tipoTarea = (String) request.getAttribute("mitipoTarea");
-        String duracionNuestra = (String) request.getAttribute("miduracion");
+        java.util.Date semana1 = new java.util.Date();
+        Date semana = new Date(semana1.getYear(), semana1.getMonth(), semana1.getDate());
+        String tipoTarea = (String) request.getParameter("mitipoTarea");
+        String duracionNuestra = (String) request.getParameter("miduracion");
         int duracion = Integer.parseInt(duracionNuestra);
         String user = trabajador.getUser();
-        String proyectoNuestro = (String) sesion.getAttribute("introDatosP");
+        String proyectoNuestro =  (String)sesion.getAttribute("introDatosP");
         String etapa = (String) sesion.getAttribute("introDatosE");
         String actividad = (String) sesion.getAttribute("introDatosA");
         
