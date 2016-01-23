@@ -3,7 +3,6 @@ package Proyecto.Persistencia;
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Etapa;
-import Proyecto.Dominio.Proyecto;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -39,17 +38,14 @@ public class EtapaPersistencia {
     };
 
     public static Etapa getEtapa(String nombreProyecto, int numeroEtapa) throws SQLException {
-        try {
-            String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "' AND numero = " + numeroEtapa;
+        String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "' AND numero = " + numeroEtapa;
 
-            ConexionBD conexion = new ConexionBD();
-            Etapa etapa = conexion.search(etapaConverter, sql);
-            conexion.close();
+        ConexionBD conexion = new ConexionBD();
+        Etapa etapa = conexion.search(etapaConverter, sql);
 
-            return etapa;
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }
+        conexion.close();
+
+        return etapa;
     }
 
     public static void guardarEtapa(Etapa etapa) throws SQLException {
@@ -60,12 +56,12 @@ public class EtapaPersistencia {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        System.out.println("insert into Etapa values('"+etapa.getNombre()+"', "+
-                etapa.getNumero()+", '"+etapa.getFechaInicio()+"', '"+
-                etapa.getFechaFin()+"', null, '"+etapa.getEstado()+"')");;
-        s.execute("insert into Etapa values('"+etapa.getNombre()+"', "+
-                etapa.getNumero()+", '"+etapa.getFechaInicio()+"', '"+
-                etapa.getFechaFin()+"', null, '"+etapa.getEstado()+"')");
+        System.out.println("insert into Etapa values('" + etapa.getNombre() + "', "
+                + etapa.getNumero() + ", '" + etapa.getFechaInicio() + "', '"
+                + etapa.getFechaFin() + "', null, '" + etapa.getEstado() + "')");;
+        s.execute("insert into Etapa values('" + etapa.getNombre() + "', "
+                + etapa.getNumero() + ", '" + etapa.getFechaInicio() + "', '"
+                + etapa.getFechaFin() + "', null, '" + etapa.getEstado() + "')");
     }
 
     public static ArrayList<Etapa> getCerrados(String user) throws SQLException {
@@ -77,7 +73,7 @@ public class EtapaPersistencia {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        ResultSet rs = s.executeQuery("Select * from Etapa where nombre = '"+user+"'");
+        ResultSet rs = s.executeQuery("Select * from Etapa where nombre = '" + user + "'");
         while (rs.next()) {
             actuales.add(new Etapa(rs.getString(1), rs.getInt(2), rs.getDate(3), rs.getDate(4), rs.getDate(5), rs.getString(6)));
         }
@@ -85,56 +81,40 @@ public class EtapaPersistencia {
     }
 
     public ArrayList<Etapa> getEtapasProyecto(String nombreProyecto) throws SQLException {
-        try {
-            String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "'";
+        String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "'";
 
-            ConexionBD conexion = new ConexionBD();
-            ArrayList<Etapa> etapas = conexion.searchAll(etapaConverter, sql);
-            conexion.close();
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Etapa> etapas = conexion.searchAll(etapaConverter, sql);
+        conexion.close();
 
-            return etapas;
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }
+        return etapas;
     }
 
     public ArrayList<Etapa> getEtapasAbiertasProyecto(String nombreProyecto) throws SQLException {
-        try {
-            String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "' AND estado <> 'cerrado'";
+        String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "' AND estado <> 'cerrado'";
 
-            ConexionBD conexion = new ConexionBD();
-            ArrayList<Etapa> etapas = conexion.searchAll(etapaConverter, sql);
-            conexion.close();
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Etapa> etapas = conexion.searchAll(etapaConverter, sql);
+        conexion.close();
 
-            return etapas;
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }
+        return etapas;
     }
-    
+
     public static int numeroEtapasAbiertas(String nombreProyecto) throws SQLException {
-        try {
-            String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "' AND estado <> 'cerrado'";
+        String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "' AND estado <> 'cerrado'";
 
-            ConexionBD conexion = new ConexionBD();
-            int count = conexion.count(sql);
-            conexion.close();
+        ConexionBD conexion = new ConexionBD();
+        int count = conexion.count(sql);
+        conexion.close();
 
-            return count;
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }
+        return count;
     }
 
     public static void cerrarEtapa(String nombreProyecto, int numeroEtapas) throws SQLException {
-        try {
-            String sql = "UPDATE Etapa SET estado = 'cerrado' WHERE nombre = '" + nombreProyecto + "' AND numero = " + numeroEtapas;
+        String sql = "UPDATE Etapa SET estado = 'cerrado' WHERE nombre = '" + nombreProyecto + "' AND numero = " + numeroEtapas;
 
-            ConexionBD conexion = new ConexionBD();
-            conexion.execute(sql);
-            conexion.close();
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }
+        ConexionBD conexion = new ConexionBD();
+        conexion.execute(sql);
+        conexion.close();
     }
 }

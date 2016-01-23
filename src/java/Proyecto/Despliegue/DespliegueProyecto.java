@@ -3,8 +3,6 @@ package Proyecto.Despliegue;
 import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.ActividadTrabajador;
 import Proyecto.Dominio.Etapa;
-import Proyecto.Dominio.Tarea;
-import Proyecto.Dominio.TipoTarea;
 import Proyecto.Dominio.InformeSeguimiento;
 import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
@@ -26,7 +24,7 @@ import javax.ejb.Stateless;
  * @author antonio
  */
 @Stateless
-public class despliegueProyecto implements despliegueProyectoLocal {
+public class DespliegueProyecto implements DespliegueProyectoLocal {
 
     @Override
     public ArrayList<Proyecto> getMisProyectos(String jefe) {
@@ -34,7 +32,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             proyectos = PersistenciaProyecto.getMisProyectos(jefe);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return proyectos;
     }
@@ -46,7 +44,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             misProyectos = PersistenciaProyecto.getMisProyectosActuales(tr);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return misProyectos;
@@ -58,7 +56,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             p = PersistenciaProyecto.getProyecto(nombreProyecto);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return p;
     }
@@ -68,7 +66,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             PersistenciaProyecto.generar(nombreProyecto, jefe);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -82,7 +80,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
             PersistenciaProyecto.cerrarProyecto(nombreProyecto);
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
@@ -97,7 +95,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
             EtapaPersistencia.cerrarEtapa(nombreProyecto, numero);
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
@@ -108,7 +106,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             tp = PersistenciaProyecto.getTrabajadorProyecto(user, nombre);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tp;
     }
@@ -118,7 +116,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             return InformeSeguimientoPersistencia.getInformesProyecto(nombreProyecto);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
@@ -128,7 +126,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             InformeSeguimientoPersistencia.aprobarInforme(informe);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -137,7 +135,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             InformeSeguimientoPersistencia.rechazarInforme(informe);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -146,7 +144,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             return InformeSeguimientoPersistencia.getInformesPendientesProyecto(nombreProyecto);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
@@ -156,7 +154,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             return InformeSeguimientoPersistencia.getInformesNoEnviados(nombreProyecto);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
@@ -166,7 +164,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             PersistenciaProyecto.guardarProyecto(proyecto);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -177,7 +175,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
             try {
                 EtapaPersistencia.guardarEtapa(etapas.get(i));
             } catch (SQLException ex) {
-                Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -193,7 +191,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
             try {
                 ActividadPersistencia.guardaActividad(actividades.get(i));
             } catch (SQLException ex) {
-                Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -204,7 +202,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
             try {
                 PersistenciaProyecto.guardarTrabajadores(tp.get(i));
             } catch (SQLException ex) {
-                Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -215,7 +213,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
             try {
                 PersistenciaProyecto.guardarAsignaciones(actividadTrabajador.get(i));
             } catch (SQLException ex) {
-                Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -226,7 +224,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             at = PersistenciaProyecto.getMisActividadesActuales(user);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return at;
     }
@@ -237,7 +235,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             at = ActividadPersistencia.sobreesfuerzo(user);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return at;
     }
@@ -248,7 +246,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             cerrados = PersistenciaProyecto.getCerrados();
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return cerrados;
     }
@@ -259,7 +257,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             cerrados = EtapaPersistencia.getCerrados(nombre);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return cerrados;
     }
@@ -270,7 +268,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             cerrados = ActividadPersistencia.getCerrados(nombre, numero);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return cerrados;
     }
@@ -281,7 +279,7 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             cerrados = ActividadPersistencia.getAbiertosNoJefe(nombre, numero, idTrabajador);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return cerrados;
     }
@@ -292,27 +290,26 @@ public class despliegueProyecto implements despliegueProyectoLocal {
         try {
             actividades = ActividadPersistencia.actividadesAbiertasDe(user);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return actividades;
     }
-    
+
     @Override
-     public void guardarTareaIntroducida(String proyecto, String etapa, String actividad, String user, int numTarea, Date semana, String tipoTarea, int duracion){
+    public void guardarTareaIntroducida(String proyecto, String etapa, String actividad, String user, int numTarea, Date semana, String tipoTarea, int duracion) {
         try {
             TareaPersistencia.guardarTareaIntroducida(proyecto, etapa, actividad, user, numTarea, semana, tipoTarea, duracion);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
-     }
-     
-     @Override
-     public void cerrarActividad(String proyecto, String etapa, String actividad){
+    }
+
+    @Override
+    public void cerrarActividad(String proyecto, String etapa, String actividad) {
         try {
             ActividadPersistencia.cerrarActividad(proyecto, etapa, actividad);
         } catch (SQLException ex) {
-            Logger.getLogger(despliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
-     }
+    }
 }
- 

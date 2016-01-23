@@ -5,7 +5,6 @@ import Persistencia.ObjectConverter;
 import Proyecto.Dominio.EstadoInforme;
 import Proyecto.Dominio.InformeSeguimiento;
 import java.sql.ResultSet;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -38,72 +37,48 @@ public class InformeSeguimientoPersistencia {
     };
 
     public static ArrayList<InformeSeguimiento> getInformesProyecto(String nombreProyecto) throws SQLException {
-        try {
-            String sql = "SELECT * FROM InformeSeguimiento WHERE nombreProyecto = '" + nombreProyecto + "'";
+        String sql = "SELECT * FROM InformeSeguimiento WHERE nombreProyecto = '" + nombreProyecto + "'";
 
-            ConexionBD conexion = new ConexionBD();
-            ArrayList<InformeSeguimiento> informes = conexion.searchAll(informeSeguimientoConverter, sql);
-            conexion.close();
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<InformeSeguimiento> informes = conexion.searchAll(informeSeguimientoConverter, sql);
+        conexion.close();
 
-            return informes;
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }
+        return informes;
     }
 
     public static ArrayList<InformeSeguimiento> getInformesPendientesProyecto(String nombreProyecto) throws SQLException {
-        try {
-            String sql = "SELECT * FROM InformeSeguimiento WHERE nombreProyecto = '" + nombreProyecto + "' AND estado = 'pendiente'";
+        String sql = "SELECT * FROM InformeSeguimiento WHERE nombreProyecto = '" + nombreProyecto + "' AND estado = 'pendiente'";
 
-            ConexionBD conexion = new ConexionBD();
-            ArrayList<InformeSeguimiento> informes = conexion.searchAll(informeSeguimientoConverter, sql);
-            conexion.close();
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<InformeSeguimiento> informes = conexion.searchAll(informeSeguimientoConverter, sql);
+        conexion.close();
 
-            return informes;
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }
+        return informes;
     }
 
     public static void aprobarInforme(InformeSeguimiento informe) throws SQLException {
-        try {
-            String sql = "UPDATE InformeSeguimiento SET estado = 'aprobado' WHERE nombreProyecto = '" + informe.getNombreProyecto() + "' AND numeroEtapa = " + informe.getNumeroEtapa() + " AND idActividad = " + informe.getIdActividad() + " AND trabajador = '" + informe.getTrabajador() + "' AND numTarea = " + informe.getNumTarea() + " AND semana = '" + informe.getSemana() + "'";
+        String sql = "UPDATE InformeSeguimiento SET estado = 'aprobado' WHERE nombreProyecto = '" + informe.getNombreProyecto() + "' AND numeroEtapa = " + informe.getNumeroEtapa() + " AND idActividad = " + informe.getIdActividad() + " AND trabajador = '" + informe.getTrabajador() + "' AND numTarea = " + informe.getNumTarea() + " AND semana = '" + informe.getSemana() + "'";
 
-            ConexionBD conexion = new ConexionBD();
-
-            conexion.execute(sql);
-
-            conexion.close();
-        } catch (ClassNotFoundException ex) {
-            throw new SQLDataException(ex);
-        }
+        ConexionBD conexion = new ConexionBD();
+        conexion.execute(sql);
+        conexion.close();
     }
 
     public static void rechazarInforme(InformeSeguimiento informe) throws SQLException {
-        try {
-            String sql = "UPDATE InformeSeguimiento SET estado = 'rechazado' WHERE nombreProyecto = '" + informe.getNombreProyecto() + "' AND numeroEtapa = " + informe.getNumeroEtapa() + " AND idActividad = " + informe.getIdActividad() + " AND trabajador = '" + informe.getTrabajador() + "' AND numTarea = " + informe.getNumTarea() + " AND semana = '" + informe.getSemana() + "'";
+        String sql = "UPDATE InformeSeguimiento SET estado = 'rechazado' WHERE nombreProyecto = '" + informe.getNombreProyecto() + "' AND numeroEtapa = " + informe.getNumeroEtapa() + " AND idActividad = " + informe.getIdActividad() + " AND trabajador = '" + informe.getTrabajador() + "' AND numTarea = " + informe.getNumTarea() + " AND semana = '" + informe.getSemana() + "'";
 
-            ConexionBD conexion = new ConexionBD();
-
-            conexion.execute(sql);
-
-            conexion.close();
-        } catch (ClassNotFoundException ex) {
-            throw new SQLDataException(ex);
-        }
+        ConexionBD conexion = new ConexionBD();
+        conexion.execute(sql);
+        conexion.close();
     }
-    
+
     public static ArrayList<InformeSeguimiento> getInformesNoEnviados(String nombreProyecto) throws SQLException {
-        try {
-            String sql = "SELECT * FROM InformeSeguimiento WHERE nombreProyecto = '" + nombreProyecto + "' AND estado = 'noEnviado'";
+        String sql = "SELECT * FROM InformeSeguimiento WHERE nombreProyecto = '" + nombreProyecto + "' AND estado = 'noEnviado'";
 
-            ConexionBD conexion = new ConexionBD();
-            ArrayList<InformeSeguimiento> informes = conexion.searchAll(informeSeguimientoConverter, sql);
-            conexion.close();
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<InformeSeguimiento> informes = conexion.searchAll(informeSeguimientoConverter, sql);
+        conexion.close();
 
-            return informes;
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }
+        return informes;
     }
 }

@@ -3,7 +3,6 @@ package Proyecto.Persistencia;
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Actividad;
-import Proyecto.Dominio.Etapa;
 import Trabajador.Dominio.Rol;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -52,33 +51,25 @@ public class ActividadPersistencia {
     };
 
     public static Actividad getActividad(String nombreProyecto, int numeroEtapa, int idActividad) throws SQLException {
-        try {
-            String sql = "SELECT * FROM Actividad WHERE nombre = '" + nombreProyecto + "' AND numero = " + numeroEtapa + " AND id = " + idActividad;
+        String sql = "SELECT * FROM Actividad WHERE nombre = '" + nombreProyecto + "' AND numero = " + numeroEtapa + " AND id = " + idActividad;
 
-            ConexionBD conexion = new ConexionBD();
+        ConexionBD conexion = new ConexionBD();
 
-            Actividad actividad = conexion.search(actividadConverter, sql);
+        Actividad actividad = conexion.search(actividadConverter, sql);
 
-            conexion.close();
+        conexion.close();
 
-            return actividad;
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }
+        return actividad;
     }
 
     public static int numeroActividadesAbiertas(String nombreProyecto, int numeroEtapa) throws SQLException {
-        try {
-            String sql = "SELECT * FROM Actividad WHERE nombre = '" + nombreProyecto + "' AND numero = " + numeroEtapa + " AND estado <> 'cerrado'";
+        String sql = "SELECT * FROM Actividad WHERE nombre = '" + nombreProyecto + "' AND numero = " + numeroEtapa + " AND estado <> 'cerrado'";
 
-            ConexionBD conexion = new ConexionBD();
-            int count = conexion.count(sql);
-            conexion.close();
+        ConexionBD conexion = new ConexionBD();
+        int count = conexion.count(sql);
+        conexion.close();
 
-            return count;
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }
+        return count;
     }
 
     public static void guardaActividad(Actividad actividad) throws SQLException {
@@ -97,13 +88,13 @@ public class ActividadPersistencia {
         if (!actividad.getPredecesoras().isEmpty()) {
             for (int i = 0; i < actividad.getPredecesoras().size(); i++) {
                 s.execute("insert into Antecesora values('" + actividad.getNombre() + "', "
-//                        + actividad.getNumero() + ", " + actividad.getId() + ", '" + actividad.getPredecesoras().get(i).getNombre() + "', "
+                        //                        + actividad.getNumero() + ", " + actividad.getId() + ", '" + actividad.getPredecesoras().get(i).getNombre() + "', "
                         + actividad.getPredecesoras().get(i).getNumero() + ", " + actividad.getPredecesoras().get(i).getId() + ")");
             }
         }
     }
 
-    public static ArrayList<Actividad> sobreesfuerzo(String user) throws SQLException{
+    public static ArrayList<Actividad> sobreesfuerzo(String user) throws SQLException {
         ArrayList<Actividad> actuales = new ArrayList<>();
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -116,7 +107,7 @@ public class ActividadPersistencia {
         while (rs.next()) {
             actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7), rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
         }
-        rs = s.executeQuery("Select * from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'realizando' and A.duracion<A.duracionReal and P.jefeProyecto = '"+user+"'");
+        rs = s.executeQuery("Select * from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'realizando' and A.duracion<A.duracionReal and P.jefeProyecto = '" + user + "'");
         while (rs.next()) {
             actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7), rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
         }
@@ -131,10 +122,10 @@ public class ActividadPersistencia {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        ResultSet rs = s.executeQuery("Select * from Actividad where nombre = '"+nombre+"' and numero = "+numero);
+        ResultSet rs = s.executeQuery("Select * from Actividad where nombre = '" + nombre + "' and numero = " + numero);
         while (rs.next()) {
             actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7),
-            rs.getDate(8),rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
+                    rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
         }
         return actuales;
     }
@@ -148,11 +139,11 @@ public class ActividadPersistencia {
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
         ResultSet rs = s.executeQuery("Select A.* from Actividad A, ActividadTrabajador AP "
-                + "where A.nombre = '"+nombre+"' and A.numero = "+numero+" and"
-                + " AP.nombreProyecto=A.nombre and AP.numeroEtapa = A.numero and AP.idActividad = A.id and AP.nombreTrabajador = '"+idTrabajador+"'");
+                + "where A.nombre = '" + nombre + "' and A.numero = " + numero + " and"
+                + " AP.nombreProyecto=A.nombre and AP.numeroEtapa = A.numero and AP.idActividad = A.id and AP.nombreTrabajador = '" + idTrabajador + "'");
         while (rs.next()) {
             actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7),
-            rs.getDate(8),rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
+                    rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
         }
         return actuales;
     }
@@ -165,23 +156,19 @@ public class ActividadPersistencia {
         }
         Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
         Statement s = conexion.createStatement();
-        ResultSet rs = s.executeQuery("Select A.* from Actividad A, ActividadTrabajador AP where A.estado = 'realizando' and AP.nombreTrabajador = '"+user+"' and A.nombre = AP.nombreProyecto and A.numero = AP.numeroEtapa and A.id = AP.idActividad");
+        ResultSet rs = s.executeQuery("Select A.* from Actividad A, ActividadTrabajador AP where A.estado = 'realizando' and AP.nombreTrabajador = '" + user + "' and A.nombre = AP.nombreProyecto and A.numero = AP.numeroEtapa and A.id = AP.idActividad");
         while (rs.next()) {
             actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7),
-            rs.getDate(8),rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
+                    rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
         }
         return actuales;
     }
 
     public static void cerrarActividad(String proyecto, String etapa, String actividad) throws SQLException {
-        try {
-            System.out.println("UPDATE Actividad SET estado = 'cerrado' WHERE nombre = '" + proyecto + "' AND numero = " + etapa + " AND id = "+ actividad);
-            String sql = "UPDATE Actividad SET estado = 'cerrado' WHERE nombre = '" + proyecto + "' AND numero = " + Integer.parseInt(etapa) + " AND id = "+ Integer.parseInt(actividad);
-            ConexionBD conexion = new ConexionBD();
-            conexion.execute(sql);
-            conexion.close();
-        } catch (ClassNotFoundException ex) {
-            throw new SQLException(ex);
-        }
+        System.out.println("UPDATE Actividad SET estado = 'cerrado' WHERE nombre = '" + proyecto + "' AND numero = " + etapa + " AND id = " + actividad);
+        String sql = "UPDATE Actividad SET estado = 'cerrado' WHERE nombre = '" + proyecto + "' AND numero = " + Integer.parseInt(etapa) + " AND id = " + Integer.parseInt(actividad);
+        ConexionBD conexion = new ConexionBD();
+        conexion.execute(sql);
+        conexion.close();
     }
 }

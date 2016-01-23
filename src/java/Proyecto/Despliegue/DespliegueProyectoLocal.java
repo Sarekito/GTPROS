@@ -16,7 +16,7 @@ import javax.ejb.Local;
  * @author antonio
  */
 @Local
-public interface despliegueProyectoLocal {
+public interface DespliegueProyectoLocal {
 
     public ArrayList<Proyecto> getMisProyectos(String jefe);
 

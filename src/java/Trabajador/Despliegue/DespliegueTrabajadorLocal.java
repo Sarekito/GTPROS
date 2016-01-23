@@ -38,4 +38,6 @@ public interface DespliegueTrabajadorLocal {
 
     public ArrayList<Vacaciones> getVacaciones(String user);
 
+    java.util.ArrayList<Trabajador> getJefesSinProyecto();
+
 }

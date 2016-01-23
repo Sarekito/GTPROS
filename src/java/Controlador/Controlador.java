@@ -1,6 +1,6 @@
 package Controlador;
 
-import Proyecto.Despliegue.despliegueProyectoLocal;
+import Proyecto.Despliegue.DespliegueProyectoLocal;
 
 import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.ActividadTrabajador;
@@ -34,7 +34,7 @@ import javax.servlet.http.HttpSession;
 public class Controlador extends HttpServlet {
 
     @EJB
-    private despliegueProyectoLocal despliegueProyecto;
+    private DespliegueProyectoLocal despliegueProyecto;
 
     @EJB
     private DespliegueTrabajadorLocal despliegueTrabajador;

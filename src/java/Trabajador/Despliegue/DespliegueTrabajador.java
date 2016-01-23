@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Trabajador.Despliegue;
 
 import Trabajador.Dominio.Administrador;
@@ -23,8 +18,6 @@ import javax.ejb.Stateless;
 @Stateless
 public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
     @Override
     public Trabajador getTrabajador(String user) {
         Trabajador t = null;
@@ -44,18 +37,15 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (vacaciones.size() == 0) {
-            return false;
-        } else {
-            return true;
-        }
+
+        return !vacaciones.isEmpty();
     }
 
     @Override
     public void reservaVacaciones(Trabajador t, int periodo, int year, Date fechaElegida, int semanas) {
         Vacaciones v = new Vacaciones(t.getUser(), periodo, fechaElegida.getYear(), fechaElegida, semanas);
         try {
-            TrabajadorPersistencia.guardaVacaciones(v.getUser(), v.getPeriodo(), year , v.getInicio(), v.getSemanas());
+            TrabajadorPersistencia.guardaVacaciones(v.getUser(), v.getPeriodo(), year, v.getInicio(), v.getSemanas());
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -85,16 +75,12 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
     public boolean buscaTrabajador(String user) {
         Trabajador t = null;
         try {
-             t = TrabajadorPersistencia.getTrabajador(user);
+            t = TrabajadorPersistencia.getTrabajador(user);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (t==null){
-            return false;
-        }
-        else{
-            return true;
-        }
+
+        return t != null;
     }
 
     @Override
@@ -116,7 +102,7 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println(proyectos+" "+t.getUser());
+        System.out.println(proyectos + " " + t.getUser());
         return proyectos;
     }
 
@@ -131,5 +117,14 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
         return vc;
+    }
+
+    @Override
+    public java.util.ArrayList<Trabajador> getJefesSinProyecto() {
+        try {
+            return TrabajadorPersistencia.getJefesSinProyecto();
+        } catch (SQLException ex) {
+            return null;
+        }
     }
 }

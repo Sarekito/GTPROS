@@ -21,9 +21,13 @@ public class ConexionBD {
     private static final String DATABASE_USER = "PGP_grupo11";
     private static final String DATABASE_PASSWORD = "P6AbQA8Z";
 
-    public ConexionBD() throws ClassNotFoundException, SQLException {
-        Class.forName(DATABASE_DRIVER);
-        conexion = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+    public ConexionBD() throws SQLException {
+        try {
+            Class.forName(DATABASE_DRIVER);
+            conexion = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+        } catch (ClassNotFoundException ex) {
+            throw new SQLException(ex);
+        }
     }
 
     public Statement createStatement() throws SQLException {
