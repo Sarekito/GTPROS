@@ -303,7 +303,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     }
 
     @Override
-    public void cerrarActividad(String proyecto, String etapa, String actividad) {
+    public void cerrarActividad(String proyecto, int etapa, int actividad) {
         try {
             ActividadPersistencia.cerrarActividad(proyecto, etapa, actividad);
         } catch (SQLException ex) {

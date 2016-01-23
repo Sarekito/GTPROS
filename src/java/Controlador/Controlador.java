@@ -1067,7 +1067,7 @@ public class Controlador extends HttpServlet {
         String etapaElegida = (String) request.getAttribute("etapaElegida");
         String proyectoElegido = (String) request.getAttribute("proyectoElegida");
         try{
-            despliegueProyecto.cerrarActividad(proyectoElegido, etapaElegida, actividadElegida);
+            despliegueProyecto.cerrarActividad(proyectoElegido, Integer.parseInt(etapaElegida), Integer.parseInt(actividadElegida));
             return "/actividadCerradaConExito.jsp";
         }catch(Exception e){
             e.printStackTrace();

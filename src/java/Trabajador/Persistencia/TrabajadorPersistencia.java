@@ -73,16 +73,6 @@ public class TrabajadorPersistencia {
         return trabajadores;
     }
 
-    public static int getNumProyectos(Trabajador t) throws SQLException {
-        String sql = "SELECT * FROM (SELECT P.nombre FROM Proyecto P WHERE P.estado <> 'finalizado') P, TrabajadoresProyecto TP WHERE TP.nombre = P.nombre AND TP.user='" + t.getUser() + "'";
-
-        ConexionBD conexion = new ConexionBD();
-        int count = conexion.count(sql);
-        conexion.close();
-
-        return count;
-    }
-
     public static ArrayList<Trabajador> getJefesSinProyecto() throws SQLException {
         String sql = "SELECT * FROM Trabajador T WHERE T.tipoCategoria = 1 AND NOT EXISTS(SELECT * FROM Proyecto P WHERE P.jefeProyecto = T.user AND P.estado <> 'cerrado')";
 

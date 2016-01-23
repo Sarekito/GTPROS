@@ -1,5 +1,6 @@
 package Trabajador.Despliegue;
 
+import Proyecto.Persistencia.ProyectoPersistencia;
 import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
@@ -99,7 +100,7 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
     public int getNumProyectosActivos(Trabajador t) {
         int proyectos = 0;
         try {
-            proyectos = TrabajadorPersistencia.getNumProyectos(t);
+            proyectos = ProyectoPersistencia.getNumProyectos(t);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }

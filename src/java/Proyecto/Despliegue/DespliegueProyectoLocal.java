@@ -70,7 +70,7 @@ public interface DespliegueProyectoLocal {
 
     public void guardarTareaIntroducida(String proyecto, String etapa, String actividad, String user, int numTarea, Date semana, String tipoTarea, int duracion);
 
-    public void cerrarActividad(String proyecto, String etapa, String actividad);
+    public void cerrarActividad(String proyecto, int etapa, int actividad);
 
     boolean tieneActividadesAbiertas(String nombreProyecto, int numeroEtapa);
 

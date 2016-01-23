@@ -146,4 +146,12 @@ public class ProyectoPersistencia {
 
         return proyectos;
     }
+
+    public static int getNumProyectos(Trabajador t) throws SQLException {
+        String sql = "SELECT * FROM (SELECT P.nombre FROM Proyecto P WHERE P.estado <> 'finalizado') P, TrabajadoresProyecto TP WHERE TP.nombre = P.nombre AND TP.user='" + t.getUser() + "'";
+        ConexionBD conexion = new ConexionBD();
+        int count = conexion.count(sql);
+        conexion.close();
+        return count;
+    }
 }

@@ -132,8 +132,8 @@ public class ActividadPersistencia {
         return actividades;
     }
 
-    public static void cerrarActividad(String proyecto, String etapa, String actividad) throws SQLException {
-        String sql = "UPDATE Actividad SET estado = 'cerrado' WHERE nombre = '" + proyecto + "' AND numero = " + Integer.parseInt(etapa) + " AND id = " + Integer.parseInt(actividad);
+    public static void cerrarActividad(String proyecto, int etapa, int actividad) throws SQLException {
+        String sql = "UPDATE Actividad SET estado = 'cerrado' WHERE nombre = '" + proyecto + "' AND numero = " + etapa + " AND id = " + actividad;
 
         ConexionBD conexion = new ConexionBD();
         conexion.execute(sql);
