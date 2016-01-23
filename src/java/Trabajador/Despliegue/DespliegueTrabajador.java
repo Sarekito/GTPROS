@@ -4,6 +4,7 @@ import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
 import Trabajador.Persistencia.TrabajadorPersistencia;
+import Trabajador.Persistencia.VacacionesPersistencia;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,7 +34,7 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
     public boolean reservoVacaciones(String user, int ano) {
         ArrayList<Vacaciones> vacaciones = null;
         try {
-            vacaciones = TrabajadorPersistencia.getVacaciones(user, ano);
+            vacaciones = VacacionesPersistencia.getVacaciones(user, ano);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -45,7 +46,7 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
     public void reservaVacaciones(Trabajador t, int periodo, int year, Date fechaElegida, int semanas) {
         Vacaciones v = new Vacaciones(t.getUser(), periodo, fechaElegida.getYear(), fechaElegida, semanas);
         try {
-            TrabajadorPersistencia.guardaVacaciones(v.getUser(), v.getPeriodo(), year, v.getInicio(), v.getSemanas());
+            VacacionesPersistencia.guardaVacaciones(v.getUser(), v.getPeriodo(), year, v.getInicio(), v.getSemanas());
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -110,7 +111,7 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
     public ArrayList<Vacaciones> getVacaciones(String user) {
         ArrayList<Vacaciones> vc = new ArrayList<>();
         try {
-            vc = TrabajadorPersistencia.dameVacaciones(user);
+            vc = VacacionesPersistencia.dameVacaciones(user);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {

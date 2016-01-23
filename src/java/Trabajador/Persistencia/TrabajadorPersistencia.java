@@ -6,12 +6,10 @@ import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Categoria;
 import Trabajador.Dominio.Rol;
 import Trabajador.Dominio.Trabajador;
-import Trabajador.Dominio.Vacaciones;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  *
@@ -40,28 +38,6 @@ public class TrabajadorPersistencia {
         conexion.close();
 
         return t;
-    }
-
-    public static ArrayList<Vacaciones> getVacaciones(String user, int year) throws SQLException {
-        ConexionBD conexion = new ConexionBD();
-
-        Statement s = conexion.createStatement();
-        ResultSet rs = s.executeQuery("select * from Vacaciones V where V.user='" + user + "' and V.ano = " + year);
-        ArrayList<Vacaciones> vacaciones = new ArrayList<>();
-        while (rs.next()) {
-            vacaciones.add(new Vacaciones(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getDate(4), rs.getInt(5)));
-        }
-        conexion.close();
-
-        return vacaciones;
-    }
-
-    public static void guardaVacaciones(String user, int periodo, int year, Date inicio, int semanas) throws SQLException {
-        String sql = "INSERT INTO Vacaciones VALUES ('" + user + "'," + periodo + ", " + (int) (year + 1900) + ", '" + (int) (inicio.getYear() + 1900) + "-" + (int) (inicio.getMonth() + 1) + "-" + inicio.getDate() + "', " + semanas + ")";
-
-        ConexionBD conexion = new ConexionBD();
-        conexion.execute(sql);
-        conexion.close();
     }
 
     public static Administrador getAdministrador(String user) throws SQLException {
@@ -107,29 +83,13 @@ public class TrabajadorPersistencia {
         return count;
     }
 
-    public static ArrayList<Vacaciones> dameVacaciones(String user) throws SQLException, ClassNotFoundException {
-        String sql = "SELECT * FROM Vacaciones WHERE user = '" + user + "'";
-
-        ArrayList<Vacaciones> vc = new ArrayList<>();
-        ConexionBD conexion = new ConexionBD();
-        Statement s = conexion.createStatement();
-
-        ResultSet rs = s.executeQuery(sql);
-
-        while (rs.next()) {
-            vc.add(new Vacaciones(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getDate(4), rs.getInt(5)));
-        }
-
-        return vc;
-    }
-
     public static ArrayList<Trabajador> getJefesSinProyecto() throws SQLException {
         String sql = "SELECT * FROM Trabajador T WHERE T.tipoCategoria = 1 AND NOT EXISTS(SELECT * FROM Proyecto P WHERE P.jefeProyecto = T.user AND P.estado <> 'cerrado')";
-        
+
         ConexionBD conexion = new ConexionBD();
         ArrayList<Trabajador> trabajadores = conexion.searchAll(trabajadorConverter, sql);
         conexion.close();
-        
+
         return trabajadores;
     }
 }
