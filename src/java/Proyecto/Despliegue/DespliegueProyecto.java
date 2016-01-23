@@ -1,5 +1,7 @@
 package Proyecto.Despliegue;
 
+import Excepciones.EtapaConActividadesAbiertasException;
+import Excepciones.ProyectoConEtapasAbiertasException;
 import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.ActividadTrabajador;
 import Proyecto.Dominio.Etapa;
@@ -71,32 +73,28 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     }
 
     @Override
-    public boolean cerrarProyecto(String nombreProyecto) {
+    public void cerrarProyecto(String nombreProyecto) throws ProyectoConEtapasAbiertasException {
         try {
-            if (EtapaPersistencia.numeroEtapasAbiertas(nombreProyecto) > 0) {
-                return false;
+            if (tieneEtapasAbiertas(nombreProyecto)) {
+                throw new ProyectoConEtapasAbiertasException();
             }
 
             PersistenciaProyecto.cerrarProyecto(nombreProyecto);
-            return true;
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
         }
     }
 
     @Override
-    public boolean cerrarEtapa(String nombreProyecto, int numero) {
+    public void cerrarEtapa(String nombreProyecto, int numero) throws EtapaConActividadesAbiertasException {
         try {
-            if (ActividadPersistencia.numeroActividadesAbiertas(nombreProyecto, numero) > 0) {
-                return false;
+            if (tieneActividadesAbiertas(nombreProyecto, numero)) {
+                throw new EtapaConActividadesAbiertasException();
             }
 
             EtapaPersistencia.cerrarEtapa(nombreProyecto, numero);
-            return true;
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
         }
     }
 
@@ -310,6 +308,24 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
             ActividadPersistencia.cerrarActividad(proyecto, etapa, actividad);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public boolean tieneActividadesAbiertas(String nombreProyecto, int numeroEtapa) {
+        try {
+            return ActividadPersistencia.numeroActividadesAbiertas(nombreProyecto, numeroEtapa) > 0;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean tieneEtapasAbiertas(String nombreProyecto) {
+        try {
+            return EtapaPersistencia.numeroEtapasAbiertas(nombreProyecto) > 0;
+        } catch (SQLException ex) {
+            return false;
         }
     }
 }

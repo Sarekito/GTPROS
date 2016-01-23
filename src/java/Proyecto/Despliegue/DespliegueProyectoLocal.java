@@ -1,5 +1,7 @@
 package Proyecto.Despliegue;
 
+import Excepciones.EtapaConActividadesAbiertasException;
+import Excepciones.ProyectoConEtapasAbiertasException;
 import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.ActividadTrabajador;
 import Proyecto.Dominio.Etapa;
@@ -24,9 +26,9 @@ public interface DespliegueProyectoLocal {
 
     public void generar(String nombreProyecto, String jefe);
 
-    boolean cerrarProyecto(String nombreProyecto);
+    void cerrarProyecto(String nombreProyecto) throws ProyectoConEtapasAbiertasException;
 
-    boolean cerrarEtapa(String nombreProyecto, int numero);
+    void cerrarEtapa(String nombreProyecto, int numero) throws EtapaConActividadesAbiertasException;
 
     public ArrayList<Proyecto> getMisProyectosActuales(Trabajador get);
 
@@ -67,7 +69,11 @@ public interface DespliegueProyectoLocal {
     public ArrayList<Actividad> misActividadesAbiertas(String user);
 
     public void guardarTareaIntroducida(String proyecto, String etapa, String actividad, String user, int numTarea, Date semana, String tipoTarea, int duracion);
-    
+
     public void cerrarActividad(String proyecto, String etapa, String actividad);
+
+    boolean tieneActividadesAbiertas(String nombreProyecto, int numeroEtapa);
+
+    boolean tieneEtapasAbiertas(String nombreProyecto);
 
 }
