@@ -12,7 +12,7 @@ import Proyecto.Persistencia.TareaPersistencia;
 import Proyecto.Persistencia.ActividadPersistencia;
 import Proyecto.Persistencia.EtapaPersistencia;
 import Proyecto.Persistencia.InformeSeguimientoPersistencia;
-import Proyecto.Persistencia.PersistenciaProyecto;
+import Proyecto.Persistencia.ProyectoPersistencia;
 import Trabajador.Dominio.Trabajador;
 import java.util.Date;
 import java.sql.SQLException;
@@ -32,7 +32,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     public ArrayList<Proyecto> getMisProyectos(String jefe) {
         ArrayList<Proyecto> proyectos = new ArrayList<>();
         try {
-            proyectos = PersistenciaProyecto.getMisProyectos(jefe);
+            proyectos = ProyectoPersistencia.getMisProyectos(jefe);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -44,7 +44,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
         ArrayList<Proyecto> misProyectos = null;
 
         try {
-            misProyectos = PersistenciaProyecto.getMisProyectosActuales(tr);
+            misProyectos = ProyectoPersistencia.getMisProyectosActuales(tr);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -56,7 +56,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     public Proyecto getProyecto(String nombreProyecto) {
         Proyecto p = null;
         try {
-            p = PersistenciaProyecto.getProyecto(nombreProyecto);
+            p = ProyectoPersistencia.getProyecto(nombreProyecto);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -66,7 +66,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     @Override
     public void generar(String nombreProyecto, String jefe) {
         try {
-            PersistenciaProyecto.generar(nombreProyecto, jefe);
+            ProyectoPersistencia.generar(nombreProyecto, jefe);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -79,7 +79,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
                 throw new ProyectoConEtapasAbiertasException();
             }
 
-            PersistenciaProyecto.cerrarProyecto(nombreProyecto);
+            ProyectoPersistencia.cerrarProyecto(nombreProyecto);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -102,7 +102,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     public TrabajadoresProyecto dameTrabajadorProyecto(String user, String nombre) {
         TrabajadoresProyecto tp = null;
         try {
-            tp = PersistenciaProyecto.getTrabajadorProyecto(user, nombre);
+            tp = ProyectoPersistencia.getTrabajadorProyecto(user, nombre);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -160,7 +160,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     @Override
     public void guardarProyecto(Proyecto proyecto) {
         try {
-            PersistenciaProyecto.guardarProyecto(proyecto);
+            ProyectoPersistencia.guardarProyecto(proyecto);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -198,7 +198,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     public void guardarTrabajadores(ArrayList<TrabajadoresProyecto> tp) {
         for (int i = 0; i < tp.size(); i++) {
             try {
-                PersistenciaProyecto.guardarTrabajadores(tp.get(i));
+                ProyectoPersistencia.guardarTrabajadores(tp.get(i));
             } catch (SQLException ex) {
                 Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -209,7 +209,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     public void guardarAsignaciones(ArrayList<ActividadTrabajador> actividadTrabajador) {
         for (int i = 0; i < actividadTrabajador.size(); i++) {
             try {
-                PersistenciaProyecto.guardarAsignaciones(actividadTrabajador.get(i));
+                ProyectoPersistencia.guardarAsignaciones(actividadTrabajador.get(i));
             } catch (SQLException ex) {
                 Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -220,7 +220,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     public ArrayList<Actividad> misActividadesFecha(String user) {
         ArrayList<Actividad> at = null;
         try {
-            at = PersistenciaProyecto.getMisActividadesActuales(user);
+            at = ActividadPersistencia.getMisActividadesActuales(user);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -242,7 +242,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     public ArrayList<Proyecto> getProyectosCerrados() {
         ArrayList<Proyecto> cerrados = null;
         try {
-            cerrados = PersistenciaProyecto.getCerrados();
+            cerrados = ProyectoPersistencia.getCerrados();
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }

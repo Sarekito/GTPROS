@@ -3,11 +3,8 @@ package Proyecto.Persistencia;
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Etapa;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -33,7 +30,9 @@ public class EtapaPersistencia {
 
         @Override
         public String createInsertQuery(Etapa object) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return "INSERT INTO Etapa VALUES ('" + object.getNombre() + "', "
+                    + object.getNumero() + ", '" + object.getFechaInicio() + "', '"
+                    + object.getFechaFin() + "', null, '" + object.getEstado() + "')";
         }
     };
 
@@ -42,42 +41,25 @@ public class EtapaPersistencia {
 
         ConexionBD conexion = new ConexionBD();
         Etapa etapa = conexion.search(etapaConverter, sql);
-
         conexion.close();
 
         return etapa;
     }
 
     public static void guardarEtapa(Etapa etapa) throws SQLException {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (Exception e) {
-
-        }
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
-        Statement s = conexion.createStatement();
-        System.out.println("insert into Etapa values('" + etapa.getNombre() + "', "
-                + etapa.getNumero() + ", '" + etapa.getFechaInicio() + "', '"
-                + etapa.getFechaFin() + "', null, '" + etapa.getEstado() + "')");;
-        s.execute("insert into Etapa values('" + etapa.getNombre() + "', "
-                + etapa.getNumero() + ", '" + etapa.getFechaInicio() + "', '"
-                + etapa.getFechaFin() + "', null, '" + etapa.getEstado() + "')");
+        ConexionBD conexion = new ConexionBD();
+        conexion.insert(etapaConverter, etapa);
+        conexion.close();
     }
 
-    public static ArrayList<Etapa> getCerrados(String user) throws SQLException {
-        ArrayList<Etapa> actuales = new ArrayList<>();
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (Exception e) {
+    public static ArrayList<Etapa> getCerrados(String nombreProyecto) throws SQLException {
+        String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "' AND estado = 'cerrado'";
 
-        }
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
-        Statement s = conexion.createStatement();
-        ResultSet rs = s.executeQuery("Select * from Etapa where nombre = '" + user + "'");
-        while (rs.next()) {
-            actuales.add(new Etapa(rs.getString(1), rs.getInt(2), rs.getDate(3), rs.getDate(4), rs.getDate(5), rs.getString(6)));
-        }
-        return actuales;
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Etapa> etapas = conexion.searchAll(etapaConverter, sql);
+        conexion.close();
+
+        return etapas;
     }
 
     public ArrayList<Etapa> getEtapasProyecto(String nombreProyecto) throws SQLException {

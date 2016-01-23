@@ -18,6 +18,11 @@ public class Proyecto {
     private Date fechaFin;
     private final String jefe;
     private Date fechaFinReal;
+
+    public Proyecto(String nombre, String jefe) {
+        this.nombre = nombre;
+        this.jefe = jefe;
+    }
     
     public Date getFechaFinReal() {
         return fechaFinReal;
@@ -25,11 +30,6 @@ public class Proyecto {
 
     public void setFechaFinReal(Date fechaFinReal) {
         this.fechaFinReal = fechaFinReal;
-    }
-
-    public Proyecto(String nombre, String jefe) {
-        this.nombre = nombre;
-        this.jefe = jefe;
     }
 
     public Proyecto(String nombre, Date fechaInicio, Date fechaFin, String jefe, String estado) {

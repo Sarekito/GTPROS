@@ -4,8 +4,6 @@ import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Actividad;
 import Trabajador.Dominio.Rol;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -54,9 +52,7 @@ public class ActividadPersistencia {
         String sql = "SELECT * FROM Actividad WHERE nombre = '" + nombreProyecto + "' AND numero = " + numeroEtapa + " AND id = " + idActividad;
 
         ConexionBD conexion = new ConexionBD();
-
         Actividad actividad = conexion.search(actividadConverter, sql);
-
         conexion.close();
 
         return actividad;
@@ -73,12 +69,7 @@ public class ActividadPersistencia {
     }
 
     public static void guardaActividad(Actividad actividad) throws SQLException {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (Exception e) {
-
-        }
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        ConexionBD conexion = new ConexionBD();
         Statement s = conexion.createStatement();
         s.execute("insert into Actividad values('" + actividad.getNombre() + "', "
                 + actividad.getNumero() + ", " + actividad.getId() + ", '"
@@ -92,83 +83,70 @@ public class ActividadPersistencia {
                         + actividad.getPredecesoras().get(i).getNumero() + ", " + actividad.getPredecesoras().get(i).getId() + ")");
             }
         }
+        conexion.close();
     }
 
     public static ArrayList<Actividad> sobreesfuerzo(String user) throws SQLException {
-        ArrayList<Actividad> actuales = new ArrayList<>();
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (Exception e) {
+        String sql = "SELECT A.* from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'finalizado' and A.duracion<A.duracionReal";
+        String sql2 = "Select A.* from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'realizando' and A.duracion<A.duracionReal and P.jefeProyecto = '" + user + "'";
 
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
+        ArrayList<Actividad> actividades2 = conexion.searchAll(actividadConverter, sql2);
+        conexion.close();
+
+        for (Actividad a : actividades2) {
+            actividades.add(a);
         }
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
-        Statement s = conexion.createStatement();
-        ResultSet rs = s.executeQuery("Select * from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'finalizado' and A.duracion<A.duracionReal");
-        while (rs.next()) {
-            actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7), rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
-        }
-        rs = s.executeQuery("Select * from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'realizando' and A.duracion<A.duracionReal and P.jefeProyecto = '" + user + "'");
-        while (rs.next()) {
-            actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7), rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
-        }
-        return actuales;
+
+        return actividades;
     }
 
     public static ArrayList<Actividad> getCerrados(String nombre, int numero) throws SQLException {
-        ArrayList<Actividad> actuales = new ArrayList<>();
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (Exception e) {
-        }
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
-        Statement s = conexion.createStatement();
-        ResultSet rs = s.executeQuery("Select * from Actividad where nombre = '" + nombre + "' and numero = " + numero);
-        while (rs.next()) {
-            actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7),
-                    rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
-        }
-        return actuales;
+        String sql = "SELECT * FROM Actividad WHERE nombre = '" + nombre + "' AND numero = " + numero;
+
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
+        conexion.close();
+
+        return actividades;
     }
 
     public static ArrayList<Actividad> getAbiertosNoJefe(String nombre, int numero, String idTrabajador) throws SQLException {
-        ArrayList<Actividad> actuales = new ArrayList<>();
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (Exception e) {
-        }
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
-        Statement s = conexion.createStatement();
-        ResultSet rs = s.executeQuery("Select A.* from Actividad A, ActividadTrabajador AP "
-                + "where A.nombre = '" + nombre + "' and A.numero = " + numero + " and"
-                + " AP.nombreProyecto=A.nombre and AP.numeroEtapa = A.numero and AP.idActividad = A.id and AP.nombreTrabajador = '" + idTrabajador + "'");
-        while (rs.next()) {
-            actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7),
-                    rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
-        }
-        return actuales;
+        String sql = "SELECT A.* FROM Actividad A, ActividadTrabajador AP WHERE A.nombre = '" + nombre + "' AND A.numero = " + numero + " AND AP.nombreProyecto=A.nombre AND AP.numeroEtapa = A.numero AND AP.idActividad = A.id AND AP.nombreTrabajador = '" + idTrabajador + "'";
+
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
+        conexion.close();
+
+        return actividades;
     }
 
     public static ArrayList<Actividad> actividadesAbiertasDe(String user) throws SQLException {
-        ArrayList<Actividad> actuales = new ArrayList<>();
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (Exception e) {
-        }
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
-        Statement s = conexion.createStatement();
-        ResultSet rs = s.executeQuery("Select A.* from Actividad A, ActividadTrabajador AP where A.estado = 'realizando' and AP.nombreTrabajador = '" + user + "' and A.nombre = AP.nombreProyecto and A.numero = AP.numeroEtapa and A.id = AP.idActividad");
-        while (rs.next()) {
-            actuales.add(new Actividad(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7),
-                    rs.getDate(8), rs.getDate(9), rs.getString(10), new Rol(rs.getString(11))));
-        }
-        return actuales;
+        String sql = "Select A.* from Actividad A, ActividadTrabajador AP where A.estado = 'realizando' and AP.nombreTrabajador = '" + user + "' and A.nombre = AP.nombreProyecto and A.numero = AP.numeroEtapa and A.id = AP.idActividad";
+
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
+        conexion.close();
+
+        return actividades;
     }
 
     public static void cerrarActividad(String proyecto, String etapa, String actividad) throws SQLException {
-        System.out.println("UPDATE Actividad SET estado = 'cerrado' WHERE nombre = '" + proyecto + "' AND numero = " + etapa + " AND id = " + actividad);
         String sql = "UPDATE Actividad SET estado = 'cerrado' WHERE nombre = '" + proyecto + "' AND numero = " + Integer.parseInt(etapa) + " AND id = " + Integer.parseInt(actividad);
+
         ConexionBD conexion = new ConexionBD();
         conexion.execute(sql);
         conexion.close();
+    }
+
+    public static ArrayList<Actividad> getMisActividadesActuales(String user) throws SQLException {
+        String sql = "SELECT A.* FROM ActividadTrabajador AP, Actividad A, Proyecto P where AP.nombreProyecto = A.nombre and AP.numeroEtapa = A.numero and AP.idActividad = A.id and P.nombre = A.nombre and P.estado = 'realizando' and AP.nombreTrabajador = '" + user + "'";
+
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
+        conexion.close();
+
+        return actividades;
     }
 }
