@@ -19,12 +19,12 @@ public class TrabajadorPersistencia {
 
         @Override
         public Trabajador convert(ResultSet result) throws SQLException {
-            return new Trabajador(result.getString(1), result.getString(2), new Rol(result.getString(3)), Categoria.get(result.getInt(4)));
+            return new Trabajador(result.getString(1), result.getString(2), Rol.get(result.getString(3)), Categoria.get(result.getInt(4)));
         }
 
         @Override
         public String createInsertQuery(Trabajador tr) {
-            return "INSERT INTO Trabajador VALUES ('" + tr.getUser() + "', '" + tr.getPassword() + "', '" + tr.getTipoRol().getRol() + "', " + tr.getCategoria().getCategoria() + ")";
+            return "INSERT INTO Trabajador VALUES ('" + tr.getUser() + "', '" + tr.getPassword() + "', '" + tr.getTipoRol().name() + "', " + tr.getCategoria().getCategoria() + ")";
         }
     };
 

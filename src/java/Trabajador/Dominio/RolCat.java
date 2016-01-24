@@ -7,20 +7,20 @@ package Trabajador.Dominio;
 public class RolCat {
 
     public static Categoria dameCat(Rol r) {
-        switch (r.getRol()) {
-            case "JefeProyecto":
+        switch (r) {
+            case JefeProyecto:
                 return Categoria.Uno;
-            case "Analista":
+            case Analista:
                 return Categoria.Dos;
-            case "AnalistaProgramador":
+            case AnalistaProgramador:
                 return Categoria.Tres;
-            case "Disenador":
+            case Disenador:
                 return Categoria.Tres;
-            case "ResponsablePruebas":
+            case ResponsablePruebas:
                 return Categoria.Tres;
-            case "Programador":
+            case Programador:
                 return Categoria.Cuatro;
-            case "Probador":
+            case Probador:
                 return Categoria.Cuatro;
             default:
                 return null;

@@ -37,7 +37,7 @@ public class ActividadPersistencia {
             actividad.setFechaFin(result.getDate("fechaFin"));
             actividad.setFechaFinReal(result.getDate("fechaFinReal"));
             actividad.setEstado(result.getString("estado"));
-            actividad.setTipoRol(new Rol(result.getString("tipoRol")));
+            actividad.setTipoRol(Rol.get(result.getString("tipoRol")));
 
             return actividad;
         }
@@ -75,7 +75,7 @@ public class ActividadPersistencia {
                 + actividad.getNumero() + ", " + actividad.getId() + ", '"
                 + actividad.getDescripcion() + "', " + actividad.getDuracion() + ", null, '"
                 + actividad.getFechaComienzo() + "', '" + actividad.getFechaFin()
-                + "', null, '" + actividad.getEstado() + "', '" + actividad.getTipoRol().getRol() + "')");
+                + "', null, '" + actividad.getEstado() + "', '" + actividad.getTipoRol().name() + "')");
         if (!actividad.getPredecesoras().isEmpty()) {
             for (int i = 0; i < actividad.getPredecesoras().size(); i++) {
                 s.execute("insert into Antecesora values('" + actividad.getNombre() + "', "

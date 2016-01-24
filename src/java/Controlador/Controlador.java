@@ -380,7 +380,7 @@ public class Controlador extends HttpServlet {
     }
 
     private String registroTrabajador(HttpServletRequest request) {
-        Trabajador tr = new Trabajador(request.getParameter("usuario"), request.getParameter("clave"), new Rol(request.getParameter("rol")), RolCat.dameCat(new Rol(request.getParameter("rol"))));
+        Trabajador tr = new Trabajador(request.getParameter("usuario"), request.getParameter("clave"), Rol.get(request.getParameter("rol")), RolCat.dameCat(Rol.get(request.getParameter("rol"))));
         boolean existe = despliegueTrabajador.buscaTrabajador(tr.getUser());
         if (!existe) {
             despliegueTrabajador.registrarTrabajador(tr);
@@ -553,7 +553,7 @@ public class Controlador extends HttpServlet {
 
     private String asignarTrabajador(HttpServletRequest request) {
 
-        Actividad actividad = (new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", new Rol(request.getParameter("Rol"))));
+        Actividad actividad = (new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", Rol.get(request.getParameter("Rol"))));
         restantes = new ArrayList<>();
         ArrayList<Actividad> simultaneas;
         for (int i = 0; i < tp.size(); i++) {
@@ -859,7 +859,7 @@ public class Controlador extends HttpServlet {
                 Integer.parseInt(request.getParameter("duracion")), null,
                 Date.valueOf(request.getParameter("inicio")),
                 Date.valueOf(request.getParameter("fin")), null, "planifcada",
-                new Rol(request.getParameter("Rol")));
+                Rol.get(request.getParameter("Rol")));
         for (int i = 0; i < actEtapa.size(); i++) {
             if (request.getParameter("" + i) != null) {
                 if (!actEtapa.get(i).getFechaFin().before(actividad.getFechaComienzo())) {
