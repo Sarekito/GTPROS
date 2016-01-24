@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Trabajador.Dominio;
 
 /**
@@ -10,22 +5,23 @@ package Trabajador.Dominio;
  * @author antonio
  */
 public class RolCat {
-    public static Categoria dameCat(Rol r){
-        switch(r.getRol()){
+
+    public static Categoria dameCat(Rol r) {
+        switch (r.getRol()) {
             case "JefeProyecto":
-                return new Categoria(1);
+                return Categoria.Uno;
             case "Analista":
-                return new Categoria(2);
+                return Categoria.Dos;
             case "AnalistaProgramador":
-                return new Categoria(3);
+                return Categoria.Tres;
             case "Disenador":
-                return new Categoria(3);
+                return Categoria.Tres;
             case "ResponsablePruebas":
-                return new Categoria(3);
+                return Categoria.Tres;
             case "Programador":
-                return new Categoria(4);
+                return Categoria.Cuatro;
             case "Probador":
-                return new Categoria(4);
+                return Categoria.Cuatro;
             default:
                 return null;
         }

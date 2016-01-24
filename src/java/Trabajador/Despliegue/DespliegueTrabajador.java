@@ -4,6 +4,7 @@ import Proyecto.Persistencia.ProyectoPersistencia;
 import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
+import Trabajador.Persistencia.AdministradorPersistencia;
 import Trabajador.Persistencia.TrabajadorPersistencia;
 import Trabajador.Persistencia.VacacionesPersistencia;
 import java.sql.SQLException;
@@ -57,7 +58,7 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
     public Administrador getAdministrador(String user) {
         Administrador t = null;
         try {
-            t = TrabajadorPersistencia.getAdministrador(user);
+            t = AdministradorPersistencia.getAdministrador(user);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -114,8 +115,6 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
         try {
             vc = VacacionesPersistencia.dameVacaciones(user);
         } catch (SQLException ex) {
-            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
             Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
         }
         return vc;

@@ -52,7 +52,7 @@ public class EtapaPersistencia {
         conexion.close();
     }
 
-    public static ArrayList<Etapa> getCerrados(String nombreProyecto) throws SQLException {
+    public static ArrayList<Etapa> getEtapasCerradasProyecto(String nombreProyecto) throws SQLException {
         String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "' AND estado = 'cerrado'";
 
         ConexionBD conexion = new ConexionBD();

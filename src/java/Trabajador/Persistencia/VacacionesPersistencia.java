@@ -45,7 +45,7 @@ public class VacacionesPersistencia {
         conexion.close();
     }
 
-    public static ArrayList<Vacaciones> dameVacaciones(String user) throws SQLException, ClassNotFoundException {
+    public static ArrayList<Vacaciones> dameVacaciones(String user) throws SQLException {
         String sql = "SELECT * FROM Vacaciones WHERE user = '" + user + "'";
 
         ConexionBD conexion = new ConexionBD();

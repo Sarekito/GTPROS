@@ -253,7 +253,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     public ArrayList<Etapa> getEtapas(String nombre) {
         ArrayList<Etapa> cerrados = null;
         try {
-            cerrados = EtapaPersistencia.getCerrados(nombre);
+            cerrados = EtapaPersistencia.getEtapasCerradasProyecto(nombre);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }

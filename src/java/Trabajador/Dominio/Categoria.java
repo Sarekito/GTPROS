@@ -1,19 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Trabajador.Dominio;
 
 /**
  *
  * @author antonio
  */
-public class Categoria {
-    private int categoria;
-    
-    
-    public Categoria(int i){
+public enum Categoria {
+
+    Uno(1),
+    Dos(2),
+    Tres(3),
+    Cuatro(4);
+
+    private final int categoria;
+
+    private Categoria(int i) {
         categoria = i;
     }
 
@@ -21,7 +21,13 @@ public class Categoria {
         return categoria;
     }
 
-    public void setCategoria(int categoria) {
-        this.categoria = categoria;
+    public static Categoria get(int categoria) {
+        for (Categoria c : values()) {
+            if (c.categoria == categoria) {
+                return c;
+            }
+        }
+
+        return null;
     }
 }
