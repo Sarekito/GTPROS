@@ -21,12 +21,11 @@ public class ActividadPersistencia {
         public Actividad convert(ResultSet result) throws SQLException {
             Actividad actividad = new Actividad();
 
-            actividad.setNombre(result.getString("nombre"));
-            actividad.setNumero(result.getInt("numero"));
-            actividad.setId(result.getInt("id"));
+            actividad.setNombre(result.getString("nombreProyecto"));
+            actividad.setNumero(result.getInt("numeroEtapa"));
+            actividad.setId(result.getInt("idActividad"));
             actividad.setDescripcion(result.getString("descripcion"));
             actividad.setDuracion(result.getInt("duracion"));
-
             int duracionReal = result.getInt("duracionReal");
             if (result.wasNull()) {
                 actividad.setDuracionReal(null);
@@ -103,7 +102,7 @@ public class ActividadPersistencia {
     }
 
     public static ArrayList<Actividad> getCerrados(String nombre, int numero) throws SQLException {
-        String sql = "SELECT * FROM Actividad WHERE nombre = '" + nombre + "' AND numero = " + numero;
+        String sql = "SELECT * FROM Actividad WHERE nombreProyecto = '" + nombre + "' AND numeroEtapa = " + numero;
 
         ConexionBD conexion = new ConexionBD();
         ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
@@ -113,8 +112,7 @@ public class ActividadPersistencia {
     }
 
     public static ArrayList<Actividad> getAbiertosNoJefe(String nombre, int numero, String idTrabajador) throws SQLException {
-        String sql = "SELECT A.* FROM Actividad A, ActividadTrabajador AP WHERE A.nombre = '" + nombre + "' AND A.numero = " + numero + " AND AP.nombreProyecto=A.nombre AND AP.numeroEtapa = A.numero AND AP.idActividad = A.id AND AP.nombreTrabajador = '" + idTrabajador + "'";
-
+        String sql = "SELECT A.* FROM Actividad A, ActividadTrabajador AP WHERE A.nombreProyecto = '" + nombre + "' AND A.numeroEtapa = " + numero + " AND AP.nombreProyecto=A.nombre AND AP.numeroEtapa = A.numeroEtapa AND AP.idActividad = A.idActividad AND AP.nombreTrabajador = '" + idTrabajador + "'";
         ConexionBD conexion = new ConexionBD();
         ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
         conexion.close();
@@ -148,5 +146,12 @@ public class ActividadPersistencia {
         conexion.close();
 
         return actividades;
+    }
+
+    public static boolean isAsignado(Actividad get, String user) throws SQLException {
+        String sql = String.format("Select * from ActividadTrabajador where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d and nombreTrabajador = '%s'",get.getNombre(),get.getNumero(),get.getId(),user);
+        System.out.println(sql);
+        ConexionBD conexion = new ConexionBD();
+        return conexion.existe(sql);
     }
 }

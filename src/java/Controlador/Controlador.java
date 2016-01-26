@@ -76,6 +76,9 @@ public class Controlador extends HttpServlet {
             case "infoProyectoCerrado":
                 url = infoProyectoCerrado(request);
                 break;
+            case "infoProyectoAbierto":
+                url = infoProyectoAbierto(request);
+                break;
             case "Acceso":
                 url = acceso(request);
                 break;
@@ -996,12 +999,7 @@ public class Controlador extends HttpServlet {
         ArrayList<Actividad> actividadesC = new ArrayList<>();
         for (int i = 0; i < etapasC.size(); i++) {
             ArrayList<Actividad> tmp = new ArrayList<Actividad>();
-            if (trabajador.getCategoria().getCategoria() == 1) {
-                tmp = despliegueProyecto.getActividadesCerrados(p.getNombre(), etapasC.get(i).getNumero());
-            } else {
-                tmp = despliegueProyecto.getActividadesAbiertasNoJefe(p.getNombre(), etapasC.get(i).getNumero(), trabajador.getUser());
-            }
-            System.out.println(tmp);
+            tmp = despliegueProyecto.getActividadesCerrados(p.getNombre(), etapasC.get(i).getNumero());
             for (int j = 0; j < tmp.size(); j++) {
                 actividadesC.add(tmp.get(j));
             }
@@ -1020,17 +1018,17 @@ public class Controlador extends HttpServlet {
         }
 
         cerrados = despliegueProyecto.getMisProyectosActuales(trabajador);
-        request.setAttribute("cerrados", cerrados);
-        return "/cerrados.jsp";
+        request.setAttribute("abiertos", cerrados);
+        return "/abiertos.jsp";
     }
 
     private String finalizarActividades(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         ArrayList<Proyecto> todosProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
         ArrayList<Actividad> todasActividades = null;
-        for(int w=0; w<todosProyectos.size(); w++){
+        for (int w = 0; w < todosProyectos.size(); w++) {
             ArrayList<Etapa> todasEtapas = despliegueProyecto.getEtapas(todosProyectos.get(w).getNombre());
-            for(int ww=0; ww<todasEtapas.size(); ww++){
+            for (int ww = 0; ww < todasEtapas.size(); ww++) {
                 todasActividades = despliegueProyecto.getActividadesCerrados(todosProyectos.get(w).getNombre(), todasEtapas.get(ww).getNumero());
             }
         }
@@ -1063,22 +1061,22 @@ public class Controlador extends HttpServlet {
         return "/veamosAFondoActividades.jsp";
     }
 
-    private String finalizarActividadElegida(HttpServletRequest request){
+    private String finalizarActividadElegida(HttpServletRequest request) {
         String actividadElegida = (String) request.getAttribute("actividadElegida");
         String etapaElegida = (String) request.getAttribute("etapaElegida");
         String proyectoElegido = (String) request.getAttribute("proyectoElegida");
-        try{
+        try {
             despliegueProyecto.cerrarActividad(proyectoElegido, Integer.parseInt(etapaElegida), Integer.parseInt(actividadElegida));
             return "/actividadCerradaConExito.jsp";
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-       return "/index.jsp";
+        return "/index.jsp";
     }
-    
+
     private String verActividadesPendientes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         if (trabajador == null) {
             return "/index.jsp";
         }
@@ -1096,8 +1094,8 @@ Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
             return "/index.jsp";
         }
     }
-    
-    private String aIntroducirDatosActividad(HttpServletRequest request){
+
+    private String aIntroducirDatosActividad(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         if (trabajador == null) {
@@ -1105,24 +1103,22 @@ Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         }
         String introProyecto = request.getParameter("chosenProject");
         String introEtapa = request.getParameter("chosenEtapa");
-        String introActividad =  request.getParameter("chosenActividad");
-        
-        if((!"".equals(introProyecto))&&(!"".equals(introEtapa))&&(!"".equals(introActividad))){
-            
-            
+        String introActividad = request.getParameter("chosenActividad");
+
+        if ((!"".equals(introProyecto)) && (!"".equals(introEtapa)) && (!"".equals(introActividad))) {
+
             sesion.setAttribute("introDatosP", introProyecto);
             sesion.setAttribute("introDatosE", introEtapa);
             sesion.setAttribute("introDatosA", introActividad);
-            
-            
+
             return "/introducirDatosActividad.jsp";
-        } else{
+        } else {
             //Error en la recepcion de datos
             return "/verActividadesPendientes.jsp";
         }
     }
-    
-    private String datosIntroducidosCorrectamente(HttpServletRequest request){
+
+    private String datosIntroducidosCorrectamente(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         String tarea = request.getParameter("mitarea");
         int numTarea = Integer.parseInt(tarea);
@@ -1132,15 +1128,51 @@ Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         String duracionNuestra = (String) request.getParameter("miduracion");
         int duracion = Integer.parseInt(duracionNuestra);
         String user = trabajador.getUser();
-        String proyectoNuestro =  (String)sesion.getAttribute("introDatosP");
+        String proyectoNuestro = (String) sesion.getAttribute("introDatosP");
         String etapa = (String) sesion.getAttribute("introDatosE");
         String actividad = (String) sesion.getAttribute("introDatosA");
-        
-        try{
+
+        try {
             despliegueProyecto.guardarTareaIntroducida(proyectoNuestro, etapa, actividad, user, numTarea, semana, tipoTarea, duracion);
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "/accesoUsuario.jsp";
+    }
+
+    private String infoProyectoAbierto(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+
+        if (trabajador == null) {
+            return "/index.jsp";
+        }
+        Proyecto p = cerrados.get(Integer.parseInt(request.getParameter("eleccion")));
+        ArrayList<Etapa> etapasC = despliegueProyecto.getEtapas(p.getNombre());
+        ArrayList<Actividad> actividadesC = new ArrayList<>();
+        ArrayList<Actividad> tmp2 = new ArrayList<>();
+        for (int i = 0; i < etapasC.size(); i++) {
+            ArrayList<Actividad> tmp = new ArrayList<>();
+            tmp = despliegueProyecto.getActividadesCerrados(p.getNombre(), etapasC.get(i).getNumero());
+            for (int j = 0; j < tmp.size(); j++) {
+                tmp2.add(tmp.get(j));
+            }
+        }
+        System.out.println(tmp2);
+        if(!p.getJefe().equals(trabajador.getUser())){
+            for (int i = 0;i<tmp2.size();i++){
+                System.out.println(despliegueProyecto.isAsignado(tmp2.get(i), trabajador.getUser()));
+                if (despliegueProyecto.isAsignado(tmp2.get(i), trabajador.getUser())){
+                    actividadesC.add(tmp2.get(i));
+                }
+            }
+        request.setAttribute("actividades", actividadesC);
+        }
+        else{
+            request.setAttribute("actividades", tmp2);
+        }
+        request.setAttribute("etapas", etapasC);
+        
+        return "/vistaCerrados.jsp";
     }
 }

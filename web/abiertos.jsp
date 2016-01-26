@@ -15,7 +15,7 @@
     </head>
     <body>
     <center>
-        <%ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) request.getAttribute("cerrados");%>
+        <%ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) request.getAttribute("abiertos");%>
         <h1>Proyectos</h1>
         <form action="Controlador" method ="post">
             <table border="5">
@@ -46,7 +46,7 @@
                         <%=misProyectos.get(i).getDuracionReal()%>
                     </td>
                     <td>
-                        <input type="hidden" name="accion" value="infoProyectoCerrado" readonly="readonly" />
+                        <input type="hidden" name="accion" value="infoProyectoAbierto" readonly="readonly" />
                         <input type="hidden" name="eleccion" value="<%=i%>" readonly="readonly" />
                         <input type="submit" value="Elegir" />
                     </td>

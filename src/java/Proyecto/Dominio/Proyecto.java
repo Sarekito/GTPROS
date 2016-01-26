@@ -16,14 +16,41 @@ public class Proyecto {
     private final String nombre;
     private Date fechaInicio;
     private Date fechaFin;
-    private final String jefe;
     private Date fechaFinReal;
+    private int duracion;
+    private int duracionReal;
+    private final String jefe;
+    private String estado;
 
     public Proyecto(String nombre, String jefe) {
         this.nombre = nombre;
         this.jefe = jefe;
     }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getJefe() {
+        return jefe;
+    }
     
+    public Date getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public Date getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
     public Date getFechaFinReal() {
         return fechaFinReal;
     }
@@ -32,45 +59,28 @@ public class Proyecto {
         this.fechaFinReal = fechaFinReal;
     }
 
-    public Proyecto(String nombre, Date fechaInicio, Date fechaFin, String jefe, String estado) {
-        this.nombre = nombre;
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-        this.jefe = jefe;
-        this.estado = estado;
+    public int getDuracion() {
+        return duracion;
     }
 
-    public void setFechaInicio(Date fechaInicio) {
-        this.fechaInicio = fechaInicio;
+    public void setDuracion(int duracion) {
+        this.duracion = duracion;
     }
 
-    public void setFechaFin(Date fechaFin) {
-        this.fechaFin = fechaFin;
+    public int getDuracionReal() {
+        return duracionReal;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public Date getFechaInicio() {
-        return fechaInicio;
-    }
-
-    public Date getFechaFin() {
-        return fechaFin;
-    }
-
-    public String getJefe() {
-        return jefe;
+    public void setDuracionReal(int duracionReal) {
+        this.duracionReal = duracionReal;
     }
 
     public String getEstado() {
         return estado;
     }
-    private String estado;
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
     
 }

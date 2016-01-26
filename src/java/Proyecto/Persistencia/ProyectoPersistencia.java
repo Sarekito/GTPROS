@@ -21,8 +21,13 @@ public class ProyectoPersistencia {
 
         @Override
         public Proyecto convert(ResultSet result) throws SQLException {
-            Proyecto proyecto = new Proyecto(result.getString("nombre"), result.getDate("fechaInicio"), result.getDate("fechaFin"), result.getString("jefeProyecto"), result.getString("estado"));
+            Proyecto proyecto = new Proyecto(result.getString("nombreProyecto"), result.getString("jefeProyecto"));
             proyecto.setFechaFinReal(result.getDate("fechaFinReal"));
+            proyecto.setFechaInicio(result.getDate("fechaInicio"));
+            proyecto.setFechaFin(result.getDate("fechaFin"));
+            proyecto.setDuracion(result.getInt("duracion"));
+            proyecto.setDuracionReal(result.getInt("duracionReal"));
+            proyecto.setEstado(result.getString("estado"));
             return proyecto;
         }
 
@@ -89,7 +94,7 @@ public class ProyectoPersistencia {
     }
 
     public static ArrayList<Proyecto> getMisProyectosActuales(Trabajador tr) throws SQLException {
-        String sql = "SELECT P.* FROM (SELECT * FROM TrabajadoresProyecto TP where TP.user = '" + tr.getUser() + "')TP, Proyecto P where P.nombre = TP.nombre and P.estado = 'realizando'";
+        String sql = "SELECT P.* FROM (SELECT * FROM TrabajadoresProyecto TP where TP.trabajador = '" + tr.getUser() + "')TP, Proyecto P where P.nombreProyecto = TP.nombreProyecto and P.estado = 'realizando'";
 
         ConexionBD conexion = new ConexionBD();
         ArrayList<Proyecto> proyectos = conexion.searchAll(proyectoConverter, sql);
@@ -138,8 +143,7 @@ public class ProyectoPersistencia {
     }
 
     public static ArrayList<Proyecto> getCerrados() throws SQLException {
-        String sql = "SELECT * FROM Proyecto WHERE estado = 'finalizado'";
-
+        String sql = "SELECT * FROM Proyecto WHERE estado = 'cerrado'";
         ConexionBD conexion = new ConexionBD();
         ArrayList<Proyecto> proyectos = conexion.searchAll(proyectoConverter, sql);
         conexion.close();

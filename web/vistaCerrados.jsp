@@ -15,87 +15,81 @@
         <title>GTPROS</title>
     </head>
     <body>
-        <%ArrayList<Etapa> etapas = (ArrayList<Etapa>)request.getAttribute("etapas");%>
-        <center>
+        <%ArrayList<Etapa> etapas = (ArrayList<Etapa>) request.getAttribute("etapas");%>
+    <center>
         <h1>Etapas</h1>
         <table border = "1">
             <tr>
                 <td>
                     Etapa
                 </td>
-                 <td>
-                    Fecha de Inicio
+                <td>
+                    Duracion prevista
                 </td>
-                 <td>
-                    Fecha de fin prevista
-                </td>
-                 <td>
-                    Fecha de fin real
+                <td>
+                    Duracion real
                 </td>
             </tr>
-        <%for (int i=0;i<etapas.size();i++){%>
+            <%for (int i = 0; i < etapas.size(); i++) {%>
             <tr>
                 <td>
                     <%=etapas.get(i).getNumero()%>
                 </td>
                 <td>
-                    <%=etapas.get(i).getFechaInicio()%>
+                    <%=etapas.get(i).getDuracion()%>
                 </td>
                 <td>
-                    <%=etapas.get(i).getFechaFin()%>
-                </td>
-                <td>
-                    <%=etapas.get(i).getFechaFinReal()%>
+                    <%=etapas.get(i).getDuracionReal()%>
                 </td>
             </tr>
-        <%}%>
-        <%ArrayList<Actividad> actividades = (ArrayList<Actividad>)request.getAttribute("actividades");%>
+            <%}%>
+            <%ArrayList<Actividad> actividades = (ArrayList<Actividad>) request.getAttribute("actividades");%>
         </table>
         <h1>Actividades</h1>
         <table border = "1">
             <tr>
-                 <td>
+                <td>
+                    Etapa
+                </td> 
+                <td>
                     Actividad
                 </td>
                 <td>
-                    Etapa
+                    Descripcion
                 </td>
-                 <td>
-                    Fecha de Inicio
+                <td>
+                    Duracion
                 </td>
-                 <td>
-                    Fecha de fin prevista
+                <td>
+                    Duracion real
                 </td>
-                 <td>
-                    Fecha de fin real
-                </td>
-                 <td>
+                <td>
                     Rol
                 </td>
             </tr>
-        <%for (int i=0;i<actividades.size();i++){%>
+            <%for (int i = 0; i < actividades.size(); i++) {%>
             <tr>
-                 <td>
-                    <%=actividades.get(i).getId()%>
-                </td>
                 <td>
                     <%=actividades.get(i).getNumero()%>
                 </td>
                 <td>
-                    <%=actividades.get(i).getFechaComienzo()%>
+                    <%=actividades.get(i).getId()%>
                 </td>
                 <td>
-                    <%=actividades.get(i).getFechaFin()%>
+                    <%=actividades.get(i).getDescripcion()%>
                 </td>
                 <td>
-                    <%=actividades.get(i).getFechaFinReal()%>
+                    <%=actividades.get(i).getDuracion()%>
                 </td>
                 <td>
-                    <%=actividades.get(i).getTipoRol().getRol() %>
+                    <%=actividades.get(i).getDuracionReal()%>
+                </td>
+                <td>
+                    <%=actividades.get(i).getTipoRol()%>
                 </td>
             </tr>
-        <%}%>
+            <%}%>
         </table>
     </center>
-    </body>
+</body>
 </html>

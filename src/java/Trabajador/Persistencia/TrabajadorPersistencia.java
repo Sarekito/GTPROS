@@ -18,7 +18,7 @@ public class TrabajadorPersistencia {
 
         @Override
         public Trabajador convert(ResultSet result) throws SQLException {
-            return new Trabajador(result.getString(1), result.getString(2), Categoria.get(result.getInt(4)));
+            return new Trabajador(result.getString(1), result.getString(2), Categoria.get(result.getInt(3)));
         }
 
         @Override

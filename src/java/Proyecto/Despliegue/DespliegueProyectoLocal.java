@@ -76,4 +76,6 @@ public interface DespliegueProyectoLocal {
 
     boolean tieneEtapasAbiertas(String nombreProyecto);
 
+    public boolean isAsignado(Actividad get, String user);
+
 }

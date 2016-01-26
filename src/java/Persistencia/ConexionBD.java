@@ -73,7 +73,6 @@ public class ConexionBD {
     public boolean existe(String sql) throws SQLException {
         Statement statement = createStatement();
         ResultSet result = statement.executeQuery(sql);
-
         return result.next();
     }
 

@@ -18,12 +18,14 @@ public class EtapaPersistencia {
         @Override
         public Etapa convert(ResultSet result) throws SQLException {
             Etapa etapa = new Etapa();
-
-            etapa.setNombre(result.getString("nombre"));
-            etapa.setNumero(result.getInt("numero"));
+            etapa.setNombre(result.getString("nombreProyecto"));
+            etapa.setNumero(result.getInt("numeroEtapa"));
             etapa.setFechaInicio(result.getDate("fechaInicio"));
             etapa.setFechaFin(result.getDate("fechaFin"));
             etapa.setFechaFinReal(result.getDate("fechaFinReal"));
+            etapa.setDuracion(result.getInt("duracion"));
+            etapa.setDuracionReal(result.getInt("duracionReal"));
+            etapa.setEstado(result.getString("estado"));
 
             return etapa;
         }
@@ -52,23 +54,11 @@ public class EtapaPersistencia {
         conexion.close();
     }
 
-    public static ArrayList<Etapa> getEtapasCerradasProyecto(String nombreProyecto) throws SQLException {
-        String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "' AND estado = 'cerrado'";
-
+    public static ArrayList<Etapa> getEtapasProyecto(String nombreProyecto) throws SQLException {
+        String sql = "SELECT * FROM Etapa WHERE nombreProyecto = '" + nombreProyecto + "'";
         ConexionBD conexion = new ConexionBD();
         ArrayList<Etapa> etapas = conexion.searchAll(etapaConverter, sql);
         conexion.close();
-
-        return etapas;
-    }
-
-    public ArrayList<Etapa> getEtapasProyecto(String nombreProyecto) throws SQLException {
-        String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "'";
-
-        ConexionBD conexion = new ConexionBD();
-        ArrayList<Etapa> etapas = conexion.searchAll(etapaConverter, sql);
-        conexion.close();
-
         return etapas;
     }
 

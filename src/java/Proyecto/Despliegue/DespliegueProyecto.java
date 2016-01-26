@@ -253,7 +253,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     public ArrayList<Etapa> getEtapas(String nombre) {
         ArrayList<Etapa> cerrados = null;
         try {
-            cerrados = EtapaPersistencia.getEtapasCerradasProyecto(nombre);
+            cerrados = EtapaPersistencia.getEtapasProyecto(nombre);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -327,5 +327,18 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
         } catch (SQLException ex) {
             return false;
         }
+    }
+
+    @Override
+    public boolean isAsignado(Actividad get, String user) {
+
+        try {
+            return ActividadPersistencia.isAsignado(get, user);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+ 
+            return false;
+        
     }
 }
