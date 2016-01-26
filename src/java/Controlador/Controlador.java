@@ -381,7 +381,7 @@ public class Controlador extends HttpServlet {
 
     private String registroTrabajador(HttpServletRequest request) {
         Categoria cat = Categoria.get(Integer.parseInt(request.getParameter("nivel")));
-        Trabajador tr = new Trabajador(request.getParameter("usuario"), request.getParameter("clave"), null, cat);
+        Trabajador tr = new Trabajador(request.getParameter("usuario"), request.getParameter("clave"), cat);
         boolean existe = despliegueTrabajador.buscaTrabajador(tr.getUser());
         if (!existe) {
             despliegueTrabajador.registrarTrabajador(tr);

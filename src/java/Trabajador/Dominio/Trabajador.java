@@ -13,13 +13,11 @@ public class Trabajador {
 
     private String user;
     private String password;
-    private Rol tipoRol;
     private Categoria categoria;
 
-    public Trabajador(String user, String password, Rol tipoRol, Categoria categoria) {
+    public Trabajador(String user, String password, Categoria categoria) {
         this.user = user;
         this.password = password;
-        this.tipoRol = tipoRol;
         this.categoria = categoria;
     }
 
@@ -37,14 +35,6 @@ public class Trabajador {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Rol getTipoRol() {
-        return tipoRol;
-    }
-
-    public void setTipoRol(Rol tipoRol) {
-        this.tipoRol = tipoRol;
     }
 
     public Categoria getCategoria() {

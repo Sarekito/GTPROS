@@ -3,7 +3,6 @@ package Trabajador.Persistencia;
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Trabajador.Dominio.Categoria;
-import Trabajador.Dominio.Rol;
 import Trabajador.Dominio.Trabajador;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,7 +18,7 @@ public class TrabajadorPersistencia {
 
         @Override
         public Trabajador convert(ResultSet result) throws SQLException {
-            return new Trabajador(result.getString(1), result.getString(2), Rol.get(result.getString(3)), Categoria.get(result.getInt(4)));
+            return new Trabajador(result.getString(1), result.getString(2), Categoria.get(result.getInt(4)));
         }
 
         @Override
