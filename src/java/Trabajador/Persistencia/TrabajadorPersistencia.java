@@ -24,7 +24,7 @@ public class TrabajadorPersistencia {
 
         @Override
         public String createInsertQuery(Trabajador tr) {
-            return "INSERT INTO Trabajador VALUES ('" + tr.getUser() + "', '" + tr.getPassword() + "', '" + tr.getTipoRol().name() + "', " + tr.getCategoria().getCategoria() + ")";
+            return "INSERT INTO Trabajador VALUES ('" + tr.getUser() + "', '" + tr.getPassword() + "', NULL, " + tr.getCategoria().getCategoria() + ")";
         }
     };
 
