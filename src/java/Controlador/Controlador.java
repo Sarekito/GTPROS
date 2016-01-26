@@ -11,6 +11,7 @@ import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.TrabajadoresProyecto;
 import Trabajador.Despliegue.DespliegueTrabajadorLocal;
 import Trabajador.Dominio.Administrador;
+import Trabajador.Dominio.Categoria;
 import Trabajador.Dominio.Rol;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
@@ -379,7 +380,8 @@ public class Controlador extends HttpServlet {
     }
 
     private String registroTrabajador(HttpServletRequest request) {
-        Trabajador tr = new Trabajador(request.getParameter("usuario"), request.getParameter("clave"), Rol.get(request.getParameter("rol")), Rol.get(request.getParameter("rol")).getCategoria());
+        Categoria cat = Categoria.get(Integer.parseInt(request.getParameter("nivel")));
+        Trabajador tr = new Trabajador(request.getParameter("usuario"), request.getParameter("clave"), null, cat);
         boolean existe = despliegueTrabajador.buscaTrabajador(tr.getUser());
         if (!existe) {
             despliegueTrabajador.registrarTrabajador(tr);

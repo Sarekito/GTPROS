@@ -39,7 +39,7 @@
                         Seleccionar rol
                     </td>
                 </tr>
-                <tr>
+                <!--<tr>
                     <td>
                         <input type="radio" name="rol" value="JefeProyecto" checked="checked"  />Jefe de Proyecto
                     </td>
@@ -72,6 +72,24 @@
                  <tr>
                     <td>
                         <input type="radio" name="rol" value="Probador" />Probador
+                    </td>
+                </tr>-->
+                <tr>
+                    <td>Nivel 
+                        <select id="nivel" name="nivel">
+                            <option value="1">
+                                1
+                            </option>
+                            <option value="2">
+                                2
+                            </option>
+                            <option value="3">
+                                3
+                            </option>
+                            <option value="4" selected="selected">
+                                4
+                            </option>
+                        </select>
                     </td>
                 </tr>
             </table>
