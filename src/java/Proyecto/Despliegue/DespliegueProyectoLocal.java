@@ -7,6 +7,7 @@ import Proyecto.Dominio.ActividadTrabajador;
 import Proyecto.Dominio.Etapa;
 import Proyecto.Dominio.InformeSeguimiento;
 import Proyecto.Dominio.Proyecto;
+import Proyecto.Dominio.Tarea;
 import Proyecto.Dominio.TrabajadoresProyecto;
 import Trabajador.Dominio.Trabajador;
 import java.util.ArrayList;
@@ -79,5 +80,7 @@ public interface DespliegueProyectoLocal {
     public boolean isAsignado(Actividad get, String user);
 
     public ArrayList<Actividad> getActividadesEtapa(Etapa et);
+
+    public ArrayList<Tarea> getInformesActividad(Actividad act);
 
 }

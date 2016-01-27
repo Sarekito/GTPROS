@@ -1,8 +1,16 @@
 package Proyecto.Persistencia;
 
 import Persistencia.ConexionBD;
+import Proyecto.Dominio.Actividad;
+import Proyecto.Dominio.Tarea;
+import Proyecto.Dominio.TipoTarea;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.sql.Date;
 
 /**
  *
@@ -12,9 +20,26 @@ public class TareaPersistencia {
 
     public static void guardarTareaIntroducida(String proyecto, String etapa, String actividad, String user, int numTarea, Date semana, String tipoTarea, int duracion) throws SQLException {
         String sql = "INSERT INTO Tarea VALUES ('" + proyecto + "', " + Integer.parseInt(etapa) + ", " + Integer.parseInt(actividad) + ", '" + user + "', " + numTarea + ", '" + semana + "','" + tipoTarea + "'," + duracion + ")";
-        
         ConexionBD conexion = new ConexionBD();
         conexion.execute(sql);
         conexion.close();
+    }
+
+    public static ArrayList<Tarea> getDeActividad(Actividad act) throws SQLException, ClassNotFoundException {
+        ArrayList<Tarea> tareas = new ArrayList<>();
+        String sql = "select * from Tarea where nombreProyecto = '" + act.getNombre() + "' and numeroEtapa = " + act.getNumero() + " and idActividad = " + act.getId();
+        String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
+        String DATABASE_URL = "jdbc:mysql://localhost:3306/PGP_grupo11?zeroDateTimeBehavior=convertToNull";
+        String DATABASE_USER = "PGP_grupo11";
+        String DATABASE_PASSWORD = "P6AbQA8Z";
+        Class.forName(DATABASE_DRIVER);
+        Connection conexion = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery(sql);
+        while (rs.next()) {
+            Tarea t = new Tarea(rs.getString("nombreProyecto"), rs.getInt("numeroEtapa"), rs.getInt("idActividad"), rs.getString("trabajador"), rs.getDate("semana"), TipoTarea.get(rs.getString("tipoTarea")), rs.getInt("duracion"), rs.getString("estado"));
+            tareas.add(t);
+        }
+        return tareas;
     }
 }

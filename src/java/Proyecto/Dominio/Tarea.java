@@ -12,23 +12,23 @@ public class Tarea {
     private int numeroEtapa;
     private int idActividad;
     private String trabajador;
-    private int numTarea;
     private Date semana;
     private TipoTarea tipoTarea;
     private int duracion;
+    private String estado;
 
     public Tarea() {
     }
 
-    public Tarea(String nombreProyecto, int numeroEtapa, int idActividad, String trabajador, int numTarea, Date semana, TipoTarea tipoTarea, int duracion) {
+    public Tarea(String nombreProyecto, int numeroEtapa, int idActividad, String trabajador, Date semana, TipoTarea tipoTarea, int duracion, String estado) {
         this.nombreProyecto = nombreProyecto;
         this.numeroEtapa = numeroEtapa;
         this.idActividad = idActividad;
         this.trabajador = trabajador;
-        this.numTarea = numTarea;
         this.semana = semana;
         this.tipoTarea = tipoTarea;
         this.duracion = duracion;
+        this.estado = estado;
     }
 
     public String getNombreProyecto() {
@@ -63,14 +63,6 @@ public class Tarea {
         this.trabajador = trabajador;
     }
 
-    public int getNumTarea() {
-        return numTarea;
-    }
-
-    public void setNumTarea(int numTarea) {
-        this.numTarea = numTarea;
-    }
-
     public Date getSemana() {
         return semana;
     }
@@ -93,5 +85,13 @@ public class Tarea {
 
     public void setDuracion(int duracion) {
         this.duracion = duracion;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

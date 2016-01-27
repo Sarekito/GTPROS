@@ -9,6 +9,7 @@ import Proyecto.Dominio.Etapa;
 import Proyecto.Dominio.InformeSeguimiento;
 
 import Proyecto.Dominio.Proyecto;
+import Proyecto.Dominio.Tarea;
 import Proyecto.Dominio.TrabajadoresProyecto;
 import Trabajador.Despliegue.DespliegueTrabajadorLocal;
 import Trabajador.Dominio.Administrador;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -51,7 +54,7 @@ public class Controlador extends HttpServlet {
     private ArrayList<Trabajador> elegidos;
     private ArrayList<Etapa> etapas;
     private ArrayList<Actividad> actividades;
-    private ArrayList<Actividad> actEtapa;
+    private ArrayList<Actividad> actEtapa, actividadesC, tmp2;
     private ArrayList<ActividadTrabajador> actividadTrabajador;
     ArrayList<Etapa> etapasC;
 
@@ -645,31 +648,14 @@ public class Controlador extends HttpServlet {
     public String mostrarInformes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-
-        if (trabajador == null) {
-            return "/index.jsp";
+        Actividad act;
+        if (trabajador.getUser().equals(p.getJefe())) {
+            act = tmp2.get(Integer.parseInt(request.getParameter("elegida")));
+            ArrayList<Tarea> tareas = despliegueProyecto.getInformesActividad(act);
+            request.setAttribute("tareas", tareas);
+        } else {
+            act = actividadesC.get(Integer.parseInt(request.getParameter("elegida")));
         }
-
-        String nombreProyecto = request.getParameter("nombreProyecto");
-        if (nombreProyecto == null) {
-            request.setAttribute("error", "No se ha indicado un nombre de proyecto.");
-            return "/accesoUsuario.jsp";
-        }
-
-        Proyecto proyecto = despliegueProyecto.getProyecto(nombreProyecto);
-        if (proyecto == null) {
-            request.setAttribute("error", "No existe un proyecto con el nombre '" + nombreProyecto + "'.");
-            return "/accesoUsuario.jsp";
-        }
-
-        if (!trabajador.getUser().equals(proyecto.getJefe())) {
-            request.setAttribute("error", "No puedes acceder a un proyecto que no es tuyo");
-            return "/accesoUsuario.jsp";
-        }
-
-        ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesProyecto(proyecto.getNombre());
-        request.setAttribute("informes", informes);
-        request.setAttribute("proyecto", proyecto);
 
         return "/informes.jsp";
     }
@@ -1042,21 +1028,24 @@ public class Controlador extends HttpServlet {
         return "/verActividadesAFinalizar.jsp";
     }
 
-    private String finalizarEtapas(HttpServletRequest request) throws EtapaConActividadesAbiertasException {
+    private String finalizarEtapas(HttpServletRequest request) {
         int elegir = Integer.parseInt(request.getParameter("elegir"));
         Etapa et = etapasC.get(elegir);
         request.setAttribute("elegir", elegir);
         request.setAttribute("trabajador", trabajador);
-        ArrayList <Actividad> act = despliegueProyecto.getActividadesEtapa(et);
-        for (int i = 0;i<act.size();i++){
-            if (!act.get(i).getEstado().equals("finalizado")){
+        ArrayList<Actividad> act = despliegueProyecto.getActividadesEtapa(et);
+        for (int i = 0; i < act.size(); i++) {
+            if (!act.get(i).getEstado().equals("finalizado")) {
                 return "/errorCierreEtapa.jsp";
             }
         }
-        despliegueProyecto.cerrarEtapa(et.getNombre(), et.getNumero());
+        try {
+            despliegueProyecto.cerrarEtapa(et.getNombre(), et.getNumero());
+        } catch (EtapaConActividadesAbiertasException ex) {
+            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return "/etapaCerrada";
     }
-   
 
     private String finalizarProyecto(HttpServletRequest request) {
         return "/verProyectoAFinalizar.jsp";
@@ -1165,10 +1154,10 @@ public class Controlador extends HttpServlet {
         if (trabajador == null) {
             return "/index.jsp";
         }
-        Proyecto p = cerrados.get(Integer.parseInt(request.getParameter("eleccion")));
+        p = cerrados.get(Integer.parseInt(request.getParameter("eleccion")));
         etapasC = despliegueProyecto.getEtapas(p.getNombre());
-        ArrayList<Actividad> actividadesC = new ArrayList<>();
-        ArrayList<Actividad> tmp2 = new ArrayList<>();
+        actividadesC = new ArrayList<>();
+        tmp2 = new ArrayList<>();
         for (int i = 0; i < etapasC.size(); i++) {
             ArrayList<Actividad> tmp = new ArrayList<>();
             tmp = despliegueProyecto.getActividadesCerrados(p.getNombre(), etapasC.get(i).getNumero());
@@ -1176,17 +1165,16 @@ public class Controlador extends HttpServlet {
                 tmp2.add(tmp.get(j));
             }
         }
-        java.util.Date hoy =  new java.util.Date();
-        if(!p.getJefe().equals(trabajador.getUser())){
-            for (int i = 0;i<tmp2.size();i++){
-                System.out.println(tmp2.get(i).getFechaComienzo()+" "+hoy.toString());
-                if (despliegueProyecto.isAsignado(tmp2.get(i), trabajador.getUser()) && tmp2.get(i).getFechaComienzo().before(hoy)){
+        java.util.Date hoy = new java.util.Date();
+        if (!p.getJefe().equals(trabajador.getUser())) {
+            for (int i = 0; i < tmp2.size(); i++) {
+                System.out.println(tmp2.get(i).getFechaComienzo() + " " + hoy.toString());
+                if (despliegueProyecto.isAsignado(tmp2.get(i), trabajador.getUser()) && tmp2.get(i).getFechaComienzo().before(hoy)) {
                     actividadesC.add(tmp2.get(i));
                 }
             }
-        request.setAttribute("actividades", actividadesC);
-        }
-        else{
+            request.setAttribute("actividades", actividadesC);
+        } else {
             request.setAttribute("actividades", tmp2);
         }
         request.setAttribute("trabajador", trabajador);

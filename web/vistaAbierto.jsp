@@ -67,6 +67,7 @@
             <%}%>
             <%ArrayList<Actividad> actividades = (ArrayList<Actividad>) request.getAttribute("actividades");%>
         </table>
+        <%request.setAttribute("trabajador", t);%>
         <h1>Actividades</h1>
         <table border = "1">
             <tr>
@@ -87,6 +88,9 @@
                 </td>
                 <td>
                     Rol
+                </td>
+                <td>
+                    Ver informes
                 </td>
             </tr>
             <%for (int i = 0; i < actividades.size(); i++) {%>
@@ -112,6 +116,13 @@
                 </td>
                 <td>
                     <%=actividades.get(i).getTipoRol()%>
+                </td>
+                <td>
+                    <form action="Controlador" method="POST">
+                        <input type="text" hidden="hidden" name="elegida" value="<%=i%>">
+                        <input type="hidden" name="accion" value="mostrarInformes" readonly="readonly" />
+                        <input type="submit" value="Ver" />
+                    </form>
                 </td>
             </tr>
             <%}%>

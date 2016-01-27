@@ -7,6 +7,7 @@ import Proyecto.Dominio.ActividadTrabajador;
 import Proyecto.Dominio.Etapa;
 import Proyecto.Dominio.InformeSeguimiento;
 import Proyecto.Dominio.Proyecto;
+import Proyecto.Dominio.Tarea;
 import Proyecto.Dominio.TrabajadoresProyecto;
 import Proyecto.Persistencia.TareaPersistencia;
 import Proyecto.Persistencia.ActividadPersistencia;
@@ -296,7 +297,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     @Override
     public void guardarTareaIntroducida(String proyecto, String etapa, String actividad, String user, int numTarea, Date semana, String tipoTarea, int duracion) {
         try {
-            TareaPersistencia.guardarTareaIntroducida(proyecto, etapa, actividad, user, numTarea, semana, tipoTarea, duracion);
+            TareaPersistencia.guardarTareaIntroducida(proyecto, etapa, actividad, user, numTarea, (java.sql.Date) semana, tipoTarea, duracion);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -351,5 +352,16 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return act;
+    }
+
+    @Override
+    public ArrayList<Tarea> getInformesActividad(Actividad act) {
+        ArrayList<Tarea> tar = null; 
+        try {
+            tar = TareaPersistencia.getDeActividad(act);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }          
+        return tar;
     }
 }

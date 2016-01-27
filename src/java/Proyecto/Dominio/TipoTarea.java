@@ -6,12 +6,12 @@ package Proyecto.Dominio;
  */
 public enum TipoTarea {
 
-    TratoUsuarios,
-    Reuniones,
-    LecturaDocumentacion,
-    ElaboracionDocumentacion,
-    TareasProgramas,
-    Otros;
+    tratoUsuarios,
+    reuniones,
+    documentacion,
+    elaboracion,
+    programas,
+    otros;
 
     public static TipoTarea get(String value) {
         for (TipoTarea e : values()) {
