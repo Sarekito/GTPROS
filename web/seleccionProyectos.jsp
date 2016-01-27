@@ -50,7 +50,7 @@
 <script>
     $(document).ready(function () {
         $("#tabla tr").find("td:eq(4)").find("input").click(function () {
-            var nombreP = $(this).parent().parent().find("td:eq(0)").val();
+            var nombreP = $(this).parent().parent().find("td:eq(0)").text();
             if(nombreP==""){
                 alert("Error en la eleccion del nombre de Proyecto");
             } else{
