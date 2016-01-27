@@ -82,7 +82,11 @@
                     <%=actividades.get(i).getDuracion()%>
                 </td>
                 <td>
+                    <%if(actividades.get(i).getDuracionReal()==null){%>
+                    <%="realizando"%>
+                    <%} else {%>
                     <%=actividades.get(i).getDuracionReal()%>
+                    <%}%>
                 </td>
                 <td>
                     <%=actividades.get(i).getTipoRol()%>
@@ -90,6 +94,11 @@
             </tr>
             <%}%>
         </table>
+        <br><br>
+        <form action="Controlador" method="POST">
+            <input type="hidden" name="accion" value="aAcceso" readonly="readonly" />
+            <input type="submit" value="Ir a inicio" />
+        </form>
     </center>
 </body>
 </html>
