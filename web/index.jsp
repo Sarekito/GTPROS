@@ -40,7 +40,15 @@
             <input type="hidden" name="accion" value="Acceso"/>
             <input type="submit" value="Entrar" />
         </form>
-        <a href="indexAdministrador.jsp">Entrar como administrador</a>
+        <!--<a href="indexAdministrador.jsp">Entrar como administrador</a>-->
+        
+        <br>
+        <br>
+        <br><a href="Documentacion/Diseno.pdf">Documento de Analisis y Diseño</a>
+        <br><a href="Documentacion/Documento de Seguimiento.pdf">Documento de Seguimiento</a>
+        <br><a href="Documentacion/Implementacion.pdf">Documento de Implementacion</a>
+        <br><a href="Documentacion/Manual de Instalacion.pdf">Manual de Instalacion</a>
+        <br><a href="Documentacion/Manual de usuario.pdf">Manual de usuario</a>
     </center>
 </body>
 </html>

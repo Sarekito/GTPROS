@@ -268,7 +268,12 @@ public class Controlador extends HttpServlet {
 
         HttpSession sesion = request.getSession();
         sesion.setAttribute("trabajador", trabajador);
-        return "/accesoUsuario.jsp";
+        //Old version
+        //return "/accesoUsuario.jsp";
+        //New version
+        ArrayList<Proyecto> selectorProy = despliegueProyecto.getMisProyectosActuales(trabajador);
+        sesion.setAttribute("misProyectosActuales", selectorProy);
+        return "/seleccionProyectos.jsp";
     }
 
     private String vacaciones(HttpServletRequest request) {
@@ -550,7 +555,7 @@ public class Controlador extends HttpServlet {
             return "/errorFechasEtapa.jsp";
         } else {
             actEtapa = new ArrayList<>();
-            etapas.add(new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null, "pendiente"));
+            etapas.add(new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null, 0, 0, "pendiente"));
             return "/actividades.jsp";
         }
     }
@@ -945,7 +950,7 @@ public class Controlador extends HttpServlet {
             return "/errorFechasEtapa.jsp";
         } else {
             actEtapa = new ArrayList<>();
-            Etapa etapa = new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null, "pendiente");
+            Etapa etapa = new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null, 0, 0, "pendiente");
             if (etapas.get(etapas.size() - 1).getFechaFin().before(etapa.getFechaInicio())) {
                 etapas.add(etapa);
                 return "/actividades.jsp";
