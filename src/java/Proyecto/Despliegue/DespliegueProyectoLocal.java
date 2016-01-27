@@ -78,4 +78,6 @@ public interface DespliegueProyectoLocal {
 
     public boolean isAsignado(Actividad get, String user);
 
+    public ArrayList<Actividad> getActividadesEtapa(Etapa et);
+
 }

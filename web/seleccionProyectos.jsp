@@ -19,7 +19,7 @@
     <center>
         <h1>Tus proyectos abiertos</h1>
         <br>
-        <table id="tabla">
+        <table id="tabla" border = "4">
             <tr>
                 <td>Proyecto</td>
                 <td>Fecha inicio</td>
@@ -37,26 +37,41 @@
                 <td><%=p.get(i).getFechaInicio()%></td>
                 <td><%=p.get(i).getJefe()%></td>
                 <td><%=p.get(i).getEstado()%></td>
-                <td><input type="button" value="Seleccionar"></td>
+                <td><form action="Controlador" method ="post">
+                        <input type="hidden" name="accion" value="infoProyectoAbierto" readonly="readonly" />
+                        <input type="hidden" name="eleccion" value="<%=i%>" readonly="readonly" />
+                    <input type="submit" value="Elegir" /></td>
+                </form>
             </tr>
             <% }%>
         </table>
+        <br>
+        <hr color = "gray" size="5px">
+        <br>
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="actividadesPentiendes" readonly="readonly" />
+            <input type="submit" value="             Ver actividades pendientes             " />
+        </form>
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="proyectosCerrados" readonly="readonly" />
+            <input type="submit" value="Obtener informes sobre proyectos cerrados" />
+        </form>
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="vacaciones" readonly="readonly" />
+            <input type="submit" value="                  Reservar Vacaciones                 " />
+        </form>
     </center>
-    <form id="formulario" action="Controlador" method ="post">
-        <input type="hidden" name="accion" value="adquiereRol" readonly="readonly" />
-        <input type="hidden" name="eleccion" id="eleccion" readonly="readonly" />
-    </form>
 </body>
 <script>
     $(document).ready(function () {
-        $("#tabla tr").find("td:eq(4)").find("input").click(function () {
-            var nombreP = $(this).parent().parent().find("td:eq(0)").text();
-            if(nombreP==""){
-                alert("Error en la eleccion del nombre de Proyecto");
-            } else{
-                 $("#eleccion").val(nombreP);
-                 $("#formulario").submit();
-        });
+    $("#tabla tr").find("td:eq(4)").find("input").click(function () {
+    var nombreP = $(this).parent().parent().find("td:eq(0)").text();
+            if (nombreP == ""){
+    alert("Error en la eleccion del nombre de Proyecto");
+    } else{
+    $("#eleccion").val(nombreP);
+            $("#formulario").submit();
+    });
     });
 </script>
 </html>

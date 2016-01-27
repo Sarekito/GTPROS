@@ -341,4 +341,15 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
             return false;
         
     }
+
+    @Override
+    public ArrayList<Actividad> getActividadesEtapa(Etapa et) {
+        ArrayList<Actividad> act = null;
+        try {
+            act = ActividadPersistencia.getActividadesEtapa(et);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return act;
+    }
 }

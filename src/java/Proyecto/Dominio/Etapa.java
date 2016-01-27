@@ -14,13 +14,13 @@ public class Etapa {
     private Date fechaFin;
     private Date fechaFinReal;
     private int duracion;
-    private int duracionReal;
+    private Integer duracionReal;
     private String estado;
 
     public Etapa() {
     }
 
-    public Etapa(String nombre, int numero, Date fechaInicio, Date fechaFin, Date fechaFinReal, int duracion, int duracionReal, String estado) {
+    public Etapa(String nombre, int numero, Date fechaInicio, Date fechaFin, Date fechaFinReal, int duracion, Integer duracionReal, String estado) {
         this.nombre = nombre;
         this.numero = numero;
         this.fechaInicio = fechaInicio;
@@ -43,11 +43,11 @@ public class Etapa {
         this.duracion = duracion;
     }
 
-    public int getDuracionReal() {
+    public Integer getDuracionReal() {
         return duracionReal;
     }
 
-    public void setDuracionReal(int duracionReal) {
+    public void setDuracionReal(Integer duracionReal) {
         this.duracionReal = duracionReal;
     }
 

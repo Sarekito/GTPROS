@@ -2,6 +2,7 @@ package Proyecto.Persistencia;
 
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
+import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.Etapa;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -61,6 +62,7 @@ public class EtapaPersistencia {
         conexion.close();
         return etapas;
     }
+
 
     public ArrayList<Etapa> getEtapasAbiertasProyecto(String nombreProyecto) throws SQLException {
         String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "' AND estado <> 'cerrado'";

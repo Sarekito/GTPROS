@@ -3,6 +3,7 @@ package Proyecto.Persistencia;
 import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Actividad;
+import Proyecto.Dominio.Etapa;
 import Trabajador.Dominio.Rol;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -121,7 +122,7 @@ public class ActividadPersistencia {
     }
 
     public static ArrayList<Actividad> actividadesAbiertasDe(String user) throws SQLException {
-        String sql = "Select A.* from Actividad A, ActividadTrabajador AP where A.estado = 'realizando' and AP.nombreTrabajador = '" + user + "' and A.nombre = AP.nombreProyecto and A.numero = AP.numeroEtapa and A.id = AP.idActividad";
+        String sql = "Select A.* from Actividad A, ActividadTrabajador AP where A.estado = 'realizando' and AP.nombreTrabajador = '" + user + "' and A.nombreProyecto = AP.nombreProyecto and A.numeroEtapa = AP.numeroEtapa and A.idActividad = AP.idActividad";
 
         ConexionBD conexion = new ConexionBD();
         ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
@@ -153,5 +154,13 @@ public class ActividadPersistencia {
         System.out.println(sql);
         ConexionBD conexion = new ConexionBD();
         return conexion.existe(sql);
+    }
+
+    public static ArrayList<Actividad> getActividadesEtapa(Etapa et) throws SQLException {
+        String sql = "SELECT * FROM Actividad  WHERE nombreProyecto = '" + et.getNombre() + "' and numeroEtapa = '"+et.getNumero()+"'";
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
+        conexion.close();
+        return actividades;
     }
 }

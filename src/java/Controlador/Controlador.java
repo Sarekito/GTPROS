@@ -1,5 +1,6 @@
 package Controlador;
 
+import Excepciones.EtapaConActividadesAbiertasException;
 import Proyecto.Despliegue.DespliegueProyectoLocal;
 
 import Proyecto.Dominio.Actividad;
@@ -38,7 +39,7 @@ public class Controlador extends HttpServlet {
 
     @EJB
     private DespliegueTrabajadorLocal despliegueTrabajador;
-
+    Proyecto p;
     private Trabajador trabajador;
     private ArrayList<Trabajador> trabajadores;
     private ArrayList<Proyecto> cerrados;
@@ -52,6 +53,7 @@ public class Controlador extends HttpServlet {
     private ArrayList<Actividad> actividades;
     private ArrayList<Actividad> actEtapa;
     private ArrayList<ActividadTrabajador> actividadTrabajador;
+    ArrayList<Etapa> etapasC;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -271,8 +273,8 @@ public class Controlador extends HttpServlet {
         //Old version
         //return "/accesoUsuario.jsp";
         //New version
-        ArrayList<Proyecto> selectorProy = despliegueProyecto.getMisProyectosActuales(trabajador);
-        sesion.setAttribute("misProyectosActuales", selectorProy);
+        cerrados = despliegueProyecto.getMisProyectosActuales(trabajador);
+        sesion.setAttribute("misProyectosActuales", cerrados);
         return "/seleccionProyectos.jsp";
     }
 
@@ -1040,9 +1042,21 @@ public class Controlador extends HttpServlet {
         return "/verActividadesAFinalizar.jsp";
     }
 
-    private String finalizarEtapas(HttpServletRequest request) {
-        return "/verEtapasAFinalizar.jsp";
+    private String finalizarEtapas(HttpServletRequest request) throws EtapaConActividadesAbiertasException {
+        int elegir = Integer.parseInt(request.getParameter("elegir"));
+        Etapa et = etapasC.get(elegir);
+        request.setAttribute("elegir", elegir);
+        request.setAttribute("trabajador", trabajador);
+        ArrayList <Actividad> act = despliegueProyecto.getActividadesEtapa(et);
+        for (int i = 0;i<act.size();i++){
+            if (!act.get(i).getEstado().equals("finalizado")){
+                return "/errorCierreEtapa.jsp";
+            }
+        }
+        despliegueProyecto.cerrarEtapa(et.getNombre(), et.getNumero());
+        return "/etapaCerrada";
     }
+   
 
     private String finalizarProyecto(HttpServletRequest request) {
         return "/verProyectoAFinalizar.jsp";
@@ -1152,7 +1166,7 @@ public class Controlador extends HttpServlet {
             return "/index.jsp";
         }
         Proyecto p = cerrados.get(Integer.parseInt(request.getParameter("eleccion")));
-        ArrayList<Etapa> etapasC = despliegueProyecto.getEtapas(p.getNombre());
+        etapasC = despliegueProyecto.getEtapas(p.getNombre());
         ArrayList<Actividad> actividadesC = new ArrayList<>();
         ArrayList<Actividad> tmp2 = new ArrayList<>();
         for (int i = 0; i < etapasC.size(); i++) {
@@ -1175,7 +1189,9 @@ public class Controlador extends HttpServlet {
         else{
             request.setAttribute("actividades", tmp2);
         }
+        request.setAttribute("trabajador", trabajador);
+        request.setAttribute("proyecto", p);
         request.setAttribute("etapas", etapasC);
-        return "/vistaCerrados.jsp";
+        return "/vistaAbierto.jsp";
     }
 }
