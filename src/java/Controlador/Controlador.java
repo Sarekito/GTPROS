@@ -975,7 +975,6 @@ public class Controlador extends HttpServlet {
 
         ArrayList<Actividad> sobreesfuerzo = new ArrayList<>();
         sobreesfuerzo = despliegueProyecto.getSobreesfuerzo(trabajador.getUser());
-        System.out.println(sobreesfuerzo);
         request.setAttribute("sobreesfuerzo", sobreesfuerzo);
         return "/sobreesfuerzo.jsp";
     }
@@ -1158,11 +1157,11 @@ public class Controlador extends HttpServlet {
                 tmp2.add(tmp.get(j));
             }
         }
-        System.out.println(tmp2);
+        java.util.Date hoy =  new java.util.Date();
         if(!p.getJefe().equals(trabajador.getUser())){
             for (int i = 0;i<tmp2.size();i++){
-                System.out.println(despliegueProyecto.isAsignado(tmp2.get(i), trabajador.getUser()));
-                if (despliegueProyecto.isAsignado(tmp2.get(i), trabajador.getUser())){
+                System.out.println(tmp2.get(i).getFechaComienzo()+" "+hoy.toString());
+                if (despliegueProyecto.isAsignado(tmp2.get(i), trabajador.getUser()) && tmp2.get(i).getFechaComienzo().before(hoy)){
                     actividadesC.add(tmp2.get(i));
                 }
             }
@@ -1172,7 +1171,6 @@ public class Controlador extends HttpServlet {
             request.setAttribute("actividades", tmp2);
         }
         request.setAttribute("etapas", etapasC);
-        
         return "/vistaCerrados.jsp";
     }
 }
