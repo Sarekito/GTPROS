@@ -1,3 +1,4 @@
+<%@page import="Proyecto.Dominio.TipoTarea"%>
 <%@page import="Proyecto.Dominio.Tarea"%>
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -37,7 +38,7 @@
                     <%=tareas.get(i).getIdActividad()%>
                 </td>
                 <td>
-                    <%=tareas.get(i).getTipoTarea()%>
+                    <%=TipoTarea.getLegible(tareas.get(i).getTipoTarea().toString())%>
                 </td>
                 <td>
                     <%=tareas.get(i).getDuracion()%>
