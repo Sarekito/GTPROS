@@ -76,6 +76,9 @@ public class Controlador extends HttpServlet {
             case "generaActividadTrabajador":
                 url = otroTrabajador(request);
                 break;
+            case "guardarInforme":
+                url = guardarInforme(request);
+                break;
             case "proyectosAbiertos":
                 url = proyectosAbiertos(request);
                 break;
@@ -651,17 +654,28 @@ public class Controlador extends HttpServlet {
 
     public String mostrarInformes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
+        tareas = new ArrayList<>();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         Actividad act;
-        request.setAttribute("trabajador", trabajador);
+        sesion.setAttribute("trabajador", trabajador);
         if (trabajador.getUser().equals(p.getJefe())) {
             act = tmp2.get(Integer.parseInt(request.getParameter("elegida")));
             tareas = despliegueProyecto.getInformesActividad(act);
-            request.setAttribute("tareas", tareas);
+            sesion.setAttribute("tareas", tareas);
         } else {
             act = actividadesC.get(Integer.parseInt(request.getParameter("elegida")));
+            ArrayList<Tarea> tmptareas = despliegueProyecto.getInformesActividadMios(act, trabajador);
+            int horas = despliegueProyecto.getDedicacion(act, trabajador);
+            request.getSession().setAttribute("horas", horas);
+            java.util.Date hoy = new java.util.Date();
+            for (int i = 0; i < tmptareas.size(); i++) {
+                if (!tmptareas.get(i).getSemana().after(hoy)) {
+                    tareas.add(tmptareas.get(i));
+                }
+            }
+            sesion.setAttribute("tareas", tareas);
         }
-
+        sesion.setAttribute("actividad", act);
         return "/informes.jsp";
     }
 
@@ -669,7 +683,7 @@ public class Controlador extends HttpServlet {
         int tar = Integer.parseInt(request.getParameter("tareasAcepto"));
         System.out.println(tareas.get(tar).getIdActividad());
         despliegueProyecto.aprobarInforme(tareas.get(tar));
-        request.setAttribute("trabajador", trabajador);
+        request.getSession().setAttribute("trabajador", trabajador);
         return "/informesAprobados.jsp";
     }
 
@@ -1126,6 +1140,7 @@ public class Controlador extends HttpServlet {
         }
         int selected = Integer.parseInt(request.getParameter("eleccion"));
         p = cerrados.get(selected);
+        sesion.setAttribute("proyecto", p);
         etapasC = despliegueProyecto.getEtapas(p.getNombre());
         actividadesC = new ArrayList<>();
         tmp2 = new ArrayList<>();
@@ -1139,20 +1154,45 @@ public class Controlador extends HttpServlet {
         java.util.Date hoy = new java.util.Date();
         if (!p.getJefe().equals(trabajador.getUser())) {
             for (int i = 0; i < tmp2.size(); i++) {
-                System.out.println(tmp2.get(i).getFechaComienzo() + " " + hoy.toString());
                 if (despliegueProyecto.isAsignado(tmp2.get(i), trabajador.getUser()) && tmp2.get(i).getFechaComienzo().before(hoy)) {
                     actividadesC.add(tmp2.get(i));
                 }
             }
-            request.setAttribute("actividades", actividadesC);
+            sesion.setAttribute("actividades", actividadesC);
         } else {
-            request.setAttribute("actividades", tmp2);
+            sesion.setAttribute("actividades", tmp2);
         }
         sesion.setAttribute("selected", selected);
-        System.out.println(selected);
-        request.setAttribute("trabajador", trabajador);
-        request.setAttribute("proyecto", p);
-        request.setAttribute("etapas", etapasC);
+        sesion.setAttribute("trabajador", trabajador);
+        sesion.setAttribute("proyecto", p);
+        sesion.setAttribute("etapas", etapasC);
         return "/vistaAbierto.jsp";
+    }
+
+    private String guardarInforme(HttpServletRequest request) {
+        int j = Integer.parseInt(request.getParameter("inicio"));
+        ArrayList<String> estado = new ArrayList<>();
+        int duracion = 0;
+        int limite = (Integer) request.getSession().getAttribute("horas");
+        estado.add("documentacion");
+        estado.add("elaboracion");
+        estado.add("otras");
+        estado.add("programas");
+        estado.add("reuniones");
+        estado.add("tratoUsuarios");
+        for (int i = j; i < j + 6; i++) {
+
+            duracion += Integer.parseInt(request.getParameter("get-" + i % 6));
+        }
+        if (limite < duracion) {
+            return "/errorHoras.jsp";
+        } else {
+            for (int i = j; i < j + 6; i++) {
+                tareas.get(i).setDuracion(Integer.parseInt(request.getParameter("get-" + i % 6)));
+                despliegueProyecto.guardaInforme(tareas.get(i), estado.get(i % 6));
+            }
+            return "/informes.jsp";
+        }
+
     }
 }

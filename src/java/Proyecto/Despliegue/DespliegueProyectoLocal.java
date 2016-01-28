@@ -85,4 +85,10 @@ public interface DespliegueProyectoLocal {
 
     public void aprobarInforme(Tarea tar);
 
+    public ArrayList<Tarea> getInformesActividadMios(Actividad act, Trabajador trabajador);
+
+    public void guardaInforme(Tarea get, String get0);
+
+    public int getDedicacion(Actividad act, Trabajador trabajador);
+
 }

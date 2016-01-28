@@ -17,9 +17,9 @@
         <title>GTPROS</title>
     </head>
     <body>
-        <%Trabajador t = (Trabajador) request.getAttribute("trabajador");%>
-        <%ArrayList<Etapa> etapas = (ArrayList<Etapa>) request.getAttribute("etapas");%>
-        <%Proyecto p = (Proyecto) request.getAttribute("proyecto");%>
+        <%Trabajador t = (Trabajador) request.getSession().getAttribute("trabajador");%>
+        <%ArrayList<Etapa> etapas = (ArrayList<Etapa>) request.getSession().getAttribute("etapas");%>
+        <%Proyecto p = (Proyecto) request.getSession().getAttribute("proyecto");%>
     <center>
         <h1>Etapas</h1>
         <table border = "1">
@@ -65,9 +65,8 @@
                 </td>
             </tr>
             <%}%>
-            <%ArrayList<Actividad> actividades = (ArrayList<Actividad>) request.getAttribute("actividades");%>
+            <%ArrayList<Actividad> actividades = (ArrayList<Actividad>) request.getSession().getAttribute("actividades");%>
         </table>
-        <%request.setAttribute("trabajador", t);%>
         <h1>Actividades</h1>
         <table border = "1">
             <tr>

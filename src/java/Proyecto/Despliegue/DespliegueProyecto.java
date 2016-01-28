@@ -374,4 +374,36 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
         }
 
     }
+
+    @Override
+    public ArrayList<Tarea> getInformesActividadMios(Actividad act, Trabajador trabajador) {
+        ArrayList<Tarea> tar = null;
+        try {
+            tar = TareaPersistencia.getDeActividadMios(act, trabajador);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return tar;
+    }
+
+    @Override
+    public void guardaInforme(Tarea get, String get0) {
+        try {
+            TareaPersistencia.guardaInforme(get, get0);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public int getDedicacion(Actividad act, Trabajador trabajador) {
+        try {
+            return ActividadPersistencia.getDedicacion(act, trabajador);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
 }

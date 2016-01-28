@@ -27,7 +27,7 @@
                 <td>Fecha comienzo</td>
                 <td>Fecha fin teórica</td>
                 <td>Tipo rol</td>
-                <td></td>
+                <td>Estado</td>
             </tr>
             <% for (int i = 0; i < actividades.size(); i++) {%>
             <tr>
@@ -38,23 +38,16 @@
                 <td><%= actividades.get(i).getDuracion()%></td>
                 <td><%= actividades.get(i).getFechaComienzo()%></td>
                 <td><%= actividades.get(i).getFechaFin()%></td>
+                <td><%= actividades.get(i).getTipoRol().toString()%></td>
                 <%if (hoy.before(actividades.get(i).getFechaComienzo())) {%>
                 <td><%="aun no comenzo"%></td>
                 <%} else {%>
                 <td><%= actividades.get(i).getEstado()%></td>
-                <td><input type="button" value="Introducir datos actividad"></td>
+                
                     <%}%>
             </tr>
             <%}%>
         </table>
-
-
-        <form id="formulario" method="post" action="Controlador">
-            <input type="hidden" name="accion" value="aIntroducirDatosActividad">
-            <input type="hidden" name="chosenProject" id="chosenP">
-            <input type="hidden" name="chosenEtapa" id="chosenE">
-            <input type="hidden" name="chosenActividad" id="chosenA">
-        </form>
 
         <form action="Controlador" method="POST">
             <input type="text" name="usuario" value="<%=t.getUser()%>" readonly="readonly" hidden="hidden"/>

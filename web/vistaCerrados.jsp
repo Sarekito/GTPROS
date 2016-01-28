@@ -4,6 +4,7 @@
     Author     : antonio
 --%>
 
+<%@page import="Trabajador.Dominio.Trabajador"%>
 <%@page import="Proyecto.Dominio.Actividad"%>
 <%@page import="Proyecto.Dominio.Etapa"%>
 <%@page import="java.util.ArrayList"%>
@@ -15,6 +16,7 @@
         <title>GTPROS</title>
     </head>
     <body>
+        <%Trabajador t = (Trabajador) request.getSession().getAttribute("trabajador");%>
         <%ArrayList<Etapa> etapas = (ArrayList<Etapa>) request.getAttribute("etapas");%>
     <center>
         <h1>Etapas</h1>
@@ -89,14 +91,20 @@
                     <%}%>
                 </td>
                 <td>
+                    <%if(actividades.get(i).getTipoRol()==null){%>
+                    <%="Diseñador"%>
+                    <%} else {%>
                     <%=actividades.get(i).getTipoRol()%>
+                    <%}%>
                 </td>
             </tr>
             <%}%>
         </table>
         <br><br>
         <form action="Controlador" method="POST">
-            <input type="hidden" name="accion" value="aAcceso" readonly="readonly" />
+            <input type="text" name="usuario" value="<%=t.getUser()%>" readonly="readonly" hidden="hidden"/>
+            <input type="text" name="clave" value="<%=t.getPassword()%>" readonly="readonly" hidden="hidden" />
+            <input type="hidden" name="accion" value="Acceso" readonly="readonly" />
             <input type="submit" value="Ir a inicio" />
         </form>
     </center>

@@ -5,6 +5,9 @@ import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.Etapa;
 import Trabajador.Dominio.Rol;
+import Trabajador.Dominio.Trabajador;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -162,5 +165,19 @@ public class ActividadPersistencia {
         ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
         conexion.close();
         return actividades;
+    }
+
+    public static int getDedicacion(Actividad act, Trabajador trabajador) throws SQLException, ClassNotFoundException {
+        String sql = "select horas from ActividadTrabajador where nombreProyecto = '" + act.getNombre() + "' and numeroEtapa = " + act.getNumero() + " and idActividad = " + act.getId()+" and nombreTrabajador = '"+trabajador.getUser()+"'";
+        String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
+        String DATABASE_URL = "jdbc:mysql://localhost:3306/PGP_grupo11?zeroDateTimeBehavior=convertToNull";
+        String DATABASE_USER = "PGP_grupo11";
+        String DATABASE_PASSWORD = "P6AbQA8Z";
+        Class.forName(DATABASE_DRIVER);
+        Connection conexion = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery(sql);
+        rs.next();
+        return rs.getInt("horas");
     }
 }
