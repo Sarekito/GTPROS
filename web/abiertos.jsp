@@ -15,7 +15,7 @@
     </head>
     <body>
     <center>
-        <%ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) request.getAttribute("abiertos");%>
+        <%ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) request.getSession().getAttribute("abiertos");%>
         <h1>Proyectos</h1>
         <form action="Controlador" method ="post">
             <table border="5">

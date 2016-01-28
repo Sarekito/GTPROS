@@ -83,4 +83,6 @@ public interface DespliegueProyectoLocal {
 
     public ArrayList<Tarea> getInformesActividad(Actividad act);
 
+    public void aprobarInforme(Tarea tar);
+
 }

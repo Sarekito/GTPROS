@@ -1,3 +1,4 @@
+<%@page import="Trabajador.Dominio.Trabajador"%>
 <%@page import="Proyecto.Dominio.TipoTarea"%>
 <%@page import="Proyecto.Dominio.Tarea"%>
 <%@page import="java.util.ArrayList"%>
@@ -10,6 +11,8 @@
     </head>
     <body>
         <%ArrayList<Tarea> tareas = (ArrayList<Tarea>) request.getAttribute("tareas");%>
+        <%ArrayList<ArrayList<Tarea>> tas = new ArrayList<ArrayList<Tarea>>();%>
+        <%Trabajador trabajador = (Trabajador)request.getAttribute("trabajador");%>
     <center>
         <h1>Etapas</h1>
         <%for (int j = 0; j < tareas.size(); j = j + 6) {%>
@@ -45,8 +48,16 @@
                 </td>
             </tr>
             <%}%>
-            </table>
-            <%}%>
+        </table>
+        <br>
+        <%if (tareas.get(j).getEstado().equals("Enviado")) {%>
+        <form action="Controlador" method="POST">
+            <input type="hidden" name="tareasAcepto" value="<%=j%>" readonly="readonly" />
+            <input type="hidden" name="accion" value="aprobarInforme" readonly="readonly" />
+            <input type="submit" value="Aceptar informe" />
+        </form>
+        <%}%>
+        <%}%>
     </center>
 </body>
 </html>

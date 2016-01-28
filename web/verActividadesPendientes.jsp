@@ -1,3 +1,4 @@
+<%@page import="Trabajador.Dominio.Trabajador"%>
 <%@page import="java.util.Date"%>
 <%@page import="Proyecto.Dominio.Actividad"%>
 <%@page import="java.util.ArrayList"%>
@@ -12,6 +13,7 @@
     <body>
     <center>
         <%  HttpSession sesion = request.getSession();
+            Trabajador t = (Trabajador)request.getSession().getAttribute("trabajador");
             ArrayList<Actividad> actividades = (ArrayList<Actividad>) sesion.getAttribute("misActividadesPendientes");
             java.util.Date hoy = new Date();
         %>
@@ -54,9 +56,11 @@
             <input type="hidden" name="chosenActividad" id="chosenA">
         </form>
 
-        <form action="Controlador"  method ="post">
-            <input type="hidden" name="accion" value="aAcceso">
-            <input type="submit" value="A menu principal">
+        <form action="Controlador" method="POST">
+            <input type="text" name="usuario" value="<%=t.getUser()%>" readonly="readonly" hidden="hidden"/>
+            <input type="text" name="clave" value="<%=t.getPassword()%>" readonly="readonly" hidden="hidden" />
+            <input type="hidden" name="accion" value="Acceso" readonly="readonly" />
+            <input type="submit" value="Ir a inicio" />
         </form>
     </center>
 </body>

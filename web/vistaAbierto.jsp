@@ -129,7 +129,9 @@
         </table>
         <br><br>
         <form action="Controlador" method="POST">
-            <input type="hidden" name="accion" value="aAcceso" readonly="readonly" />
+            <input type="text" name="usuario" value="<%=t.getUser()%>" readonly="readonly" hidden="hidden"/>
+            <input type="text" name="clave" value="<%=t.getPassword()%>" readonly="readonly" hidden="hidden" />
+            <input type="hidden" name="accion" value="Acceso" readonly="readonly" />
             <input type="submit" value="Ir a inicio" />
         </form>
     </center>

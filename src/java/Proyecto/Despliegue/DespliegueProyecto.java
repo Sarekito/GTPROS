@@ -338,9 +338,9 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
- 
-            return false;
-        
+
+        return false;
+
     }
 
     @Override
@@ -356,12 +356,22 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
 
     @Override
     public ArrayList<Tarea> getInformesActividad(Actividad act) {
-        ArrayList<Tarea> tar = null; 
+        ArrayList<Tarea> tar = null;
         try {
             tar = TareaPersistencia.getDeActividad(act);
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
-        }          
+        }
         return tar;
+    }
+
+    @Override
+    public void aprobarInforme(Tarea tar) {
+        try {
+            TareaPersistencia.aprobar(tar);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 }

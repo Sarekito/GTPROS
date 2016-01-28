@@ -57,6 +57,7 @@ public class Controlador extends HttpServlet {
     private ArrayList<Actividad> actEtapa, actividadesC, tmp2;
     private ArrayList<ActividadTrabajador> actividadTrabajador;
     ArrayList<Etapa> etapasC;
+    ArrayList<Tarea> tareas;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -83,6 +84,9 @@ public class Controlador extends HttpServlet {
                 break;
             case "infoProyectoAbierto":
                 url = infoProyectoAbierto(request);
+                break;
+            case "informeApobado":
+                url = aprobarInforme(request);
                 break;
             case "Acceso":
                 url = acceso(request);
@@ -649,9 +653,10 @@ public class Controlador extends HttpServlet {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         Actividad act;
+        request.setAttribute("trabajador", trabajador);
         if (trabajador.getUser().equals(p.getJefe())) {
             act = tmp2.get(Integer.parseInt(request.getParameter("elegida")));
-            ArrayList<Tarea> tareas = despliegueProyecto.getInformesActividad(act);
+            tareas = despliegueProyecto.getInformesActividad(act);
             request.setAttribute("tareas", tareas);
         } else {
             act = actividadesC.get(Integer.parseInt(request.getParameter("elegida")));
@@ -661,45 +666,11 @@ public class Controlador extends HttpServlet {
     }
 
     public String aprobarInforme(HttpServletRequest request) {
-        HttpSession sesion = request.getSession();
-        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-
-        if (trabajador == null) {
-            return "/index.jsp";
-        }
-
-        String nombreProyecto = request.getParameter("nombreProyecto");
-        if (nombreProyecto == null) {
-            request.setAttribute("error", "No se ha indicado un nombre de proyecto.");
-            return "/accesoUsuario.jsp";
-        }
-
-        Proyecto proyecto = despliegueProyecto.getProyecto(nombreProyecto);
-        if (proyecto == null) {
-            request.setAttribute("error", "No existe un proyecto con el nombre '" + nombreProyecto + "'.");
-            return "/accesoUsuario.jsp";
-        }
-
-        if (proyecto.getJefe().equals(trabajador.getUser())) {
-            request.setAttribute("error", "No puedes aprobar informes de proyectos que no lideras");
-            return "/accesoUsuario.jsp";
-        }
-
-        InformeSeguimiento informe = new InformeSeguimiento();
-        informe.setNombreProyecto(nombreProyecto);
-        informe.setNumeroEtapa(Integer.parseInt(request.getParameter("numeroEtapa")));
-        informe.setIdActividad(Integer.parseInt(request.getParameter("idActividad")));
-        informe.setTrabajador(request.getParameter("trabajador"));
-        informe.setNumTarea(Integer.parseInt(request.getParameter("numTarea")));
-        informe.setSemana(java.sql.Date.valueOf(request.getParameter("semana")));
-
-        despliegueProyecto.aprobarInforme(informe);
-
-        ArrayList<InformeSeguimiento> informes = despliegueProyecto.getInformesPendientesProyecto(proyecto.getNombre());
-        request.setAttribute("informes", informes);
-        request.setAttribute("proyecto", proyecto);
-
-        return "/informesPendientes.jsp";
+        int tar = Integer.parseInt(request.getParameter("tareasAcepto"));
+        System.out.println(tareas.get(tar).getIdActividad());
+        despliegueProyecto.aprobarInforme(tareas.get(tar));
+        request.setAttribute("trabajador", trabajador);
+        return "/informesAprobados.jsp";
     }
 
     public String rechazarInforme(HttpServletRequest request) {
@@ -1010,7 +981,7 @@ public class Controlador extends HttpServlet {
         }
 
         cerrados = despliegueProyecto.getMisProyectosActuales(trabajador);
-        request.setAttribute("abiertos", cerrados);
+        sesion.setAttribute("abiertos", cerrados);
         return "/abiertos.jsp";
     }
 
@@ -1150,11 +1121,11 @@ public class Controlador extends HttpServlet {
     private String infoProyectoAbierto(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-
         if (trabajador == null) {
             return "/index.jsp";
         }
-        p = cerrados.get(Integer.parseInt(request.getParameter("eleccion")));
+        int selected = Integer.parseInt(request.getParameter("eleccion"));
+        p = cerrados.get(selected);
         etapasC = despliegueProyecto.getEtapas(p.getNombre());
         actividadesC = new ArrayList<>();
         tmp2 = new ArrayList<>();
@@ -1177,6 +1148,8 @@ public class Controlador extends HttpServlet {
         } else {
             request.setAttribute("actividades", tmp2);
         }
+        sesion.setAttribute("selected", selected);
+        System.out.println(selected);
         request.setAttribute("trabajador", trabajador);
         request.setAttribute("proyecto", p);
         request.setAttribute("etapas", etapasC);

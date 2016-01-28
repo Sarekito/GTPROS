@@ -42,4 +42,11 @@ public class TareaPersistencia {
         }
         return tareas;
     }
+
+    public static void aprobar(Tarea get) throws SQLException {
+        String sql = "UPDATE Tarea SET estado = 'Aceptado' where nombreProyecto = '"+get.getNombreProyecto()+"' and numeroEtapa = "+get.getNumeroEtapa()+" and idActividad = "+get.getIdActividad()+" and trabajador = '"+get.getTrabajador()+"'";
+        ConexionBD conexion = new ConexionBD();
+        conexion.execute(sql);
+        conexion.close();
+    }
 }
