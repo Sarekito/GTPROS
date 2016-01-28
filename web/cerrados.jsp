@@ -4,6 +4,7 @@
     Author     : antonio
 --%>
 
+<%@page import="Trabajador.Dominio.Trabajador"%>
 <%@page import="Proyecto.Dominio.Proyecto"%>
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -15,6 +16,7 @@
     </head>
     <body>
     <center>
+        <%Trabajador t = (Trabajador) request.getSession().getAttribute("trabajador");%>
         <%ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) request.getAttribute("cerrados");%>
         <h1>Proyectos</h1>
         <form action="Controlador" method ="post">
@@ -53,6 +55,13 @@
                 </tr>
                 <%}%>
             </table>
+        </form>
+        <br>
+        <form action="Controlador" method="POST">
+            <input type="text" name="usuario" value="<%=t.getUser()%>" readonly="readonly" hidden="hidden"/>
+            <input type="text" name="clave" value="<%=t.getPassword()%>" readonly="readonly" hidden="hidden" />
+            <input type="hidden" name="accion" value="Acceso" readonly="readonly" />
+            <input type="submit" value="Ir a inicio" />
         </form>
     </center>
 </body>

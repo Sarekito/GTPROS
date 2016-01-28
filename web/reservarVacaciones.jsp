@@ -4,6 +4,7 @@
     Author     : antonio
 --%>
 
+<%@page import="Trabajador.Dominio.Trabajador"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -13,6 +14,7 @@
         <title>GTPROS</title>
     </head>
     <body>
+        <%Trabajador t = (Trabajador) request.getSession().getAttribute("trabajador");%>
     <center>
         <form name="Controlador" method ="post" onsubmit="return comprueba();">
             <input type="checkbox" name="periodos" value="ON"/>Solicito las vacaciones en dos periodos
@@ -94,6 +96,13 @@
                     </td>
                 </tr>
             </table>
+        </form>
+        <br>
+        <form action="Controlador" method="POST">
+            <input type="text" name="usuario" value="<%=t.getUser()%>" readonly="readonly" hidden="hidden"/>
+            <input type="text" name="clave" value="<%=t.getPassword()%>" readonly="readonly" hidden="hidden" />
+            <input type="hidden" name="accion" value="Acceso" readonly="readonly" />
+            <input type="submit" value="Ir a inicio" />
         </form>
     </center>
     </body>
