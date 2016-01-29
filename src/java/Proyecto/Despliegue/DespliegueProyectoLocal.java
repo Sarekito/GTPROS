@@ -97,4 +97,8 @@ public interface DespliegueProyectoLocal {
 
     public void cierreActividad(Actividad act);
 
+    public void cierreEtapa(Etapa et);
+
+    public void cierreProyecto(Proyecto p);
+
 }

@@ -4,6 +4,7 @@
     Author     : antonio
 --%>
 
+<%@page import="Proyecto.Dominio.Proyecto"%>
 <%@page import="Trabajador.Dominio.Trabajador"%>
 <%@page import="Proyecto.Dominio.Actividad"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -14,7 +15,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <%Actividad a = (Actividad) request.getSession().getAttribute("cerrada");%>
+        <%Proyecto a = (Proyecto) request.getSession().getAttribute("proyectoCerrado");%>
         <%Trabajador t = (Trabajador) request.getSession().getAttribute("trabajador");%>
     <center>
         <h2>Resumen</h2>
@@ -25,22 +26,6 @@
                 </td>
                 <td>
                     <%=a.getNombre()%>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Etapa
-                </td>
-                <td>
-                    <%=a.getNumero()%>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Actividad
-                </td>
-                <td>
-                    <%=a.getId()%>
                 </td>
             </tr>
             <tr>

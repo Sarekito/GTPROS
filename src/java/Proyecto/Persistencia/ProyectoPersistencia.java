@@ -158,4 +158,15 @@ public class ProyectoPersistencia {
         conexion.close();
         return count;
     }
+
+    public static void cerrar(Proyecto p) throws SQLException {
+        String sql = String.format("Update Proyecto Set estado = 'cerrado' where nombreProyecto = '%s'", p.getNombre());
+        ConexionBD conexion = new ConexionBD();
+        conexion.execute(sql);
+        sql = String.format("Update Proyecto Set duracionReal = %d where nombreProyecto = '%s'", p.getDuracionReal(), p.getNombre());
+        conexion.execute(sql);
+        sql = String.format("Update Proyecto Set fechaFinReal = '%d-%d-%d' where nombreProyecto = '%s'", p.getFechaFinReal().getYear() + 1900, p.getFechaFinReal().getMonth() + 1, p.getFechaFinReal().getDate(), p.getNombre());
+        conexion.execute(sql);
+        conexion.close();
+    }
 }

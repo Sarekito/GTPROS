@@ -5,6 +5,7 @@
 --%>
 
 <%@page import="Trabajador.Dominio.Trabajador"%>
+<%@page import="Proyecto.Dominio.Etapa"%>
 <%@page import="Proyecto.Dominio.Actividad"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -14,7 +15,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <%Actividad a = (Actividad) request.getSession().getAttribute("cerrada");%>
+        <%Etapa a = (Etapa) request.getSession().getAttribute("etapaCerrada");%>
         <%Trabajador t = (Trabajador) request.getSession().getAttribute("trabajador");%>
     <center>
         <h2>Resumen</h2>
@@ -33,14 +34,6 @@
                 </td>
                 <td>
                     <%=a.getNumero()%>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Actividad
-                </td>
-                <td>
-                    <%=a.getId()%>
                 </td>
             </tr>
             <tr>

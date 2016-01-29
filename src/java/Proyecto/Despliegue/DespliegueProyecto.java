@@ -439,4 +439,22 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    @Override
+    public void cierreEtapa(Etapa et) {
+    try {
+            EtapaPersistencia.cerrar(et);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void cierreProyecto(Proyecto p) {
+        try {
+            ProyectoPersistencia.cerrar(p);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

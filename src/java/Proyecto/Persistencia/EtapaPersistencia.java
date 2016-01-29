@@ -63,6 +63,16 @@ public class EtapaPersistencia {
         return etapas;
     }
 
+    public static void cerrar(Etapa et) throws SQLException {
+        String sql = String.format("Update Etapa Set estado = 'finalizado' where nombreProyecto = '%s' and numeroEtapa = %d", et.getNombre(), et.getNumero());
+        ConexionBD conexion = new ConexionBD();
+        conexion.execute(sql);
+        sql = String.format("Update Etapa Set duracionReal = %d where nombreProyecto = '%s' and numeroEtapa = %d", et.getDuracionReal(), et.getNombre(), et.getNumero());
+        conexion.execute(sql);
+        sql = String.format("Update Etapa Set fechaFinReal = '%d-%d-%d' where nombreProyecto = '%s' and numeroEtapa = %d", et.getFechaFinReal().getYear() + 1900, et.getFechaFinReal().getMonth() + 1, et.getFechaFinReal().getDate(), et.getNombre(), et.getNumero());
+        conexion.execute(sql);
+        conexion.close();
+    }
 
     public ArrayList<Etapa> getEtapasAbiertasProyecto(String nombreProyecto) throws SQLException {
         String sql = "SELECT * FROM Etapa WHERE nombre = '" + nombreProyecto + "' AND estado <> 'cerrado'";

@@ -50,20 +50,22 @@
                 </td>
                 <td>
                     <%if (etapas.get(i).getDuracionReal() == null) {%>
-                    <%="aun no cerrada"%>
+                    <%="realizando"%>
                     <%} else {%>
                     <%=etapas.get(i).getDuracionReal()%>
                     <%}%>
                 </td>
                 <%if (p.getJefe().equals(t.getUser())) {%>
                 <td>
-
+                    <%if (!etapas.get(i).getEstado().equals("finalizado")) {%>
                     <form action="Controlador" method="POST">
                         <input type="text" hidden="hidden" value="<%=i%>" name="elegir">
                         <input type="hidden" name="accion" value="finalizarEtapas" readonly="readonly" />
                         <input type="submit" value="Cerrar" />
                     </form>
-
+                    <%} else {%>
+                    Etapa cerrada
+                    <%}%>
                 </td>
                 <%}%>
             </tr>
@@ -137,7 +139,6 @@
                     </form>
 
                 </td>
-                <%=actividades.get(i).getEstado()%>
                 <%if (p.getJefe().equals(t.getUser()) && actividades.get(i).getEstado().equals("realizando") && !actividades.get(i).getFechaComienzo().after(new Date())) {%>
                 <td>
 
@@ -161,6 +162,11 @@
             <%}%>
         </table>
         <br><br>
+        <form action="Controlador" method="POST">
+            <input type="hidden" name="accion" value="finalizarProyecto" readonly="readonly" />
+            <input type="submit" value="Cerrar proyecto" />
+        </form>
+        <br><br><br><br>
         <form action="Controlador" method="POST">
             <input type="text" name="usuario" value="<%=t.getUser()%>" readonly="readonly" hidden="hidden"/>
             <input type="text" name="clave" value="<%=t.getPassword()%>" readonly="readonly" hidden="hidden" />

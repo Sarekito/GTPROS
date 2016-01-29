@@ -212,7 +212,7 @@ public class ActividadPersistencia {
         String sql = String.format("Update Actividad Set estado = 'finalizado' where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getNombre(), act.getNumero(), act.getId());
         ConexionBD conexion = new ConexionBD();
         conexion.execute(sql);
-        sql = String.format("Update Actividad Set duracionReal = %d where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getDuracion(), act.getNombre(), act.getNumero(), act.getId());
+        sql = String.format("Update Actividad Set duracionReal = %d where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getDuracionReal(), act.getNombre(), act.getNumero(), act.getId());
         conexion.execute(sql);
         sql = String.format("Update Actividad Set fechaFinReal = '%d-%d-%d' where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getFechaFinReal().getYear()+1900, act.getFechaFinReal().getMonth()+1, act.getFechaFinReal().getDate(), act.getNombre(), act.getNumero(), act.getId());
         conexion.execute(sql);

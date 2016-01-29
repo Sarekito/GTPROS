@@ -1026,23 +1026,48 @@ public class Controlador extends HttpServlet {
     private String finalizarEtapas(HttpServletRequest request) {
         int elegir = Integer.parseInt(request.getParameter("elegir"));
         Etapa et = etapasC.get(elegir);
+        int duracion = 0;
         request.getSession().setAttribute("elegir", elegir);
         ArrayList<Actividad> act = despliegueProyecto.getActividadesEtapa(et);
         for (int i = 0; i < act.size(); i++) {
+            duracion += act.get(i).getDuracionReal();
             if (!act.get(i).getEstado().equals("finalizado")) {
                 return "/errorCierreEtapa.jsp";
             }
         }
-        try {
-            despliegueProyecto.cerrarEtapa(et.getNombre(), et.getNumero());
-        } catch (EtapaConActividadesAbiertasException ex) {
-            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return "/etapaCerrada";
+        et.setDuracionReal(duracion);
+        et.setEstado("finalizado");
+        java.util.Date fechaFinReal = new java.util.Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(fechaFinReal);
+        c.add(Calendar.DATE, (fechaFinReal.getDay() - 1) * -1);
+        fechaFinReal = c.getTime();
+        et.setFechaFinReal(fechaFinReal);
+        despliegueProyecto.cierreEtapa(et);
+        request.getSession().setAttribute("etapaCerrada", et);
+        return "/etapaCerrada.jsp";
     }
 
     private String finalizarProyecto(HttpServletRequest request) {
-        return "/verProyectoAFinalizar.jsp";
+        ArrayList<Etapa> et = despliegueProyecto.getEtapas(p.getNombre());
+        int duracion = 0;
+        for (int i = 0; i < et.size(); i++) {
+            duracion += et.get(i).getDuracionReal();
+            if (!et.get(i).getEstado().equals("finalizado")) {
+                return "/errorCierreProyecto.jsp";
+            }
+        }
+        p.setDuracionReal(duracion);
+        p.setEstado("cerrado");
+        java.util.Date fechaFinReal = new java.util.Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(fechaFinReal);
+        c.add(Calendar.DATE, (fechaFinReal.getDay() - 1) * -1);
+        fechaFinReal = c.getTime();
+        p.setFechaFinReal(fechaFinReal);
+        despliegueProyecto.cierreProyecto(p);
+        request.getSession().setAttribute("proyectoCerrado", p);
+        return "/proyectoCerrado.jsp";
     }
 
     private String elegidaEtapaDimeActividad(HttpServletRequest request) {

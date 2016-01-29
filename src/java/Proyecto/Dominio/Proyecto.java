@@ -5,7 +5,7 @@
  */
 package Proyecto.Dominio;
 
-import java.sql.Date;
+import java.util.Date;
 
 /**
  *
