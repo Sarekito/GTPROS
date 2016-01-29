@@ -805,21 +805,31 @@ public class Controlador extends HttpServlet {
     }
 
     private String finalizarActividad(HttpServletRequest request) {
-        Actividad ac = actEtapa.get(actEtapa.size() - 1);
-        int numSemanas = (ac.getFechaFin().compareTo(ac.getFechaComienzo()) / 7) + 1;
-        int horasActividades = 0;
-        for (int i = 0; i < actividadTrabajador.size(); i++) {
-            if (actividadTrabajador.get(i).getNumeroEtapa() == ac.getNumero() && actividadTrabajador.get(i).getIdActividad() == ac.getId()) {
-                horasActividades += actividadTrabajador.get(i).getHoras() * numSemanas;
+        int elegido = Integer.parseInt(request.getParameter("elegir"));
+        //request.getSession().setAttribute("elegir", elegido);
+        Actividad act = tmp2.get(elegido);
+        ArrayList<Tarea> tr = despliegueProyecto.getMisTareas(act);
+        for (int i = 0; i < tr.size(); i++) {
+            if (!tr.get(i).getEstado().equals("Aceptado")) {
+                return "/errorCierreActividad.jsp";
             }
         }
-        if (ac.getDuracion() == horasActividades) {
-            request.setAttribute("posiblesPredecesoras", actEtapa);
-            return "/actividadesFinalizar.jsp";
+        int duracion = 0;
+        for (int i = 0; i < tr.size(); i++) {
+            duracion += tr.get(i).getDuracion();
 
-        } else {
-            return "/actividadConDesigualdad.jsp";
         }
+        java.util.Date fechaFinReal = new java.util.Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(fechaFinReal);
+        c.add(Calendar.DATE, (fechaFinReal.getDay() - 1) * -1);
+        fechaFinReal = c.getTime();
+        act.setFechaFinReal(fechaFinReal);
+        act.setDuracionReal(duracion);
+        act.setEstado("finalizado");
+        despliegueProyecto.cierreActividad(act);
+        request.getSession().setAttribute("cerrada", act);
+        return "/actividadCerrada.jsp";
     }
 
     private String volverAPlanificar(HttpServletRequest request) {
@@ -1016,8 +1026,7 @@ public class Controlador extends HttpServlet {
     private String finalizarEtapas(HttpServletRequest request) {
         int elegir = Integer.parseInt(request.getParameter("elegir"));
         Etapa et = etapasC.get(elegir);
-        request.setAttribute("elegir", elegir);
-        request.setAttribute("trabajador", trabajador);
+        request.getSession().setAttribute("elegir", elegir);
         ArrayList<Actividad> act = despliegueProyecto.getActividadesEtapa(et);
         for (int i = 0; i < act.size(); i++) {
             if (!act.get(i).getEstado().equals("finalizado")) {
@@ -1149,13 +1158,22 @@ public class Controlador extends HttpServlet {
             tmp = despliegueProyecto.getActividadesCerrados(p.getNombre(), etapasC.get(i).getNumero());
             for (int j = 0; j < tmp.size(); j++) {
                 tmp2.add(tmp.get(j));
+                if (!despliegueProyecto.tieneAntecesoras(tmp2.get(j))) {
+                    tmp2.get(j).setEstado("Predecesoras en realizacion");
+                }
             }
+
         }
         java.util.Date hoy = new java.util.Date();
         if (!p.getJefe().equals(trabajador.getUser())) {
             for (int i = 0; i < tmp2.size(); i++) {
                 if (despliegueProyecto.isAsignado(tmp2.get(i), trabajador.getUser()) && tmp2.get(i).getFechaComienzo().before(hoy)) {
                     actividadesC.add(tmp2.get(i));
+                }
+            }
+            for (int i = 0; i < actividadesC.size(); i++) {
+                if (!despliegueProyecto.tieneAntecesoras(actividadesC.get(i))) {
+                    actividadesC.get(i).setEstado("Predecesoras en realizacion");
                 }
             }
             sesion.setAttribute("actividades", actividadesC);
@@ -1181,7 +1199,6 @@ public class Controlador extends HttpServlet {
         estado.add("reuniones");
         estado.add("tratoUsuarios");
         for (int i = j; i < j + 6; i++) {
-
             duracion += Integer.parseInt(request.getParameter("get-" + i % 6));
         }
         if (limite < duracion) {
@@ -1189,6 +1206,7 @@ public class Controlador extends HttpServlet {
         } else {
             for (int i = j; i < j + 6; i++) {
                 tareas.get(i).setDuracion(Integer.parseInt(request.getParameter("get-" + i % 6)));
+                tareas.get(i).setEstado("Enviado");
                 despliegueProyecto.guardaInforme(tareas.get(i), estado.get(i % 6));
             }
             return "/informes.jsp";

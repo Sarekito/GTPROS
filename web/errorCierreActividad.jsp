@@ -12,7 +12,8 @@
         <title>JSP Page</title>
     </head>
     <body>
-    <center><font color="red"><h1>Etapa imposible de cerrar. Cierre primero sus actividades pendientes</h1></font>
+    <center><font color="red"><h1>Actividad imposible de cerrar. revise primero sus tareas pendientes</h1></font>
+        <%//request.setAttribute("trabajador", request.getAttribute("trabajador"));%>
         <form action="Controlador" method="POST">
             <input type="hidden" name="eleccion" value="<%=request.getSession().getAttribute("selected")%>" readonly="readonly" />
             <input type="hidden" name="accion" value="infoProyectoAbierto" readonly="readonly" />

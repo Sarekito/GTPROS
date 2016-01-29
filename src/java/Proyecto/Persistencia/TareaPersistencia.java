@@ -45,7 +45,7 @@ public class TareaPersistencia {
     }
 
     public static void aprobar(Tarea get) throws SQLException {
-        String sql = "UPDATE Tarea SET estado = 'Aceptado' where nombreProyecto = '"+get.getNombreProyecto()+"' and numeroEtapa = "+get.getNumeroEtapa()+" and idActividad = "+get.getIdActividad()+" and trabajador = '"+get.getTrabajador()+"'";
+        String sql = "UPDATE Tarea SET estado = 'Aceptado' where nombreProyecto = '"+get.getNombreProyecto()+"' and numeroEtapa = "+get.getNumeroEtapa()+" and idActividad = "+get.getIdActividad()+" and trabajador = '"+get.getTrabajador()+"' and semana = '"+get.getSemana()+"'";
         ConexionBD conexion = new ConexionBD();
         conexion.execute(sql);
         conexion.close();
@@ -74,7 +74,7 @@ public class TareaPersistencia {
         ConexionBD conexion = new ConexionBD();
         conexion.execute(sql);
         conexion.close();
-        sql = "UPDATE Tarea SET estado = 'Enviado' where semana = '"+get.getSemana()+" and tipoTarea = '"+str+"' and nombreProyecto = '"+get.getNombreProyecto()+"' and numeroEtapa = "+get.getNumeroEtapa()+" and idActividad = "+get.getIdActividad()+" and trabajador = '"+get.getTrabajador()+"'";
+        sql = "UPDATE Tarea SET estado = 'Enviado' where semana = '"+get.getSemana()+"' and tipoTarea = '"+str+"' and nombreProyecto = '"+get.getNombreProyecto()+"' and numeroEtapa = "+get.getNumeroEtapa()+" and idActividad = "+get.getIdActividad()+" and trabajador = '"+get.getTrabajador()+"'";
         conexion = new ConexionBD();
         conexion.execute(sql);
         conexion.close();

@@ -4,6 +4,8 @@ import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.Etapa;
+import Proyecto.Dominio.Tarea;
+import Proyecto.Dominio.TipoTarea;
 import Trabajador.Dominio.Rol;
 import Trabajador.Dominio.Trabajador;
 import java.sql.Connection;
@@ -153,14 +155,14 @@ public class ActividadPersistencia {
     }
 
     public static boolean isAsignado(Actividad get, String user) throws SQLException {
-        String sql = String.format("Select * from ActividadTrabajador where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d and nombreTrabajador = '%s'",get.getNombre(),get.getNumero(),get.getId(),user);
+        String sql = String.format("Select * from ActividadTrabajador where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d and nombreTrabajador = '%s'", get.getNombre(), get.getNumero(), get.getId(), user);
         System.out.println(sql);
         ConexionBD conexion = new ConexionBD();
         return conexion.existe(sql);
     }
 
     public static ArrayList<Actividad> getActividadesEtapa(Etapa et) throws SQLException {
-        String sql = "SELECT * FROM Actividad  WHERE nombreProyecto = '" + et.getNombre() + "' and numeroEtapa = '"+et.getNumero()+"'";
+        String sql = "SELECT * FROM Actividad  WHERE nombreProyecto = '" + et.getNombre() + "' and numeroEtapa = " + et.getNumero();
         ConexionBD conexion = new ConexionBD();
         ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
         conexion.close();
@@ -168,7 +170,7 @@ public class ActividadPersistencia {
     }
 
     public static int getDedicacion(Actividad act, Trabajador trabajador) throws SQLException, ClassNotFoundException {
-        String sql = "select horas from ActividadTrabajador where nombreProyecto = '" + act.getNombre() + "' and numeroEtapa = " + act.getNumero() + " and idActividad = " + act.getId()+" and nombreTrabajador = '"+trabajador.getUser()+"'";
+        String sql = "select horas from ActividadTrabajador where nombreProyecto = '" + act.getNombre() + "' and numeroEtapa = " + act.getNumero() + " and idActividad = " + act.getId() + " and nombreTrabajador = '" + trabajador.getUser() + "'";
         String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
         String DATABASE_URL = "jdbc:mysql://localhost:3306/PGP_grupo11?zeroDateTimeBehavior=convertToNull";
         String DATABASE_USER = "PGP_grupo11";
@@ -179,5 +181,41 @@ public class ActividadPersistencia {
         ResultSet rs = s.executeQuery(sql);
         rs.next();
         return rs.getInt("horas");
+    }
+
+    public static ArrayList<Tarea> getTareaActividad(Actividad act) throws ClassNotFoundException, SQLException {
+        ArrayList<Tarea> ta = new ArrayList<>();
+        String sql = "SELECT * FROM Tarea  WHERE nombreProyecto = '" + act.getNombre() + "' and numeroEtapa = " + act.getNumero() + " and idActividad = " + act.getId();
+        String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
+        String DATABASE_URL = "jdbc:mysql://localhost:3306/PGP_grupo11?zeroDateTimeBehavior=convertToNull";
+        String DATABASE_USER = "PGP_grupo11";
+        String DATABASE_PASSWORD = "P6AbQA8Z";
+        Class.forName(DATABASE_DRIVER);
+        Connection conexion = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery(sql);
+        while (rs.next()) {
+            ta.add(new Tarea(rs.getString("nombreProyecto"), rs.getInt("numeroEtapa"), rs.getInt("idActividad"), rs.getString("trabajador"), rs.getDate("semana"), TipoTarea.get(rs.getString("tipoTareA")), rs.getInt("duracion"), rs.getString("estado")));
+        }
+        return ta;
+    }
+
+    public static ArrayList<Actividad> getPredecesoras(Actividad get) throws SQLException {
+        String sql = "SELECT * FROM Actividad A, Antecesora P  WHERE A.nombreProyecto = P.proyecto1 and A.numeroEtapa = P.idEtapa1 and A.idActividad = P.idActividad1 and A.estado = 'realizando' and P.proyecto2 = '" + get.getNombre() + "' and P.idEtapa2 = " + get.getNumero() + " and P.idActividad2 = " + get.getId();
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
+        conexion.close();
+        return actividades;
+    }
+
+    public static void cerrar(Actividad act) throws SQLException {
+        String sql = String.format("Update Actividad Set estado = 'finalizado' where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getNombre(), act.getNumero(), act.getId());
+        ConexionBD conexion = new ConexionBD();
+        conexion.execute(sql);
+        sql = String.format("Update Actividad Set duracionReal = %d where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getDuracion(), act.getNombre(), act.getNumero(), act.getId());
+        conexion.execute(sql);
+        sql = String.format("Update Actividad Set fechaFinReal = '%d-%d-%d' where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getFechaFinReal().getYear()+1900, act.getFechaFinReal().getMonth()+1, act.getFechaFinReal().getDate(), act.getNombre(), act.getNumero(), act.getId());
+        conexion.execute(sql);
+        conexion.close();
     }
 }

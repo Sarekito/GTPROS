@@ -4,6 +4,7 @@
     Author     : antonio
 --%>
 
+<%@page import="java.util.Date"%>
 <%@page import="Proyecto.Dominio.Proyecto"%>
 <%@page import="Trabajador.Dominio.Trabajador"%>
 <%@page import="Proyecto.Dominio.Actividad"%>
@@ -33,9 +34,11 @@
                 <td>
                     Duracion real
                 </td>
+                <%if (p.getJefe().equals(t.getUser())) {%>
                 <td>
                     Cierre
                 </td>
+                <%}%>
             </tr>
             <%for (int i = 0; i < etapas.size(); i++) {%>
             <tr>
@@ -52,17 +55,17 @@
                     <%=etapas.get(i).getDuracionReal()%>
                     <%}%>
                 </td>
+                <%if (p.getJefe().equals(t.getUser())) {%>
                 <td>
-                    <%if (p.getJefe().equals(t.getUser())) {%>
+
                     <form action="Controlador" method="POST">
                         <input type="text" hidden="hidden" value="<%=i%>" name="elegir">
                         <input type="hidden" name="accion" value="finalizarEtapas" readonly="readonly" />
                         <input type="submit" value="Cerrar" />
                     </form>
-                    <%} else {%>
-                    <%="No disponible"%>
-                    <%}%>
+
                 </td>
+                <%}%>
             </tr>
             <%}%>
             <%ArrayList<Actividad> actividades = (ArrayList<Actividad>) request.getSession().getAttribute("actividades");%>
@@ -91,6 +94,11 @@
                 <td>
                     Ver informes
                 </td>
+                <%if (p.getJefe().equals(t.getUser())) {%>
+                <td>
+                    Cierre
+                </td>
+                <%}%>
             </tr>
             <%for (int i = 0; i < actividades.size(); i++) {%>
             <tr>
@@ -107,8 +115,12 @@
                     <%=actividades.get(i).getDuracion()%>
                 </td>
                 <td>
-                    <%if (actividades.get(i).getDuracionReal() == null) {%>
-                    <%="realizando"%>
+                    <%if (actividades.get(i).getDuracionReal() == null) {
+                            if (actividades.get(i).getFechaComienzo().after(new Date())) {%>
+                    Aun no ha comenzado
+                    <%} else {%>
+                    <%="Aun no acabo"%>
+                    <%}%>
                     <%} else {%>
                     <%=actividades.get(i).getDuracionReal()%>
                     <%}%>
@@ -117,12 +129,34 @@
                     <%=actividades.get(i).getTipoRol()%>
                 </td>
                 <td>
+
                     <form action="Controlador" method="POST">
                         <input type="text" hidden="hidden" name="elegida" value="<%=i%>">
                         <input type="hidden" name="accion" value="mostrarInformes" readonly="readonly" />
                         <input type="submit" value="Ver" />
                     </form>
+
                 </td>
+                <%=actividades.get(i).getEstado()%>
+                <%if (p.getJefe().equals(t.getUser()) && actividades.get(i).getEstado().equals("realizando") && !actividades.get(i).getFechaComienzo().after(new Date())) {%>
+                <td>
+
+                    <form action="Controlador" method="POST">
+                        <input type="text" hidden="hidden" value="<%=i%>" name="elegir">
+                        <input type="hidden" name="accion" value="finalizarActividad" readonly="readonly" />
+                        <input type="submit" value="Cerrar" />
+                    </form>
+
+                </td>
+                <%}
+                    if ((p.getJefe().equals(t.getUser()) && actividades.get(i).getEstado().equals("finalizado"))) {%>
+                <td>ya esta cerrada</td>
+                <%}%>
+
+                <%if ((p.getJefe().equals(t.getUser()) && actividades.get(i).getEstado().equals("Predecesoras en realizacion"))) {%>
+                <td>predecesoras pendientes</td>
+                <%}%>
+
             </tr>
             <%}%>
         </table>

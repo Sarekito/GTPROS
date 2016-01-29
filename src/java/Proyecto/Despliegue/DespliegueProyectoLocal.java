@@ -91,4 +91,10 @@ public interface DespliegueProyectoLocal {
 
     public int getDedicacion(Actividad act, Trabajador trabajador);
 
+    public ArrayList<Tarea> getMisTareas(Actividad act);
+
+    public boolean tieneAntecesoras(Actividad get);
+
+    public void cierreActividad(Actividad act);
+
 }

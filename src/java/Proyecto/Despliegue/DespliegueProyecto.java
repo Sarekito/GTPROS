@@ -406,4 +406,37 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
         }
         return 0;
     }
+
+    @Override
+    public ArrayList<Tarea> getMisTareas(Actividad act) {
+        ArrayList<Tarea> tar = null;
+        try {
+            tar = ActividadPersistencia.getTareaActividad(act);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return tar;
+    }
+
+    @Override
+    public boolean tieneAntecesoras(Actividad get) {
+        ArrayList<Actividad> ant = null;
+        try {
+            ant = ActividadPersistencia.getPredecesoras(get);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ant.isEmpty();
+    }
+
+    @Override
+    public void cierreActividad(Actividad act) {
+        try {
+            ActividadPersistencia.cerrar(act);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
