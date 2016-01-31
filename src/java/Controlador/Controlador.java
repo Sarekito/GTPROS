@@ -1,5 +1,6 @@
 package Controlador;
 
+import Excepciones.DatabaseException;
 import Excepciones.EtapaConActividadesAbiertasException;
 import Proyecto.Despliegue.DespliegueProyectoLocal;
 
@@ -259,33 +260,37 @@ public class Controlador extends HttpServlet {
     }// </editor-fold>
 
     private String acceso(HttpServletRequest request) {
-        String usuario = request.getParameter("usuario");
-        String clave = request.getParameter("clave");
+        try {
+            String usuario = request.getParameter("usuario");
+            String clave = request.getParameter("clave");
 
-        if (usuario == null || usuario.equals("") || clave == null || clave.equals("")) {
-            request.setAttribute("error", "No se han introducido todos los parametros.");
-            return "/index.jsp";
+            if (usuario == null || usuario.equals("") || clave == null || clave.equals("")) {
+                request.setAttribute("error", "No se han introducido todos los parametros.");
+                return "/index.jsp";
+            }
+
+            trabajador = despliegueTrabajador.getTrabajador(usuario);
+            if (trabajador == null) {
+                request.setAttribute("error", "No existe un trabajador con ese identificador.");
+                return "/index.jsp";
+            }
+
+            if (!trabajador.getPassword().equals(clave)) {
+                request.setAttribute("error", "La contraseña introducida es incorrecta.");
+                return "/index.jsp";
+            }
+
+            HttpSession sesion = request.getSession();
+            sesion.setAttribute("trabajador", trabajador);
+            //Old version
+            //return "/accesoUsuario.jsp";
+            //New version
+            cerrados = despliegueProyecto.getMisProyectosActuales(trabajador);
+            sesion.setAttribute("misProyectosActuales", cerrados);
+            return "/seleccionProyectos.jsp";
+        } catch (DatabaseException ex) {
+            return "/errorBaseDatos.jsp";
         }
-
-        trabajador = despliegueTrabajador.getTrabajador(usuario);
-        if (trabajador == null) {
-            request.setAttribute("error", "No existe un trabajador con ese identificador.");
-            return "/index.jsp";
-        }
-
-        if (!trabajador.getPassword().equals(clave)) {
-            request.setAttribute("error", "La contraseña introducida es incorrecta.");
-            return "/index.jsp";
-        }
-
-        HttpSession sesion = request.getSession();
-        sesion.setAttribute("trabajador", trabajador);
-        //Old version
-        //return "/accesoUsuario.jsp";
-        //New version
-        cerrados = despliegueProyecto.getMisProyectosActuales(trabajador);
-        sesion.setAttribute("misProyectosActuales", cerrados);
-        return "/seleccionProyectos.jsp";
     }
 
     private String vacaciones(HttpServletRequest request) {
@@ -293,150 +298,165 @@ public class Controlador extends HttpServlet {
     }
 
     private String reservaVacaciones(HttpServletRequest request) {
-        HttpSession sesion = request.getSession();
-        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        try {
+            HttpSession sesion = request.getSession();
+            Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
 
-        java.util.Date hoy = new java.util.Date();
-        Date hoySql = new Date(hoy.getYear(), hoy.getMonth(), hoy.getDate());
-        if (request.getParameter("periodos") == null) {
-            int semanas = Integer.parseInt(request.getParameter("semanas1"));
-            Date fechaElegida = Date.valueOf(request.getParameter("fecha1"));
-            if (despliegueTrabajador.reservoVacaciones(trabajador.getUser(), (int) (1900 + fechaElegida.getYear()))) {
-                return "/vacacionesReservadas.jsp";
-            }
-            if (semanas != 4 || fechaElegida.getDay() != 1 || fechaElegida.before(hoySql)) {
-                return "/vacacionesErroneas.jsp";
-            }
-            ArrayList<Actividad> tmpAct = despliegueProyecto.misActividadesAbiertas(trabajador.getUser());
-            Date diaInicio = fechaElegida;
-            Calendar c = Calendar.getInstance();
-            c.setTime(fechaElegida);
-            c.add(Calendar.DATE, (semanas * 7) - 1);
-            Date fechaFin = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
-            for (int i = 0; i < tmpAct.size(); i++) {
-                if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
-                        || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
-                        || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
-                        || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
-                    return "/vacacionesErroneas.jsp";
-
+            java.util.Date hoy = new java.util.Date();
+            Date hoySql = new Date(hoy.getYear(), hoy.getMonth(), hoy.getDate());
+            if (request.getParameter("periodos") == null) {
+                int semanas = Integer.parseInt(request.getParameter("semanas1"));
+                Date fechaElegida = Date.valueOf(request.getParameter("fecha1"));
+                if (despliegueTrabajador.reservoVacaciones(trabajador.getUser(), (int) (1900 + fechaElegida.getYear()))) {
+                    return "/vacacionesReservadas.jsp";
                 }
-            }
-            despliegueTrabajador.reservaVacaciones(trabajador, 1, fechaElegida.getYear(), fechaElegida, semanas);
-        } else {
-            ArrayList<Actividad> tmpAct = despliegueProyecto.misActividadesAbiertas(trabajador.getUser());
-            int semanas1 = Integer.parseInt(request.getParameter("semanas1"));
-            Date fechaElegida1 = Date.valueOf(request.getParameter("fecha1"));
-            Date diaInicio = fechaElegida1;
-            Calendar cd = Calendar.getInstance();
-            cd.setTime(fechaElegida1);
-            cd.add(Calendar.DATE, (semanas1 * 7) - 1);
-            Date fechaFin = new Date(cd.getTime().getYear(), cd.getTime().getMonth(), cd.getTime().getDate());
-            for (int i = 0; i < tmpAct.size(); i++) {
-                if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
-                        || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
-                        || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
-                        || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
+                if (semanas != 4 || fechaElegida.getDay() != 1 || fechaElegida.before(hoySql)) {
                     return "/vacacionesErroneas.jsp";
-
                 }
-            }
-            int semanas2 = Integer.parseInt(request.getParameter("semanas2"));
-            Date fechaElegida2 = Date.valueOf(request.getParameter("fecha2"));
-            diaInicio = fechaElegida1;
-            cd = Calendar.getInstance();
-            cd.setTime(fechaElegida1);
-            cd.add(Calendar.DATE, (semanas1 * 7) - 1);
-            fechaFin = new Date(cd.getTime().getYear(), cd.getTime().getMonth(), cd.getTime().getDate());
-            for (int i = 0; i < tmpAct.size(); i++) {
-                if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
-                        || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
-                        || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
-                        || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
-                    return "/vacacionesErroneas.jsp";
+                ArrayList<Actividad> tmpAct = despliegueProyecto.misActividadesAbiertas(trabajador.getUser());
+                Date diaInicio = fechaElegida;
+                Calendar c = Calendar.getInstance();
+                c.setTime(fechaElegida);
+                c.add(Calendar.DATE, (semanas * 7) - 1);
+                Date fechaFin = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
+                for (int i = 0; i < tmpAct.size(); i++) {
+                    if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
+                            || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
+                            || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
+                            || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
+                        return "/vacacionesErroneas.jsp";
 
+                    }
                 }
-            }
-            if (despliegueTrabajador.reservoVacaciones(trabajador.getUser(), (int) (1900 + fechaElegida1.getYear()))) {
-                return "/vacacionesReservadas.jsp";
-            }
-            Calendar c = Calendar.getInstance();
-            c.setTime(fechaElegida1);
-            c.add(Calendar.DATE, (semanas1 * 7) - 1);
-            Date fechaFin1 = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
-            if (semanas1 + semanas2 != 4 || fechaElegida2.getDay() != 1 || fechaElegida1.getDay() != 1
-                    || fechaElegida1.after(fechaElegida2) || fechaElegida2.before(fechaFin1)
-                    || fechaElegida1.before(hoySql) || fechaElegida2.before(hoySql)) {
-                return "/vacacionesErroneas.jsp";
+                despliegueTrabajador.reservaVacaciones(trabajador, 1, fechaElegida.getYear(), fechaElegida, semanas);
             } else {
-                despliegueTrabajador.reservaVacaciones(trabajador, 1, fechaElegida1.getYear(), fechaElegida1, semanas1);
-                despliegueTrabajador.reservaVacaciones(trabajador, 2, fechaElegida1.getYear(), fechaElegida2, semanas2);
-            }
+                ArrayList<Actividad> tmpAct = despliegueProyecto.misActividadesAbiertas(trabajador.getUser());
+                int semanas1 = Integer.parseInt(request.getParameter("semanas1"));
+                Date fechaElegida1 = Date.valueOf(request.getParameter("fecha1"));
+                Date diaInicio = fechaElegida1;
+                Calendar cd = Calendar.getInstance();
+                cd.setTime(fechaElegida1);
+                cd.add(Calendar.DATE, (semanas1 * 7) - 1);
+                Date fechaFin = new Date(cd.getTime().getYear(), cd.getTime().getMonth(), cd.getTime().getDate());
+                for (int i = 0; i < tmpAct.size(); i++) {
+                    if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
+                            || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
+                            || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
+                            || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
+                        return "/vacacionesErroneas.jsp";
 
+                    }
+                }
+                int semanas2 = Integer.parseInt(request.getParameter("semanas2"));
+                Date fechaElegida2 = Date.valueOf(request.getParameter("fecha2"));
+                diaInicio = fechaElegida1;
+                cd = Calendar.getInstance();
+                cd.setTime(fechaElegida1);
+                cd.add(Calendar.DATE, (semanas1 * 7) - 1);
+                fechaFin = new Date(cd.getTime().getYear(), cd.getTime().getMonth(), cd.getTime().getDate());
+                for (int i = 0; i < tmpAct.size(); i++) {
+                    if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
+                            || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
+                            || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
+                            || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
+                        return "/vacacionesErroneas.jsp";
+
+                    }
+                }
+                if (despliegueTrabajador.reservoVacaciones(trabajador.getUser(), (int) (1900 + fechaElegida1.getYear()))) {
+                    return "/vacacionesReservadas.jsp";
+                }
+                Calendar c = Calendar.getInstance();
+                c.setTime(fechaElegida1);
+                c.add(Calendar.DATE, (semanas1 * 7) - 1);
+                Date fechaFin1 = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
+                if (semanas1 + semanas2 != 4 || fechaElegida2.getDay() != 1 || fechaElegida1.getDay() != 1
+                        || fechaElegida1.after(fechaElegida2) || fechaElegida2.before(fechaFin1)
+                        || fechaElegida1.before(hoySql) || fechaElegida2.before(hoySql)) {
+                    return "/vacacionesErroneas.jsp";
+                } else {
+                    despliegueTrabajador.reservaVacaciones(trabajador, 1, fechaElegida1.getYear(), fechaElegida1, semanas1);
+                    despliegueTrabajador.reservaVacaciones(trabajador, 2, fechaElegida1.getYear(), fechaElegida2, semanas2);
+                }
+
+            }
+            return "/vacacionesGuardadas.jsp";
+        } catch (DatabaseException ex) {
+            return "/errorBaseDatos.jsp";
         }
-        return "/vacacionesGuardadas.jsp";
     }
 
     private String entrarAdmin(HttpServletRequest request) {
-        final String errorCredenciales = "Credenciales incorrectas.";
+        try {
+            final String errorCredenciales = "Credenciales incorrectas.";
 
-        String usuario = request.getParameter("usuario");
-        String clave = request.getParameter("clave");
+            String usuario = request.getParameter("usuario");
+            String clave = request.getParameter("clave");
 
-        if (usuario == null || usuario.equals("") || clave == null || clave.equals("")) {
-            request.setAttribute("error", "No se han introducido todos los parametros.");
-            return "/indexAdministrador.jsp";
+            if (usuario == null || usuario.equals("") || clave == null || clave.equals("")) {
+                request.setAttribute("error", "No se han introducido todos los parametros.");
+                return "/indexAdministrador.jsp";
+            }
+
+            a = despliegueTrabajador.getAdministrador(usuario);
+            if (a == null || !a.getPassword().equals(clave)) {
+                request.setAttribute("error", errorCredenciales);
+                return "/indexAdministrador.jsp";
+            }
+
+            HttpSession sesion = request.getSession();
+            sesion.setAttribute("administrador", a);
+            return "/accesoAdmin.jsp";
+        } catch (DatabaseException ex) {
+            return "/errorBaseDatos.jsp";
         }
-
-        a = despliegueTrabajador.getAdministrador(usuario);
-        if (a == null || !a.getPassword().equals(clave)) {
-            request.setAttribute("error", errorCredenciales);
-            return "/indexAdministrador.jsp";
-        }
-
-        HttpSession sesion = request.getSession();
-        sesion.setAttribute("administrador", a);
-        return "/accesoAdmin.jsp";
     }
 
     private String registroTrabajador(HttpServletRequest request) {
-        Categoria cat = Categoria.get(Integer.parseInt(request.getParameter("nivel")));
-        Trabajador tr = new Trabajador(request.getParameter("usuario"), request.getParameter("clave"), cat);
-        boolean existe = despliegueTrabajador.buscaTrabajador(tr.getUser());
-        if (!existe) {
-            despliegueTrabajador.registrarTrabajador(tr);
-            return "/creacionConExito.jsp";
-        } else {
-            return "/trabajadorCreado.jsp";
+        try {
+            Categoria cat = Categoria.get(Integer.parseInt(request.getParameter("nivel")));
+            Trabajador tr = new Trabajador(request.getParameter("usuario"), request.getParameter("clave"), cat);
+            boolean existe = despliegueTrabajador.buscaTrabajador(tr.getUser());
+            if (!existe) {
+                despliegueTrabajador.registrarTrabajador(tr);
+                return "/creacionConExito.jsp";
+            } else {
+                return "/trabajadorCreado.jsp";
+            }
+        } catch (DatabaseException ex) {
+            return "/errorBaseDatos.jsp";
         }
-
     }
 
     private String registroProyecto(HttpServletRequest request) {
-        String jefe = request.getParameter("jefe");
-        String nombreProyecto = request.getParameter("nombre");
+        try {
+            String jefe = request.getParameter("jefe");
+            String nombreProyecto = request.getParameter("nombre");
 
-        Trabajador tr = despliegueTrabajador.getTrabajador(jefe);
-        if (tr == null) {
-            return "/errorProyectoNoJefe.jsp";
-        }
+            Trabajador tr = despliegueTrabajador.getTrabajador(jefe);
+            if (tr == null) {
+                return "/errorProyectoNoJefe.jsp";
+            }
 
-        if (tr.getCategoria().getCategoria() != 1) {
-            return "/errorNoPuedeSerJefe.jsp";
+            if (tr.getCategoria().getCategoria() != 1) {
+                return "/errorNoPuedeSerJefe.jsp";
+            }
+            ArrayList<Proyecto> proyectosDeJefe = despliegueProyecto.getMisProyectos(jefe);
+            if (!proyectosDeJefe.isEmpty()) {
+                return "/errorProyectoJefe.jsp";
+            }
+            Proyecto p = despliegueProyecto.getProyecto(nombreProyecto);
+            if (p != null) {
+                return "/errorExisteProyecto.jsp";
+            }
+            despliegueProyecto.generar(nombreProyecto, jefe);
+            ArrayList<TrabajadoresProyecto> tmpTP = new ArrayList<TrabajadoresProyecto>();
+            tmpTP.add(new TrabajadoresProyecto(nombreProyecto, jefe, 0));
+            despliegueProyecto.guardarTrabajadores(tmpTP);
+            return "/creacionConExito.jsp";
+        } catch (DatabaseException ex) {
+            return "/errorBaseDatos.jsp";
         }
-        ArrayList<Proyecto> proyectosDeJefe = despliegueProyecto.getMisProyectos(jefe);
-        if (!proyectosDeJefe.isEmpty()) {
-            return "/errorProyectoJefe.jsp";
-        }
-        Proyecto p = despliegueProyecto.getProyecto(nombreProyecto);
-        if (p != null) {
-            return "/errorExisteProyecto.jsp";
-        }
-        despliegueProyecto.generar(nombreProyecto, jefe);
-        ArrayList<TrabajadoresProyecto> tmpTP = new ArrayList<TrabajadoresProyecto>();
-        tmpTP.add(new TrabajadoresProyecto(nombreProyecto, jefe, 0));
-        despliegueProyecto.guardarTrabajadores(tmpTP);
-        return "/creacionConExito.jsp";
     }
 
     private String verMisProyectos(HttpServletRequest request) {
@@ -478,39 +498,43 @@ public class Controlador extends HttpServlet {
     }
 
     private String planificado(HttpServletRequest request) {
-        tp = new ArrayList<>();
-        java.util.Date hoy = new java.util.Date();
-        Date inicio = Date.valueOf(request.getParameter("inicio"));
-        Date fin = Date.valueOf(request.getParameter("fin"));
-        if (inicio.before(hoy) || fin.before(hoy) || inicio.after(fin) || inicio.getDay() != 1 || fin.getDay() != 1) {
-            request.setAttribute("proyecto", proyecto);
-            request.setAttribute("fallo", "si");
-            return "/planificar.jsp";
-        } else {
-            proyecto.setFechaInicio(inicio);
-            proyecto.setFechaFin(fin);
-            trabajadores = despliegueTrabajador.getTrabajadores(proyecto.getJefe());
-            for (int i = 0; i < trabajadores.size(); i++) {
-                ArrayList<Proyecto> proyActuales = despliegueProyecto.getMisProyectosActuales(trabajadores.get(i));
-                for (int j = 0; j < proyActuales.size(); j++) {
-                    Proyecto p1 = proyecto;
-                    Proyecto p2 = proyActuales.get(j);
-                    if (p1.getFechaInicio().after(p2.getFechaInicio()) && p1.getFechaInicio().before(p2.getFechaFin())
-                            || p1.getFechaFin().after(p2.getFechaInicio()) && p1.getFechaFin().before(p2.getFechaFin())
-                            || p2.getFechaInicio().after(p1.getFechaInicio()) && p2.getFechaInicio().before(p1.getFechaFin())
-                            || p2.getFechaFin().after(p1.getFechaInicio()) && p2.getFechaFin().before(p1.getFechaFin())) {
+        try {
+            tp = new ArrayList<>();
+            java.util.Date hoy = new java.util.Date();
+            Date inicio = Date.valueOf(request.getParameter("inicio"));
+            Date fin = Date.valueOf(request.getParameter("fin"));
+            if (inicio.before(hoy) || fin.before(hoy) || inicio.after(fin) || inicio.getDay() != 1 || fin.getDay() != 1) {
+                request.setAttribute("proyecto", proyecto);
+                request.setAttribute("fallo", "si");
+                return "/planificar.jsp";
+            } else {
+                proyecto.setFechaInicio(inicio);
+                proyecto.setFechaFin(fin);
+                trabajadores = despliegueTrabajador.getTrabajadores(proyecto.getJefe());
+                for (int i = 0; i < trabajadores.size(); i++) {
+                    ArrayList<Proyecto> proyActuales = despliegueProyecto.getMisProyectosActuales(trabajadores.get(i));
+                    for (int j = 0; j < proyActuales.size(); j++) {
+                        Proyecto p1 = proyecto;
+                        Proyecto p2 = proyActuales.get(j);
+                        if (p1.getFechaInicio().after(p2.getFechaInicio()) && p1.getFechaInicio().before(p2.getFechaFin())
+                                || p1.getFechaFin().after(p2.getFechaInicio()) && p1.getFechaFin().before(p2.getFechaFin())
+                                || p2.getFechaInicio().after(p1.getFechaInicio()) && p2.getFechaInicio().before(p1.getFechaFin())
+                                || p2.getFechaFin().after(p1.getFechaInicio()) && p2.getFechaFin().before(p1.getFechaFin())) {
 
-                    } else {
-                        proyActuales.remove(j);
+                        } else {
+                            proyActuales.remove(j);
+                        }
+                    }
+                    if (proyActuales.size() > 1) {
+                        trabajadores.remove(i);
                     }
                 }
-                if (proyActuales.size() > 1) {
-                    trabajadores.remove(i);
-                }
+                elegidos = new ArrayList<>();
+                request.setAttribute("trabajadores", trabajadores);
+                return "/elegirTrabajadores.jsp";
             }
-            elegidos = new ArrayList<>();
-            request.setAttribute("trabajadores", trabajadores);
-            return "/elegirTrabajadores.jsp";
+        } catch (DatabaseException ex) {
+            return "/errorBaseDatos.jsp";
         }
     }
 
@@ -573,53 +597,55 @@ public class Controlador extends HttpServlet {
     }
 
     private String asignarTrabajador(HttpServletRequest request) {
+        try {
+            Actividad actividad = (new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", Rol.get(request.getParameter("Rol"))));
+            restantes = new ArrayList<>();
+            ArrayList<Actividad> simultaneas;
+            for (int i = 0; i < tp.size(); i++) {
+                restantes.add(tp.get(i));
+                simultaneas = new ArrayList<>();
+                simultaneas = despliegueProyecto.misActividadesFecha(tp.get(i).getUser());
 
-        Actividad actividad = (new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", Rol.get(request.getParameter("Rol"))));
-        restantes = new ArrayList<>();
-        ArrayList<Actividad> simultaneas;
-        for (int i = 0; i < tp.size(); i++) {
-            restantes.add(tp.get(i));
-            simultaneas = new ArrayList<>();
-            simultaneas = despliegueProyecto.misActividadesFecha(tp.get(i).getUser());
+                for (int k = 0; k < simultaneas.size(); k++) {
+                    if ((actividad.getFechaComienzo().before(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaComienzo().after(simultaneas.get(k).getFechaFin()))
+                            || (actividad.getFechaFin().after(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaFin().before(simultaneas.get(k).getFechaFin()))
+                            || (simultaneas.get(k).getFechaComienzo().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaComienzo().before(actividad.getFechaFin()))
+                            || (simultaneas.get(k).getFechaFin().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaFin().before(actividad.getFechaFin()))) {
+                        simultaneas.remove(k);
+                    }
+                }
 
-            for (int k = 0; k < simultaneas.size(); k++) {
-                if ((actividad.getFechaComienzo().before(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaComienzo().after(simultaneas.get(k).getFechaFin()))
-                        || (actividad.getFechaFin().after(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaFin().before(simultaneas.get(k).getFechaFin()))
-                        || (simultaneas.get(k).getFechaComienzo().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaComienzo().before(actividad.getFechaFin()))
-                        || (simultaneas.get(k).getFechaFin().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaFin().before(actividad.getFechaFin()))) {
-                    simultaneas.remove(k);
+                if (simultaneas.size() > 3) {
+                    restantes.remove(i);
                 }
             }
+            for (int i = 0; i < restantes.size(); i++) {
+                ArrayList<Vacaciones> vc = despliegueTrabajador.getVacaciones(restantes.get(i).getUser());
 
-            if (simultaneas.size() > 3) {
-                restantes.remove(i);
-            }
-        }
-        for (int i = 0; i < restantes.size(); i++) {
-            ArrayList<Vacaciones> vc = despliegueTrabajador.getVacaciones(restantes.get(i).getUser());
-
-            if (vc != null) {
-                for (int j = 0; j < vc.size(); j++) {
-                    java.util.Date inicio = vc.get(j).getInicio();
-                    Calendar c = Calendar.getInstance();
-                    c.setTime(vc.get(j).getInicio());
-                    c.add(Calendar.DATE, (vc.get(j).getSemanas() * 7) - 1);
-                    java.util.Date fin = c.getTime();
-                    if (!(actividad.getFechaComienzo().before(inicio)) && !(actividad.getFechaComienzo().after(fin))
-                            || !(actividad.getFechaFin().after(inicio)) && !(actividad.getFechaFin().before(fin))
-                            || !(inicio.after(actividad.getFechaComienzo())) && !(inicio.before(actividad.getFechaFin()))
-                            || !(fin.after(actividad.getFechaComienzo())) && !(fin.before(actividad.getFechaFin()))) {
-                        restantes.remove(i);
-                        break;
+                if (vc != null) {
+                    for (int j = 0; j < vc.size(); j++) {
+                        java.util.Date inicio = vc.get(j).getInicio();
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(vc.get(j).getInicio());
+                        c.add(Calendar.DATE, (vc.get(j).getSemanas() * 7) - 1);
+                        java.util.Date fin = c.getTime();
+                        if (!(actividad.getFechaComienzo().before(inicio)) && !(actividad.getFechaComienzo().after(fin))
+                                || !(actividad.getFechaFin().after(inicio)) && !(actividad.getFechaFin().before(fin))
+                                || !(inicio.after(actividad.getFechaComienzo())) && !(inicio.before(actividad.getFechaFin()))
+                                || !(fin.after(actividad.getFechaComienzo())) && !(fin.before(actividad.getFechaFin()))) {
+                            restantes.remove(i);
+                            break;
+                        }
                     }
                 }
             }
+            actividades.add(actividad);
+            actEtapa.add(actividad);
+            request.setAttribute("trabajadoresProyecto", restantes);
+            return "/seleccionarTrabajadores.jsp";
+        } catch (DatabaseException ex) {
+            return "/errorBaseDatos.jsp";
         }
-        actividades.add(actividad);
-        actEtapa.add(actividad);
-        request.setAttribute("trabajadoresProyecto", restantes);
-        return "/seleccionarTrabajadores.jsp";
-
     }
 
     public String indiceInformes(HttpServletRequest request) {
@@ -845,85 +871,88 @@ public class Controlador extends HttpServlet {
     }
 
     private String actividadConPredecesoras(HttpServletRequest request) {
-
-        Actividad actividad = new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(),
-                actEtapa.size(), request.getParameter("descripcion"),
-                Integer.parseInt(request.getParameter("duracion")), null,
-                Date.valueOf(request.getParameter("inicio")),
-                Date.valueOf(request.getParameter("fin")), null, "planifcada",
-                Rol.get(request.getParameter("Rol")));
-        for (int i = 0; i < actEtapa.size(); i++) {
-            if (request.getParameter("" + i) != null) {
-                if (!actEtapa.get(i).getFechaFin().before(actividad.getFechaComienzo())) {
-                    request.setAttribute("posiblesPredecesoras", actEtapa);
-                    request.setAttribute("predecesora", actEtapa.get(i));
-                    return "/actividadesFinalizarNoPredecesora.jsp";
-                } else {
-                    actividad.addPredecesora(actEtapa.get(i));
+        try {
+            Actividad actividad = new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(),
+                    actEtapa.size(), request.getParameter("descripcion"),
+                    Integer.parseInt(request.getParameter("duracion")), null,
+                    Date.valueOf(request.getParameter("inicio")),
+                    Date.valueOf(request.getParameter("fin")), null, "planifcada",
+                    Rol.get(request.getParameter("Rol")));
+            for (int i = 0; i < actEtapa.size(); i++) {
+                if (request.getParameter("" + i) != null) {
+                    if (!actEtapa.get(i).getFechaFin().before(actividad.getFechaComienzo())) {
+                        request.setAttribute("posiblesPredecesoras", actEtapa);
+                        request.setAttribute("predecesora", actEtapa.get(i));
+                        return "/actividadesFinalizarNoPredecesora.jsp";
+                    } else {
+                        actividad.addPredecesora(actEtapa.get(i));
+                    }
                 }
+
             }
 
-        }
+            restantes = new ArrayList<>();
+            ArrayList<Actividad> simultaneas;
+            for (int i = 0; i < tp.size(); i++) {
+                restantes.add(tp.get(i));
+                simultaneas = new ArrayList<>();
+                simultaneas = despliegueProyecto.misActividadesFecha(tp.get(i).getUser());
 
-        restantes = new ArrayList<>();
-        ArrayList<Actividad> simultaneas;
-        for (int i = 0; i < tp.size(); i++) {
-            restantes.add(tp.get(i));
-            simultaneas = new ArrayList<>();
-            simultaneas = despliegueProyecto.misActividadesFecha(tp.get(i).getUser());
-
-            for (int k = 0; k < simultaneas.size(); k++) {
-                if ((actividad.getFechaComienzo().before(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaComienzo().after(simultaneas.get(k).getFechaFin()))
-                        || (actividad.getFechaFin().after(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaFin().before(simultaneas.get(k).getFechaFin()))
-                        || (simultaneas.get(k).getFechaComienzo().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaComienzo().before(actividad.getFechaFin()))
-                        || (simultaneas.get(k).getFechaFin().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaFin().before(actividad.getFechaFin()))) {
-                    simultaneas.remove(k);
+                for (int k = 0; k < simultaneas.size(); k++) {
+                    if ((actividad.getFechaComienzo().before(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaComienzo().after(simultaneas.get(k).getFechaFin()))
+                            || (actividad.getFechaFin().after(simultaneas.get(k).getFechaComienzo())) && (actividad.getFechaFin().before(simultaneas.get(k).getFechaFin()))
+                            || (simultaneas.get(k).getFechaComienzo().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaComienzo().before(actividad.getFechaFin()))
+                            || (simultaneas.get(k).getFechaFin().after(actividad.getFechaComienzo())) && (simultaneas.get(k).getFechaFin().before(actividad.getFechaFin()))) {
+                        simultaneas.remove(k);
+                    }
                 }
-            }
-            for (int k = 0; k < actividadTrabajador.size(); k++) {
-                if (actividadTrabajador.get(k).getNombreTrabajador().equals(tp.get(i).getUser())) {
-                    for (int j = 0; j < actividades.size(); j++) {
-                        if (actividades.get(j).getNumero() == actividadTrabajador.get(k).getNumeroEtapa()
-                                && actividades.get(j).getId() == actividadTrabajador.get(k).getIdActividad()) {
-                            if (!(actividad.getFechaComienzo().before(actividades.get(j).getFechaComienzo())) && !(actividad.getFechaComienzo().after(actividades.get(j).getFechaFin()))
-                                    || !(actividad.getFechaFin().after(actividades.get(j).getFechaComienzo())) && !(actividad.getFechaFin().before(actividades.get(j).getFechaFin()))
-                                    || !(actividades.get(j).getFechaComienzo().after(actividad.getFechaComienzo())) && !(actividades.get(j).getFechaComienzo().before(actividad.getFechaFin()))
-                                    || !(actividades.get(j).getFechaFin().after(actividad.getFechaComienzo())) && !(actividades.get(j).getFechaFin().before(actividad.getFechaFin()))) {
+                for (int k = 0; k < actividadTrabajador.size(); k++) {
+                    if (actividadTrabajador.get(k).getNombreTrabajador().equals(tp.get(i).getUser())) {
+                        for (int j = 0; j < actividades.size(); j++) {
+                            if (actividades.get(j).getNumero() == actividadTrabajador.get(k).getNumeroEtapa()
+                                    && actividades.get(j).getId() == actividadTrabajador.get(k).getIdActividad()) {
+                                if (!(actividad.getFechaComienzo().before(actividades.get(j).getFechaComienzo())) && !(actividad.getFechaComienzo().after(actividades.get(j).getFechaFin()))
+                                        || !(actividad.getFechaFin().after(actividades.get(j).getFechaComienzo())) && !(actividad.getFechaFin().before(actividades.get(j).getFechaFin()))
+                                        || !(actividades.get(j).getFechaComienzo().after(actividad.getFechaComienzo())) && !(actividades.get(j).getFechaComienzo().before(actividad.getFechaFin()))
+                                        || !(actividades.get(j).getFechaFin().after(actividad.getFechaComienzo())) && !(actividades.get(j).getFechaFin().before(actividad.getFechaFin()))) {
 
-                                simultaneas.add(actividades.get(j));
+                                    simultaneas.add(actividades.get(j));
+                                }
                             }
                         }
                     }
                 }
+                if (simultaneas.size() > 3) {
+                    restantes.remove(i);
+                }
             }
-            if (simultaneas.size() > 3) {
-                restantes.remove(i);
-            }
-        }
-        for (int i = 0; i < restantes.size(); i++) {
-            ArrayList<Vacaciones> vc = despliegueTrabajador.getVacaciones(restantes.get(i).getUser());
+            for (int i = 0; i < restantes.size(); i++) {
+                ArrayList<Vacaciones> vc = despliegueTrabajador.getVacaciones(restantes.get(i).getUser());
 
-            if (vc != null) {
-                for (int j = 0; j < vc.size(); j++) {
-                    java.util.Date inicio = vc.get(j).getInicio();
-                    Calendar c = Calendar.getInstance();
-                    c.setTime(vc.get(j).getInicio());
-                    c.add(Calendar.DATE, (vc.get(j).getSemanas() * 7) - 1);
-                    java.util.Date fin = c.getTime();
-                    if (!(actividad.getFechaComienzo().before(inicio)) && !(actividad.getFechaComienzo().after(fin))
-                            || !(actividad.getFechaFin().after(inicio)) && !(actividad.getFechaFin().before(fin))
-                            || !(inicio.after(actividad.getFechaComienzo())) && !(inicio.before(actividad.getFechaFin()))
-                            || !(fin.after(actividad.getFechaComienzo())) && !(fin.before(actividad.getFechaFin()))) {
-                        restantes.remove(i);
-                        break;
+                if (vc != null) {
+                    for (int j = 0; j < vc.size(); j++) {
+                        java.util.Date inicio = vc.get(j).getInicio();
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(vc.get(j).getInicio());
+                        c.add(Calendar.DATE, (vc.get(j).getSemanas() * 7) - 1);
+                        java.util.Date fin = c.getTime();
+                        if (!(actividad.getFechaComienzo().before(inicio)) && !(actividad.getFechaComienzo().after(fin))
+                                || !(actividad.getFechaFin().after(inicio)) && !(actividad.getFechaFin().before(fin))
+                                || !(inicio.after(actividad.getFechaComienzo())) && !(inicio.before(actividad.getFechaFin()))
+                                || !(fin.after(actividad.getFechaComienzo())) && !(fin.before(actividad.getFechaFin()))) {
+                            restantes.remove(i);
+                            break;
+                        }
                     }
                 }
             }
+            actividades.add(actividad);
+            actEtapa.add(actividad);
+            request.setAttribute("trabajadoresProyecto", restantes);
+            return "/seleccionarTrabajadores.jsp";
+        } catch (DatabaseException ex) {
+            return "/errorBaseDatos.jsp";
         }
-        actividades.add(actividad);
-        actEtapa.add(actividad);
-        request.setAttribute("trabajadoresProyecto", restantes);
-        return "/seleccionarTrabajadores.jsp";
     }
 
     private String planificarSigsEtapas(HttpServletRequest request) {

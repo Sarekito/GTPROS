@@ -1,6 +1,6 @@
 package Trabajador.Despliegue;
 
-import Proyecto.Persistencia.ProyectoPersistencia;
+import Excepciones.DatabaseException;
 import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
@@ -10,8 +10,6 @@ import Trabajador.Persistencia.VacacionesPersistencia;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Stateless;
 
 /**
@@ -22,110 +20,82 @@ import javax.ejb.Stateless;
 public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
 
     @Override
-    public Trabajador getTrabajador(String user) {
-        Trabajador t = null;
+    public Trabajador getTrabajador(String user) throws DatabaseException {
         try {
-            t = TrabajadorPersistencia.getTrabajador(user);
+            return TrabajadorPersistencia.getTrabajador(user);
         } catch (SQLException ex) {
-            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DatabaseException();
         }
-        return t;
     }
 
     @Override
-    public boolean reservoVacaciones(String user, int ano) {
-        ArrayList<Vacaciones> vacaciones = null;
+    public boolean reservoVacaciones(String user, int ano) throws DatabaseException {
         try {
-            vacaciones = VacacionesPersistencia.getVacaciones(user, ano);
-        } catch (SQLException ex) {
-            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            ArrayList<Vacaciones> vacaciones = VacacionesPersistencia.getVacaciones(user, ano);
 
-        return !vacaciones.isEmpty();
+            return !vacaciones.isEmpty();
+        } catch (SQLException ex) {
+            throw new DatabaseException();
+        }
     }
 
     @Override
-    public void reservaVacaciones(Trabajador t, int periodo, int year, Date fechaElegida, int semanas) {
-        Vacaciones v = new Vacaciones(t.getUser(), periodo, fechaElegida.getYear(), fechaElegida, semanas);
+    public void reservaVacaciones(Trabajador t, int periodo, int year, Date fechaElegida, int semanas) throws DatabaseException {
         try {
+            Vacaciones v = new Vacaciones(t.getUser(), periodo, fechaElegida.getYear(), fechaElegida, semanas);
             VacacionesPersistencia.guardaVacaciones(v.getUser(), v.getPeriodo(), year, v.getInicio(), v.getSemanas());
         } catch (SQLException ex) {
-            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DatabaseException();
         }
     }
 
     @Override
-    public Administrador getAdministrador(String user) {
-        Administrador t = null;
+    public Administrador getAdministrador(String user) throws DatabaseException {
         try {
-            t = AdministradorPersistencia.getAdministrador(user);
+            return AdministradorPersistencia.getAdministrador(user);
         } catch (SQLException ex) {
-            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DatabaseException();
         }
-        return t;
     }
 
     @Override
-    public void registrarTrabajador(Trabajador tr) {
+    public void registrarTrabajador(Trabajador tr) throws DatabaseException {
         try {
             TrabajadorPersistencia.registrarTrabajador(tr);
         } catch (SQLException ex) {
-            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DatabaseException();
         }
     }
 
     @Override
-    public boolean buscaTrabajador(String user) {
-        Trabajador t = null;
+    public boolean buscaTrabajador(String user) throws DatabaseException {
+        return getTrabajador(user) != null;
+    }
+
+    @Override
+    public ArrayList<Trabajador> getTrabajadores(String jefe) throws DatabaseException {
         try {
-            t = TrabajadorPersistencia.getTrabajador(user);
+            return TrabajadorPersistencia.getTrabajadores(jefe);
         } catch (SQLException ex) {
-            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DatabaseException();
         }
-
-        return t != null;
     }
 
     @Override
-    public ArrayList<Trabajador> getTrabajadores(String jefe) {
-        ArrayList<Trabajador> trabajadores = null;
+    public ArrayList<Vacaciones> getVacaciones(String user) throws DatabaseException {
         try {
-            trabajadores = TrabajadorPersistencia.getTrabajadores(jefe);
+            return VacacionesPersistencia.dameVacaciones(user);
         } catch (SQLException ex) {
-            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DatabaseException();
         }
-        return trabajadores;
     }
 
     @Override
-    public int getNumProyectosActivos(Trabajador t) {
-        int proyectos = 0;
-        try {
-            proyectos = ProyectoPersistencia.getNumProyectos(t);
-        } catch (SQLException ex) {
-            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println(proyectos + " " + t.getUser());
-        return proyectos;
-    }
-
-    @Override
-    public ArrayList<Vacaciones> getVacaciones(String user) {
-        ArrayList<Vacaciones> vc = new ArrayList<>();
-        try {
-            vc = VacacionesPersistencia.dameVacaciones(user);
-        } catch (SQLException ex) {
-            Logger.getLogger(DespliegueTrabajador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return vc;
-    }
-
-    @Override
-    public java.util.ArrayList<Trabajador> getJefesSinProyecto() {
+    public java.util.ArrayList<Trabajador> getJefesSinProyecto() throws DatabaseException {
         try {
             return TrabajadorPersistencia.getJefesSinProyecto();
         } catch (SQLException ex) {
-            return null;
+            throw new DatabaseException();
         }
     }
 }

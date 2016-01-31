@@ -1,11 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Trabajador.Despliegue;
 
-import Proyecto.Dominio.TrabajadoresProyecto;
+import Excepciones.DatabaseException;
 import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
@@ -19,25 +14,23 @@ import javax.ejb.Local;
  */
 @Local
 public interface DespliegueTrabajadorLocal {
-    
-    public Trabajador getTrabajador(String parameter);
 
-    public boolean reservoVacaciones(String user, int date);
+    public Trabajador getTrabajador(String parameter) throws DatabaseException;
 
-    public void reservaVacaciones(Trabajador t, int year, int i, Date fechaElegida, int semanas);
+    public boolean reservoVacaciones(String user, int date) throws DatabaseException;
 
-    public Administrador getAdministrador(String parameter);
+    public void reservaVacaciones(Trabajador t, int year, int i, Date fechaElegida, int semanas) throws DatabaseException;
 
-    public void registrarTrabajador(Trabajador tr);
+    public Administrador getAdministrador(String parameter) throws DatabaseException;
 
-    public boolean buscaTrabajador(String user);
+    public void registrarTrabajador(Trabajador tr) throws DatabaseException;
 
-    public ArrayList<Trabajador> getTrabajadores(String jefe);
+    public boolean buscaTrabajador(String user) throws DatabaseException;
 
-    public int getNumProyectosActivos(Trabajador t);
+    public ArrayList<Trabajador> getTrabajadores(String jefe) throws DatabaseException;
 
-    public ArrayList<Vacaciones> getVacaciones(String user);
+    public ArrayList<Vacaciones> getVacaciones(String user) throws DatabaseException;
 
-    java.util.ArrayList<Trabajador> getJefesSinProyecto();
+    java.util.ArrayList<Trabajador> getJefesSinProyecto() throws DatabaseException;
 
 }
