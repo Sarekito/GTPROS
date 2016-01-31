@@ -42,8 +42,6 @@ public class Controlador extends HttpServlet {
     @EJB
     private DespliegueTrabajadorLocal despliegueTrabajador;
 
-    private ArrayList<Proyecto> cerrados;
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -270,8 +268,8 @@ public class Controlador extends HttpServlet {
             //Old version
             //return "/accesoUsuario.jsp";
             //New version
-            cerrados = despliegueProyecto.getMisProyectosActuales(trabajador);
-            sesion.setAttribute("misProyectosActuales", cerrados);
+            ArrayList<Proyecto> misProyectosActuales = despliegueProyecto.getMisProyectosActuales(trabajador);
+            sesion.setAttribute("misProyectosActuales", misProyectosActuales);
             return "/seleccionProyectos.jsp";
         } catch (DatabaseException ex) {
             return "/errorBaseDatos.jsp";
@@ -1052,7 +1050,10 @@ public class Controlador extends HttpServlet {
     }
 
     private String proyectosCerrados(HttpServletRequest request) {
-        cerrados = despliegueProyecto.getProyectosCerrados();
+        HttpSession sesion = request.getSession();
+
+        ArrayList<Proyecto> cerrados = despliegueProyecto.getProyectosCerrados();
+        sesion.setAttribute("cerrados", cerrados);
         request.setAttribute("cerrados", cerrados);
         return "/cerrados.jsp";
     }
@@ -1060,6 +1061,7 @@ public class Controlador extends HttpServlet {
     private String infoProyectoCerrado(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        ArrayList<Proyecto> cerrados = (ArrayList<Proyecto>) sesion.getAttribute("cerrados");
 
         if (trabajador == null) {
             return "/index.jsp";
@@ -1088,8 +1090,8 @@ public class Controlador extends HttpServlet {
             return "/index.jsp";
         }
 
-        cerrados = despliegueProyecto.getMisProyectosActuales(trabajador);
-        sesion.setAttribute("abiertos", cerrados);
+        ArrayList<Proyecto> abiertos = despliegueProyecto.getMisProyectosActuales(trabajador);
+        sesion.setAttribute("abiertos", abiertos);
         return "/abiertos.jsp";
     }
 
@@ -1266,12 +1268,13 @@ public class Controlador extends HttpServlet {
     private String infoProyectoAbierto(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        ArrayList<Proyecto> abiertos = (ArrayList<Proyecto>) sesion.getAttribute("abiertos");
 
         if (trabajador == null) {
             return "/index.jsp";
         }
         int selected = Integer.parseInt(request.getParameter("eleccion"));
-        Proyecto proyecto = cerrados.get(selected);
+        Proyecto proyecto = abiertos.get(selected);
         sesion.setAttribute("proyecto", proyecto);
         ArrayList<Etapa> etapasC = despliegueProyecto.getEtapas(proyecto.getNombre());
         ArrayList<Actividad> actividadesC = new ArrayList<>();
