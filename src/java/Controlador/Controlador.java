@@ -42,13 +42,8 @@ public class Controlador extends HttpServlet {
     @EJB
     private DespliegueTrabajadorLocal despliegueTrabajador;
 
-    Proyecto p;
-    private ArrayList<Trabajador> trabajadores;
     private ArrayList<Proyecto> cerrados;
-    private ArrayList<TrabajadoresProyecto> tp;
     private ArrayList<TrabajadoresProyecto> restantes;
-    private ArrayList<Trabajador> elegidos;
-    private ArrayList<Etapa> etapas;
     private ArrayList<Actividad> actividades;
     private ArrayList<Actividad> actEtapa, actividadesC, tmp2;
     private ArrayList<ActividadTrabajador> actividadTrabajador;
@@ -257,7 +252,7 @@ public class Controlador extends HttpServlet {
     private String acceso(HttpServletRequest request) {
         try {
             HttpSession sesion = request.getSession();
-            
+
             String usuario = request.getParameter("usuario");
             String clave = request.getParameter("clave");
 
@@ -385,7 +380,7 @@ public class Controlador extends HttpServlet {
     private String entrarAdmin(HttpServletRequest request) {
         try {
             final String errorCredenciales = "Credenciales incorrectas.";
-            
+
             HttpSession sesion = request.getSession();
 
             String usuario = request.getParameter("usuario");
@@ -426,7 +421,7 @@ public class Controlador extends HttpServlet {
     private String registroProyecto(HttpServletRequest request) {
         try {
             HttpSession sesion = request.getSession();
-            
+
             String jefe = request.getParameter("jefe");
             String nombreProyecto = request.getParameter("nombre");
 
@@ -438,12 +433,12 @@ public class Controlador extends HttpServlet {
             if (tr.getCategoria().getCategoria() != 1) {
                 return "/errorNoPuedeSerJefe.jsp";
             }
-            
+
             ArrayList<Proyecto> proyectosDeJefe = despliegueProyecto.getMisProyectos(jefe);
             if (!proyectosDeJefe.isEmpty()) {
                 return "/errorProyectoJefe.jsp";
             }
-            
+
             Proyecto p = despliegueProyecto.getProyecto(nombreProyecto);
             if (p != null) {
                 return "/errorExisteProyecto.jsp";
@@ -465,7 +460,7 @@ public class Controlador extends HttpServlet {
         if (trabajador == null) {
             return "/index.html";
         }
-        
+
         ArrayList<Proyecto> misProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
         request.setAttribute("misProyectos", misProyectos);
         sesion.setAttribute("misProyectos", misProyectos);
@@ -501,8 +496,9 @@ public class Controlador extends HttpServlet {
         try {
             HttpSession sesion = request.getSession();
             Proyecto proyecto = (Proyecto) request.getAttribute("proyecto");
-            
-            tp = new ArrayList<>();
+
+            ArrayList<TrabajadoresProyecto> tp = new ArrayList<>();
+            sesion.setAttribute("tp", tp);
             java.util.Date hoy = new java.util.Date();
             Date inicio = Date.valueOf(request.getParameter("inicio"));
             Date fin = Date.valueOf(request.getParameter("fin"));
@@ -513,7 +509,7 @@ public class Controlador extends HttpServlet {
             } else {
                 proyecto.setFechaInicio(inicio);
                 proyecto.setFechaFin(fin);
-                trabajadores = despliegueTrabajador.getTrabajadores(proyecto.getJefe());
+                ArrayList<Trabajador> trabajadores = despliegueTrabajador.getTrabajadores(proyecto.getJefe());
                 for (int i = 0; i < trabajadores.size(); i++) {
                     ArrayList<Proyecto> proyActuales = despliegueProyecto.getMisProyectosActuales(trabajadores.get(i));
                     for (int j = 0; j < proyActuales.size(); j++) {
@@ -532,7 +528,9 @@ public class Controlador extends HttpServlet {
                         trabajadores.remove(i);
                     }
                 }
-                elegidos = new ArrayList<>();
+                ArrayList<Trabajador> elegidos = new ArrayList<>();
+                sesion.setAttribute("elegidos", elegidos);
+                sesion.setAttribute("trabajadores", trabajadores);
                 request.setAttribute("trabajadores", trabajadores);
                 return "/elegirTrabajadores.jsp";
             }
@@ -544,9 +542,13 @@ public class Controlador extends HttpServlet {
     private String tomarDatos(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+        ArrayList<Trabajador> elegidos = (ArrayList<Trabajador>) sesion.getAttribute("elegidos");
+        ArrayList<Trabajador> trabajadores = (ArrayList<Trabajador>) sesion.getAttribute("trabajadores");
+        ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
 
         actividadTrabajador = new ArrayList<>();
-        etapas = new ArrayList<>();
+        ArrayList<Etapa> etapas = new ArrayList<>();
+        sesion.setAttribute("etapas", etapas);
         actividades = new ArrayList<>();
         Trabajador tr = trabajadores.get(Integer.parseInt(request.getParameter("eleccion")));
         ArrayList<Proyecto> proyActuales = despliegueProyecto.getMisProyectosActuales(tr);
@@ -592,6 +594,7 @@ public class Controlador extends HttpServlet {
     private String planificarActividades(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+        ArrayList<Etapa> etapas = (ArrayList<Etapa>) sesion.getAttribute("etapas");
 
         Date inicio = Date.valueOf(request.getParameter("inicio"));
         Date fin = Date.valueOf(request.getParameter("fin"));
@@ -608,6 +611,8 @@ public class Controlador extends HttpServlet {
         try {
             HttpSession sesion = request.getSession();
             Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+            ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
+            ArrayList<Etapa> etapas = (ArrayList<Etapa>) sesion.getAttribute("etapas");
 
             Actividad actividad = (new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", Rol.get(request.getParameter("Rol"))));
             restantes = new ArrayList<>();
@@ -691,10 +696,11 @@ public class Controlador extends HttpServlet {
     public String mostrarInformes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        
+        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
         tareas = new ArrayList<>();
         Actividad act;
-        if (trabajador.getUser().equals(p.getJefe())) {
+        if (trabajador.getUser().equals(proyecto.getJefe())) {
             act = tmp2.get(Integer.parseInt(request.getParameter("elegida")));
             tareas = despliegueProyecto.getInformesActividad(act);
             sesion.setAttribute("tareas", tareas);
@@ -830,6 +836,9 @@ public class Controlador extends HttpServlet {
     }
 
     private String otroTrabajador(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
+
         int elegido = Integer.parseInt(request.getParameter("eleccion"));
         TrabajadoresProyecto tptmp = tp.get(elegido);
         restantes.remove(elegido);
@@ -868,6 +877,9 @@ public class Controlador extends HttpServlet {
     }
 
     private String volverAPlanificar(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
+
         for (int i = 0; i < tp.size() - restantes.size(); i++) {
             actividadTrabajador.remove(actividadTrabajador.size() - 1);
         }
@@ -883,6 +895,8 @@ public class Controlador extends HttpServlet {
         try {
             HttpSession sesion = request.getSession();
             Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+            ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
+            ArrayList<Etapa> etapas = (ArrayList<Etapa>) sesion.getAttribute("etapas");
 
             Actividad actividad = new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(),
                     actEtapa.size(), request.getParameter("descripcion"),
@@ -969,6 +983,7 @@ public class Controlador extends HttpServlet {
     private String planificarSigsEtapas(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+        ArrayList<Etapa> etapas = (ArrayList<Etapa>) sesion.getAttribute("etapas");
 
         Date inicio = Date.valueOf(request.getParameter("inicio"));
         Date fin = Date.valueOf(request.getParameter("fin"));
@@ -990,6 +1005,8 @@ public class Controlador extends HttpServlet {
     private String finalizarPlanProyecto(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+        ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
+        ArrayList<Etapa> etapas = (ArrayList<Etapa>) sesion.getAttribute("etapas");
 
         despliegueProyecto.guardarProyecto(proyecto);
         despliegueProyecto.guardarEtapas(etapas);
@@ -1058,7 +1075,7 @@ public class Controlador extends HttpServlet {
     private String finalizarActividades(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        
+
         ArrayList<Proyecto> todosProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
         ArrayList<Actividad> todasActividades = null;
         for (int w = 0; w < todosProyectos.size(); w++) {
@@ -1097,7 +1114,10 @@ public class Controlador extends HttpServlet {
     }
 
     private String finalizarProyecto(HttpServletRequest request) {
-        ArrayList<Etapa> et = despliegueProyecto.getEtapas(p.getNombre());
+        HttpSession sesion = request.getSession();
+        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
+        ArrayList<Etapa> et = despliegueProyecto.getEtapas(proyecto.getNombre());
         int duracion = 0;
         for (int i = 0; i < et.size(); i++) {
             duracion += et.get(i).getDuracionReal();
@@ -1105,16 +1125,16 @@ public class Controlador extends HttpServlet {
                 return "/errorCierreProyecto.jsp";
             }
         }
-        p.setDuracionReal(duracion);
-        p.setEstado("cerrado");
+        proyecto.setDuracionReal(duracion);
+        proyecto.setEstado("cerrado");
         java.util.Date fechaFinReal = new java.util.Date();
         Calendar c = Calendar.getInstance();
         c.setTime(fechaFinReal);
         c.add(Calendar.DATE, (fechaFinReal.getDay() - 1) * -1);
         fechaFinReal = c.getTime();
-        p.setFechaFinReal(fechaFinReal);
-        despliegueProyecto.cierreProyecto(p);
-        request.getSession().setAttribute("proyectoCerrado", p);
+        proyecto.setFechaFinReal(fechaFinReal);
+        despliegueProyecto.cierreProyecto(proyecto);
+        request.getSession().setAttribute("proyectoCerrado", proyecto);
         return "/proyectoCerrado.jsp";
     }
 
@@ -1152,7 +1172,7 @@ public class Controlador extends HttpServlet {
     private String verActividadesPendientes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        
+
         if (trabajador == null) {
             return "/index.jsp";
         }
@@ -1164,7 +1184,7 @@ public class Controlador extends HttpServlet {
 
     private String aAcceso(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-        
+
         if (sesion.getAttribute("trabajador") != null) {
             return "/accesoUsuario.jsp";
         } else {
@@ -1175,7 +1195,7 @@ public class Controlador extends HttpServlet {
     private String aIntroducirDatosActividad(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        
+
         if (trabajador == null) {
             return "/index.jsp";
         }
@@ -1222,19 +1242,19 @@ public class Controlador extends HttpServlet {
     private String infoProyectoAbierto(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-        
+
         if (trabajador == null) {
             return "/index.jsp";
         }
         int selected = Integer.parseInt(request.getParameter("eleccion"));
-        p = cerrados.get(selected);
-        sesion.setAttribute("proyecto", p);
-        etapasC = despliegueProyecto.getEtapas(p.getNombre());
+        Proyecto proyecto = cerrados.get(selected);
+        sesion.setAttribute("proyecto", proyecto);
+        etapasC = despliegueProyecto.getEtapas(proyecto.getNombre());
         actividadesC = new ArrayList<>();
         tmp2 = new ArrayList<>();
         for (int i = 0; i < etapasC.size(); i++) {
             ArrayList<Actividad> tmp = new ArrayList<>();
-            tmp = despliegueProyecto.getActividadesCerrados(p.getNombre(), etapasC.get(i).getNumero());
+            tmp = despliegueProyecto.getActividadesCerrados(proyecto.getNombre(), etapasC.get(i).getNumero());
             for (int j = 0; j < tmp.size(); j++) {
                 tmp2.add(tmp.get(j));
                 if (!despliegueProyecto.tieneAntecesoras(tmp2.get(j))) {
@@ -1242,15 +1262,15 @@ public class Controlador extends HttpServlet {
                 }
             }
         }
-        
+
         java.util.Date hoy = new java.util.Date();
-        if (!p.getJefe().equals(trabajador.getUser())) {
+        if (!proyecto.getJefe().equals(trabajador.getUser())) {
             for (int i = 0; i < tmp2.size(); i++) {
                 if (despliegueProyecto.isAsignado(tmp2.get(i), trabajador.getUser()) && tmp2.get(i).getFechaComienzo().before(hoy)) {
                     actividadesC.add(tmp2.get(i));
                 }
             }
-            
+
             for (int i = 0; i < actividadesC.size(); i++) {
                 if (!despliegueProyecto.tieneAntecesoras(actividadesC.get(i))) {
                     actividadesC.get(i).setEstado("Predecesoras en realizacion");
@@ -1262,7 +1282,7 @@ public class Controlador extends HttpServlet {
         }
         sesion.setAttribute("selected", selected);
         sesion.setAttribute("trabajador", trabajador);
-        sesion.setAttribute("proyecto", p);
+        sesion.setAttribute("proyecto", proyecto);
         sesion.setAttribute("etapas", etapasC);
         return "/vistaAbierto.jsp";
     }
@@ -1278,14 +1298,19 @@ public class Controlador extends HttpServlet {
         estado.add("programas");
         estado.add("reuniones");
         estado.add("tratoUsuarios");
+
+        int[] get = new int[6];
         for (int i = j; i < j + 6; i++) {
-            duracion += Integer.parseInt(request.getParameter("get-" + i % 6));
+            int v = Integer.parseInt(request.getParameter("get-" + i % 6));
+            get[i % 6] = v;
+            duracion += v;
         }
+
         if (limite < duracion) {
             return "/errorHoras.jsp";
         } else {
             for (int i = j; i < j + 6; i++) {
-                tareas.get(i).setDuracion(Integer.parseInt(request.getParameter("get-" + i % 6)));
+                tareas.get(i).setDuracion(get[i % 6]);
                 tareas.get(i).setEstado("Enviado");
                 despliegueProyecto.guardaInforme(tareas.get(i), estado.get(i % 6));
             }
