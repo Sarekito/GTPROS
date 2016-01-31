@@ -43,7 +43,6 @@ public class Controlador extends HttpServlet {
     private DespliegueTrabajadorLocal despliegueTrabajador;
 
     private ArrayList<Proyecto> cerrados;
-    private ArrayList<Actividad> actEtapa;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -598,7 +597,8 @@ public class Controlador extends HttpServlet {
         if (inicio.after(fin) || inicio.before(proyecto.getFechaInicio()) || fin.after(proyecto.getFechaFin()) || inicio.getDay() != 1 || fin.getDay() != 1) {
             return "/errorFechasEtapa.jsp";
         } else {
-            actEtapa = new ArrayList<>();
+            ArrayList<Actividad> actEtapa = new ArrayList<>();
+            sesion.setAttribute("actEtapa", actEtapa);
             etapas.add(new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null, 0, 0, "pendiente"));
             return "/actividades.jsp";
         }
@@ -611,6 +611,7 @@ public class Controlador extends HttpServlet {
             ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
             ArrayList<Etapa> etapas = (ArrayList<Etapa>) sesion.getAttribute("etapas");
             ArrayList<Actividad> actividades = (ArrayList<Actividad>) sesion.getAttribute("actividades");
+            ArrayList<Actividad> actEtapa = (ArrayList<Actividad>) sesion.getAttribute("actEtapa");
 
             Actividad actividad = (new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", Rol.get(request.getParameter("Rol"))));
             ArrayList<TrabajadoresProyecto> restantes = new ArrayList<>();
@@ -912,6 +913,7 @@ public class Controlador extends HttpServlet {
             ArrayList<Etapa> etapas = (ArrayList<Etapa>) sesion.getAttribute("etapas");
             ArrayList<Actividad> actividades = (ArrayList<Actividad>) sesion.getAttribute("actividades");
             ArrayList<ActividadTrabajador> actividadTrabajador = (ArrayList<ActividadTrabajador>) sesion.getAttribute("actividadTrabajador");
+            ArrayList<Actividad> actEtapa = (ArrayList<Actividad>) sesion.getAttribute("actEtapa");
 
             Actividad actividad = new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(),
                     actEtapa.size(), request.getParameter("descripcion"),
@@ -1006,7 +1008,8 @@ public class Controlador extends HttpServlet {
         if (inicio.after(fin) || inicio.before(proyecto.getFechaInicio()) || fin.after(proyecto.getFechaFin()) || inicio.getDay() != 1 || fin.getDay() != 1) {
             return "/errorFechasEtapa.jsp";
         } else {
-            actEtapa = new ArrayList<>();
+            ArrayList<Actividad> actEtapa = new ArrayList<>();
+            sesion.setAttribute("actEtapa", actEtapa);
             Etapa etapa = new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null, 0, 0, "pendiente");
             if (etapas.get(etapas.size() - 1).getFechaFin().before(etapa.getFechaInicio())) {
                 etapas.add(etapa);
