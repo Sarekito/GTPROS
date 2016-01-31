@@ -45,7 +45,6 @@ public class Controlador extends HttpServlet {
     Proyecto p;
     private ArrayList<Trabajador> trabajadores;
     private ArrayList<Proyecto> cerrados;
-    private Administrador a;
     private ArrayList<Proyecto> misProyectos;
     private Proyecto proyecto;
     private ArrayList<TrabajadoresProyecto> tp;
@@ -396,7 +395,7 @@ public class Controlador extends HttpServlet {
                 return "/indexAdministrador.jsp";
             }
 
-            a = despliegueTrabajador.getAdministrador(usuario);
+            Administrador a = despliegueTrabajador.getAdministrador(usuario);
             if (a == null || !a.getPassword().equals(clave)) {
                 request.setAttribute("error", errorCredenciales);
                 return "/indexAdministrador.jsp";
