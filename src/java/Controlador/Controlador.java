@@ -1,7 +1,6 @@
 package Controlador;
 
 import Excepciones.DatabaseException;
-import Excepciones.EtapaConActividadesAbiertasException;
 import Excepciones.TrabajadorYaRegistradoException;
 import Proyecto.Despliegue.DespliegueProyectoLocal;
 
@@ -23,8 +22,6 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -44,8 +41,8 @@ public class Controlador extends HttpServlet {
 
     @EJB
     private DespliegueTrabajadorLocal despliegueTrabajador;
+    
     Proyecto p;
-    private Trabajador trabajador;
     private ArrayList<Trabajador> trabajadores;
     private ArrayList<Proyecto> cerrados;
     private Administrador a;
@@ -270,7 +267,7 @@ public class Controlador extends HttpServlet {
                 return "/index.jsp";
             }
 
-            trabajador = despliegueTrabajador.getTrabajador(usuario);
+            Trabajador trabajador = despliegueTrabajador.getTrabajador(usuario);
             if (trabajador == null) {
                 request.setAttribute("error", "No existe un trabajador con ese identificador.");
                 return "/index.jsp";
@@ -602,7 +599,6 @@ public class Controlador extends HttpServlet {
             ArrayList<Actividad> simultaneas;
             for (int i = 0; i < tp.size(); i++) {
                 restantes.add(tp.get(i));
-                simultaneas = new ArrayList<>();
                 simultaneas = despliegueProyecto.misActividadesFecha(tp.get(i).getUser());
 
                 for (int k = 0; k < simultaneas.size(); k++) {
@@ -708,7 +704,6 @@ public class Controlador extends HttpServlet {
         int tar = Integer.parseInt(request.getParameter("tareasAcepto"));
         System.out.println(tareas.get(tar).getIdActividad());
         despliegueProyecto.aprobarInforme(tareas.get(tar));
-        request.getSession().setAttribute("trabajador", trabajador);
         return "/informesAprobados.jsp";
     }
 
@@ -1039,6 +1034,7 @@ public class Controlador extends HttpServlet {
 
     private String finalizarActividades(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         ArrayList<Proyecto> todosProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
         ArrayList<Actividad> todasActividades = null;
         for (int w = 0; w < todosProyectos.size(); w++) {
@@ -1174,6 +1170,7 @@ public class Controlador extends HttpServlet {
 
     private String datosIntroducidosCorrectamente(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
+        Trabajador trabajador = (Trabajador)sesion.getAttribute("trabajador");
         String tarea = request.getParameter("mitarea");
         int numTarea = Integer.parseInt(tarea);
         java.util.Date semana1 = new java.util.Date();
