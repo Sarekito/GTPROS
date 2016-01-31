@@ -1,6 +1,7 @@
 package Trabajador.Despliegue;
 
 import Excepciones.DatabaseException;
+import Excepciones.TrabajadorYaRegistradoException;
 import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
@@ -59,8 +60,12 @@ public class DespliegueTrabajador implements DespliegueTrabajadorLocal {
     }
 
     @Override
-    public void registrarTrabajador(Trabajador tr) throws DatabaseException {
+    public void registrarTrabajador(Trabajador tr) throws DatabaseException, TrabajadorYaRegistradoException {
         try {
+            if (buscaTrabajador(tr.getUser())) {
+                throw new TrabajadorYaRegistradoException();
+            }
+            
             TrabajadorPersistencia.registrarTrabajador(tr);
         } catch (SQLException ex) {
             throw new DatabaseException();

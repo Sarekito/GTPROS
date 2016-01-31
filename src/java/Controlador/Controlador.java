@@ -2,6 +2,7 @@ package Controlador;
 
 import Excepciones.DatabaseException;
 import Excepciones.EtapaConActividadesAbiertasException;
+import Excepciones.TrabajadorYaRegistradoException;
 import Proyecto.Despliegue.DespliegueProyectoLocal;
 
 import Proyecto.Dominio.Actividad;
@@ -416,13 +417,11 @@ public class Controlador extends HttpServlet {
         try {
             Categoria cat = Categoria.get(Integer.parseInt(request.getParameter("nivel")));
             Trabajador tr = new Trabajador(request.getParameter("usuario"), request.getParameter("clave"), cat);
-            boolean existe = despliegueTrabajador.buscaTrabajador(tr.getUser());
-            if (!existe) {
-                despliegueTrabajador.registrarTrabajador(tr);
-                return "/creacionConExito.jsp";
-            } else {
-                return "/trabajadorCreado.jsp";
-            }
+
+            despliegueTrabajador.registrarTrabajador(tr);
+            return "/creacionConExito.jsp";
+        } catch (TrabajadorYaRegistradoException ex) {
+            return "/trabajadorCreado.jsp";
         } catch (DatabaseException ex) {
             return "/errorBaseDatos.jsp";
         }
