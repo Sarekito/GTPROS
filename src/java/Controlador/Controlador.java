@@ -43,12 +43,7 @@ public class Controlador extends HttpServlet {
     private DespliegueTrabajadorLocal despliegueTrabajador;
 
     private ArrayList<Proyecto> cerrados;
-    private ArrayList<TrabajadoresProyecto> restantes;
-    private ArrayList<Actividad> actividades;
-    private ArrayList<Actividad> actEtapa, actividadesC, tmp2;
-    private ArrayList<ActividadTrabajador> actividadTrabajador;
-    ArrayList<Etapa> etapasC;
-    ArrayList<Tarea> tareas;
+    private ArrayList<Actividad> actEtapa;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -546,10 +541,12 @@ public class Controlador extends HttpServlet {
         ArrayList<Trabajador> trabajadores = (ArrayList<Trabajador>) sesion.getAttribute("trabajadores");
         ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
 
-        actividadTrabajador = new ArrayList<>();
+        ArrayList<ActividadTrabajador> actividadTrabajador = new ArrayList<>();
+        sesion.setAttribute("actividadTrabajador", actividadTrabajador);
         ArrayList<Etapa> etapas = new ArrayList<>();
         sesion.setAttribute("etapas", etapas);
-        actividades = new ArrayList<>();
+        ArrayList<Actividad> actividades = new ArrayList<>();
+        sesion.setAttribute("actividades", actividades);
         Trabajador tr = trabajadores.get(Integer.parseInt(request.getParameter("eleccion")));
         ArrayList<Proyecto> proyActuales = despliegueProyecto.getMisProyectosActuales(tr);
         int dedicacion = Integer.parseInt(request.getParameter("dedicacion"));
@@ -613,9 +610,11 @@ public class Controlador extends HttpServlet {
             Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
             ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
             ArrayList<Etapa> etapas = (ArrayList<Etapa>) sesion.getAttribute("etapas");
+            ArrayList<Actividad> actividades = (ArrayList<Actividad>) sesion.getAttribute("actividades");
 
             Actividad actividad = (new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", Rol.get(request.getParameter("Rol"))));
-            restantes = new ArrayList<>();
+            ArrayList<TrabajadoresProyecto> restantes = new ArrayList<>();
+            sesion.setAttribute("restantes", restantes);
             ArrayList<Actividad> simultaneas;
             for (int i = 0; i < tp.size(); i++) {
                 restantes.add(tp.get(i));
@@ -697,8 +696,11 @@ public class Controlador extends HttpServlet {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+        ArrayList<Actividad> actividadesC = (ArrayList<Actividad>) sesion.getAttribute("actividadesC");
+        ArrayList<Actividad> tmp2 = (ArrayList<Actividad>) sesion.getAttribute("tmp2");
 
-        tareas = new ArrayList<>();
+        ArrayList<Tarea> tareas = new ArrayList<>();
+        sesion.setAttribute("tareas", tareas);
         Actividad act;
         if (trabajador.getUser().equals(proyecto.getJefe())) {
             act = tmp2.get(Integer.parseInt(request.getParameter("elegida")));
@@ -722,6 +724,9 @@ public class Controlador extends HttpServlet {
     }
 
     public String aprobarInforme(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        ArrayList<Tarea> tareas = (ArrayList<Tarea>) sesion.getAttribute("tareas");
+
         int tar = Integer.parseInt(request.getParameter("tareasAcepto"));
         System.out.println(tareas.get(tar).getIdActividad());
         despliegueProyecto.aprobarInforme(tareas.get(tar));
@@ -838,6 +843,9 @@ public class Controlador extends HttpServlet {
     private String otroTrabajador(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
+        ArrayList<Actividad> actividades = (ArrayList<Actividad>) sesion.getAttribute("actividades");
+        ArrayList<TrabajadoresProyecto> restantes = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("restantes");
+        ArrayList<ActividadTrabajador> actividadTrabajador = (ArrayList<ActividadTrabajador>) sesion.getAttribute("actividadTrabajador");
 
         int elegido = Integer.parseInt(request.getParameter("eleccion"));
         TrabajadoresProyecto tptmp = tp.get(elegido);
@@ -849,6 +857,9 @@ public class Controlador extends HttpServlet {
     }
 
     private String finalizarActividad(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        ArrayList<Actividad> tmp2 = (ArrayList<Actividad>) sesion.getAttribute("tmp2");
+
         int elegido = Integer.parseInt(request.getParameter("elegir"));
         //request.getSession().setAttribute("elegir", elegido);
         Actividad act = tmp2.get(elegido);
@@ -879,6 +890,8 @@ public class Controlador extends HttpServlet {
     private String volverAPlanificar(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
+        ArrayList<TrabajadoresProyecto> restantes = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("restantes");
+        ArrayList<ActividadTrabajador> actividadTrabajador = (ArrayList<ActividadTrabajador>) sesion.getAttribute("actividadTrabajador");
 
         for (int i = 0; i < tp.size() - restantes.size(); i++) {
             actividadTrabajador.remove(actividadTrabajador.size() - 1);
@@ -897,6 +910,8 @@ public class Controlador extends HttpServlet {
             Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
             ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
             ArrayList<Etapa> etapas = (ArrayList<Etapa>) sesion.getAttribute("etapas");
+            ArrayList<Actividad> actividades = (ArrayList<Actividad>) sesion.getAttribute("actividades");
+            ArrayList<ActividadTrabajador> actividadTrabajador = (ArrayList<ActividadTrabajador>) sesion.getAttribute("actividadTrabajador");
 
             Actividad actividad = new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(),
                     actEtapa.size(), request.getParameter("descripcion"),
@@ -917,7 +932,8 @@ public class Controlador extends HttpServlet {
 
             }
 
-            restantes = new ArrayList<>();
+            ArrayList<TrabajadoresProyecto> restantes = new ArrayList<>();
+            sesion.setAttribute("restantes", restantes);
             ArrayList<Actividad> simultaneas;
             for (int i = 0; i < tp.size(); i++) {
                 restantes.add(tp.get(i));
@@ -1007,6 +1023,8 @@ public class Controlador extends HttpServlet {
         Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
         ArrayList<TrabajadoresProyecto> tp = (ArrayList<TrabajadoresProyecto>) sesion.getAttribute("tp");
         ArrayList<Etapa> etapas = (ArrayList<Etapa>) sesion.getAttribute("etapas");
+        ArrayList<Actividad> actividades = (ArrayList<Actividad>) sesion.getAttribute("actividades");
+        ArrayList<ActividadTrabajador> actividadTrabajador = (ArrayList<ActividadTrabajador>) sesion.getAttribute("actividadTrabajador");
 
         despliegueProyecto.guardarProyecto(proyecto);
         despliegueProyecto.guardarEtapas(etapas);
@@ -1089,6 +1107,9 @@ public class Controlador extends HttpServlet {
     }
 
     private String finalizarEtapas(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        ArrayList<Etapa> etapasC = (ArrayList<Etapa>) sesion.getAttribute("etapasC");
+
         int elegir = Integer.parseInt(request.getParameter("elegir"));
         Etapa et = etapasC.get(elegir);
         int duracion = 0;
@@ -1249,12 +1270,13 @@ public class Controlador extends HttpServlet {
         int selected = Integer.parseInt(request.getParameter("eleccion"));
         Proyecto proyecto = cerrados.get(selected);
         sesion.setAttribute("proyecto", proyecto);
-        etapasC = despliegueProyecto.getEtapas(proyecto.getNombre());
-        actividadesC = new ArrayList<>();
-        tmp2 = new ArrayList<>();
+        ArrayList<Etapa> etapasC = despliegueProyecto.getEtapas(proyecto.getNombre());
+        ArrayList<Actividad> actividadesC = new ArrayList<>();
+        sesion.setAttribute("actividadesC", actividadesC);
+        ArrayList<Actividad> tmp2 = new ArrayList<>();
+        sesion.setAttribute("tmp2", tmp2);
         for (int i = 0; i < etapasC.size(); i++) {
-            ArrayList<Actividad> tmp = new ArrayList<>();
-            tmp = despliegueProyecto.getActividadesCerrados(proyecto.getNombre(), etapasC.get(i).getNumero());
+            ArrayList<Actividad> tmp = despliegueProyecto.getActividadesCerrados(proyecto.getNombre(), etapasC.get(i).getNumero());
             for (int j = 0; j < tmp.size(); j++) {
                 tmp2.add(tmp.get(j));
                 if (!despliegueProyecto.tieneAntecesoras(tmp2.get(j))) {
@@ -1288,6 +1310,9 @@ public class Controlador extends HttpServlet {
     }
 
     private String guardarInforme(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        ArrayList<Tarea> tareas = (ArrayList<Tarea>) sesion.getAttribute("tareas");
+
         int j = Integer.parseInt(request.getParameter("inicio"));
         ArrayList<String> estado = new ArrayList<>();
         int duracion = 0;
