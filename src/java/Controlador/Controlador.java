@@ -41,12 +41,10 @@ public class Controlador extends HttpServlet {
 
     @EJB
     private DespliegueTrabajadorLocal despliegueTrabajador;
-    
+
     Proyecto p;
     private ArrayList<Trabajador> trabajadores;
     private ArrayList<Proyecto> cerrados;
-    private ArrayList<Proyecto> misProyectos;
-    private Proyecto proyecto;
     private ArrayList<TrabajadoresProyecto> tp;
     private ArrayList<TrabajadoresProyecto> restantes;
     private ArrayList<Trabajador> elegidos;
@@ -258,6 +256,8 @@ public class Controlador extends HttpServlet {
 
     private String acceso(HttpServletRequest request) {
         try {
+            HttpSession sesion = request.getSession();
+            
             String usuario = request.getParameter("usuario");
             String clave = request.getParameter("clave");
 
@@ -277,7 +277,6 @@ public class Controlador extends HttpServlet {
                 return "/index.jsp";
             }
 
-            HttpSession sesion = request.getSession();
             sesion.setAttribute("trabajador", trabajador);
             //Old version
             //return "/accesoUsuario.jsp";
@@ -386,6 +385,8 @@ public class Controlador extends HttpServlet {
     private String entrarAdmin(HttpServletRequest request) {
         try {
             final String errorCredenciales = "Credenciales incorrectas.";
+            
+            HttpSession sesion = request.getSession();
 
             String usuario = request.getParameter("usuario");
             String clave = request.getParameter("clave");
@@ -401,7 +402,6 @@ public class Controlador extends HttpServlet {
                 return "/indexAdministrador.jsp";
             }
 
-            HttpSession sesion = request.getSession();
             sesion.setAttribute("administrador", a);
             return "/accesoAdmin.jsp";
         } catch (DatabaseException ex) {
@@ -425,6 +425,8 @@ public class Controlador extends HttpServlet {
 
     private String registroProyecto(HttpServletRequest request) {
         try {
+            HttpSession sesion = request.getSession();
+            
             String jefe = request.getParameter("jefe");
             String nombreProyecto = request.getParameter("nombre");
 
@@ -436,10 +438,12 @@ public class Controlador extends HttpServlet {
             if (tr.getCategoria().getCategoria() != 1) {
                 return "/errorNoPuedeSerJefe.jsp";
             }
+            
             ArrayList<Proyecto> proyectosDeJefe = despliegueProyecto.getMisProyectos(jefe);
             if (!proyectosDeJefe.isEmpty()) {
                 return "/errorProyectoJefe.jsp";
             }
+            
             Proyecto p = despliegueProyecto.getProyecto(nombreProyecto);
             if (p != null) {
                 return "/errorExisteProyecto.jsp";
@@ -461,7 +465,8 @@ public class Controlador extends HttpServlet {
         if (trabajador == null) {
             return "/index.html";
         }
-        misProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
+        
+        ArrayList<Proyecto> misProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
         request.setAttribute("misProyectos", misProyectos);
         sesion.setAttribute("misProyectos", misProyectos);
 
@@ -470,10 +475,10 @@ public class Controlador extends HttpServlet {
 
     private String verProyecto(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-        misProyectos = (ArrayList<Proyecto>) sesion.getAttribute("misProyectos");
+        ArrayList<Proyecto> misProyectos = (ArrayList<Proyecto>) sesion.getAttribute("misProyectos");
 
         int elegido = Integer.parseInt(request.getParameter("eleccion"));
-        proyecto = misProyectos.get(elegido);
+        Proyecto proyecto = misProyectos.get(elegido);
         sesion.setAttribute("proyecto", proyecto);
         if (proyecto.getEstado().equals("pendiente")) {
             request.setAttribute("proyecto", proyecto);
@@ -494,6 +499,9 @@ public class Controlador extends HttpServlet {
 
     private String planificado(HttpServletRequest request) {
         try {
+            HttpSession sesion = request.getSession();
+            Proyecto proyecto = (Proyecto) request.getAttribute("proyecto");
+            
             tp = new ArrayList<>();
             java.util.Date hoy = new java.util.Date();
             Date inicio = Date.valueOf(request.getParameter("inicio"));
@@ -534,6 +542,9 @@ public class Controlador extends HttpServlet {
     }
 
     private String tomarDatos(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
         actividadTrabajador = new ArrayList<>();
         etapas = new ArrayList<>();
         actividades = new ArrayList<>();
@@ -579,6 +590,8 @@ public class Controlador extends HttpServlet {
     }
 
     private String planificarActividades(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
 
         Date inicio = Date.valueOf(request.getParameter("inicio"));
         Date fin = Date.valueOf(request.getParameter("fin"));
@@ -593,6 +606,9 @@ public class Controlador extends HttpServlet {
 
     private String asignarTrabajador(HttpServletRequest request) {
         try {
+            HttpSession sesion = request.getSession();
+            Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
             Actividad actividad = (new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(), actEtapa.size(), request.getParameter("descripcion"), Integer.parseInt(request.getParameter("duracion")), null, Date.valueOf(request.getParameter("inicio")), Date.valueOf(request.getParameter("fin")), null, "planifcada", Rol.get(request.getParameter("Rol"))));
             restantes = new ArrayList<>();
             ArrayList<Actividad> simultaneas;
@@ -674,10 +690,10 @@ public class Controlador extends HttpServlet {
 
     public String mostrarInformes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-        tareas = new ArrayList<>();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        
+        tareas = new ArrayList<>();
         Actividad act;
-        sesion.setAttribute("trabajador", trabajador);
         if (trabajador.getUser().equals(p.getJefe())) {
             act = tmp2.get(Integer.parseInt(request.getParameter("elegida")));
             tareas = despliegueProyecto.getInformesActividad(act);
@@ -865,6 +881,9 @@ public class Controlador extends HttpServlet {
 
     private String actividadConPredecesoras(HttpServletRequest request) {
         try {
+            HttpSession sesion = request.getSession();
+            Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
             Actividad actividad = new Actividad(proyecto.getNombre(), etapas.get(etapas.size() - 1).getNumero(),
                     actEtapa.size(), request.getParameter("descripcion"),
                     Integer.parseInt(request.getParameter("duracion")), null,
@@ -888,7 +907,6 @@ public class Controlador extends HttpServlet {
             ArrayList<Actividad> simultaneas;
             for (int i = 0; i < tp.size(); i++) {
                 restantes.add(tp.get(i));
-                simultaneas = new ArrayList<>();
                 simultaneas = despliegueProyecto.misActividadesFecha(tp.get(i).getUser());
 
                 for (int k = 0; k < simultaneas.size(); k++) {
@@ -949,6 +967,9 @@ public class Controlador extends HttpServlet {
     }
 
     private String planificarSigsEtapas(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
         Date inicio = Date.valueOf(request.getParameter("inicio"));
         Date fin = Date.valueOf(request.getParameter("fin"));
         if (inicio.after(fin) || inicio.before(proyecto.getFechaInicio()) || fin.after(proyecto.getFechaFin()) || inicio.getDay() != 1 || fin.getDay() != 1) {
@@ -967,6 +988,9 @@ public class Controlador extends HttpServlet {
     }
 
     private String finalizarPlanProyecto(HttpServletRequest request) {
+        HttpSession sesion = request.getSession();
+        Proyecto proyecto = (Proyecto) sesion.getAttribute("proyecto");
+
         despliegueProyecto.guardarProyecto(proyecto);
         despliegueProyecto.guardarEtapas(etapas);
         despliegueProyecto.guardarActividades(actividades);
@@ -1034,6 +1058,7 @@ public class Controlador extends HttpServlet {
     private String finalizarActividades(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        
         ArrayList<Proyecto> todosProyectos = despliegueProyecto.getMisProyectos(trabajador.getUser());
         ArrayList<Actividad> todasActividades = null;
         for (int w = 0; w < todosProyectos.size(); w++) {
@@ -1095,7 +1120,8 @@ public class Controlador extends HttpServlet {
 
     private String elegidaEtapaDimeActividad(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-        proyecto = (Proyecto) request.getAttribute("proyecto");
+        Proyecto proyecto = (Proyecto) request.getAttribute("proyecto");
+
         ArrayList<Etapa> etapaP = (ArrayList<Etapa>) request.getAttribute("etapaP");
         Etapa etapaChosen = etapaP.get((int) request.getAttribute("eleccion"));
         int etapaX = etapaChosen.getNumero();
@@ -1126,6 +1152,7 @@ public class Controlador extends HttpServlet {
     private String verActividadesPendientes(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        
         if (trabajador == null) {
             return "/index.jsp";
         }
@@ -1137,6 +1164,7 @@ public class Controlador extends HttpServlet {
 
     private String aAcceso(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
+        
         if (sesion.getAttribute("trabajador") != null) {
             return "/accesoUsuario.jsp";
         } else {
@@ -1147,6 +1175,7 @@ public class Controlador extends HttpServlet {
     private String aIntroducirDatosActividad(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        
         if (trabajador == null) {
             return "/index.jsp";
         }
@@ -1169,7 +1198,7 @@ public class Controlador extends HttpServlet {
 
     private String datosIntroducidosCorrectamente(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
-        Trabajador trabajador = (Trabajador)sesion.getAttribute("trabajador");
+        Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
         String tarea = request.getParameter("mitarea");
         int numTarea = Integer.parseInt(tarea);
         java.util.Date semana1 = new java.util.Date();
@@ -1193,6 +1222,7 @@ public class Controlador extends HttpServlet {
     private String infoProyectoAbierto(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
+        
         if (trabajador == null) {
             return "/index.jsp";
         }
@@ -1211,8 +1241,8 @@ public class Controlador extends HttpServlet {
                     tmp2.get(j).setEstado("Predecesoras en realizacion");
                 }
             }
-
         }
+        
         java.util.Date hoy = new java.util.Date();
         if (!p.getJefe().equals(trabajador.getUser())) {
             for (int i = 0; i < tmp2.size(); i++) {
@@ -1220,6 +1250,7 @@ public class Controlador extends HttpServlet {
                     actividadesC.add(tmp2.get(i));
                 }
             }
+            
             for (int i = 0; i < actividadesC.size(); i++) {
                 if (!despliegueProyecto.tieneAntecesoras(actividadesC.get(i))) {
                     actividadesC.get(i).setEstado("Predecesoras en realizacion");
@@ -1260,6 +1291,5 @@ public class Controlador extends HttpServlet {
             }
             return "/informes.jsp";
         }
-
     }
 }
