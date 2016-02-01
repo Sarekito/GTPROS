@@ -435,10 +435,8 @@ public class Controlador extends HttpServlet {
             if (p != null) {
                 return "/errorExisteProyecto.jsp";
             }
-            despliegueProyecto.generar(nombreProyecto, jefe);
-            ArrayList<TrabajadoresProyecto> tmpTP = new ArrayList<TrabajadoresProyecto>();
-            tmpTP.add(new TrabajadoresProyecto(nombreProyecto, jefe, 0));
-            despliegueProyecto.guardarTrabajadores(tmpTP);
+            
+            despliegueProyecto.generarProyecto(nombreProyecto, jefe);
             return "/creacionConExito.jsp";
         } catch (DatabaseException ex) {
             return "/errorBaseDatos.jsp";
@@ -1043,8 +1041,7 @@ public class Controlador extends HttpServlet {
             return "/index.jsp";
         }
 
-        ArrayList<Actividad> sobreesfuerzo = new ArrayList<>();
-        sobreesfuerzo = despliegueProyecto.getSobreesfuerzo(trabajador.getUser());
+        ArrayList<Actividad> sobreesfuerzo = despliegueProyecto.getSobreesfuerzo(trabajador.getUser());
         request.setAttribute("sobreesfuerzo", sobreesfuerzo);
         return "/sobreesfuerzo.jsp";
     }
@@ -1071,8 +1068,7 @@ public class Controlador extends HttpServlet {
         ArrayList<Etapa> etapasC = despliegueProyecto.getEtapas(p.getNombre());
         ArrayList<Actividad> actividadesC = new ArrayList<>();
         for (int i = 0; i < etapasC.size(); i++) {
-            ArrayList<Actividad> tmp = new ArrayList<Actividad>();
-            tmp = despliegueProyecto.getActividadesCerrados(p.getNombre(), etapasC.get(i).getNumero());
+            ArrayList<Actividad> tmp = despliegueProyecto.getActividadesCerrados(p.getNombre(), etapasC.get(i).getNumero());
             for (int j = 0; j < tmp.size(); j++) {
                 actividadesC.add(tmp.get(j));
             }

@@ -1,5 +1,6 @@
 package Proyecto.Despliegue;
 
+import Excepciones.DatabaseException;
 import Excepciones.EtapaConActividadesAbiertasException;
 import Excepciones.ProyectoConEtapasAbiertasException;
 import Proyecto.Dominio.Actividad;
@@ -25,7 +26,7 @@ public interface DespliegueProyectoLocal {
 
     public Proyecto getProyecto(String nombreProyecto);
 
-    public void generar(String nombreProyecto, String jefe);
+    public void generarProyecto(String nombreProyecto, String jefe) throws DatabaseException;
 
     void cerrarProyecto(String nombreProyecto) throws ProyectoConEtapasAbiertasException;
 
@@ -100,5 +101,4 @@ public interface DespliegueProyectoLocal {
     public void cierreEtapa(Etapa et);
 
     public void cierreProyecto(Proyecto p);
-
 }

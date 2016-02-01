@@ -1,5 +1,6 @@
 package Proyecto.Despliegue;
 
+import Excepciones.DatabaseException;
 import Excepciones.EtapaConActividadesAbiertasException;
 import Excepciones.ProyectoConEtapasAbiertasException;
 import Proyecto.Dominio.Actividad;
@@ -65,11 +66,12 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     }
 
     @Override
-    public void generar(String nombreProyecto, String jefe) {
+    public void generarProyecto(String nombreProyecto, String jefe) throws DatabaseException {
         try {
             ProyectoPersistencia.generar(nombreProyecto, jefe);
+            ProyectoPersistencia.guardarTrabajadores(new TrabajadoresProyecto(nombreProyecto, jefe, 0));
         } catch (SQLException ex) {
-            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DatabaseException();
         }
     }
 
@@ -442,7 +444,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
 
     @Override
     public void cierreEtapa(Etapa et) {
-    try {
+        try {
             EtapaPersistencia.cerrar(et);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
