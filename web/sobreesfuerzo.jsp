@@ -32,7 +32,7 @@
                  Descripcion
              </td>
              <td>
-                 Durscion estimada
+                 Duracion estimada
              </td>
              <td>
                  Duracion real
