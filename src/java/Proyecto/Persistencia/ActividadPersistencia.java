@@ -105,8 +105,8 @@ public class ActividadPersistencia {
     }
     
     public static ArrayList<Actividad> sobreesfuerzo(String user) throws SQLException {
-        String sql = "SELECT A.* from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'finalizado' and A.duracion<A.duracionReal";
-        String sql2 = "Select A.* from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'realizando' and A.duracion<A.duracionReal and P.jefeProyecto = '" + user + "'";
+        String sql = "SELECT A.* from  Actividad A, Proyecto P where P.nombreProyecto = A.nombreProyecto and P.estado = 'cerrado' and A.duracion<A.duracionReal";
+        String sql2 = "Select A.* from  Actividad A, Proyecto P where P.nombreProyecto = A.nombreProyecto and P.estado = 'realizando' and A.duracion<A.duracionReal and P.jefeProyecto = '" + user + "'";
 
         ConexionBD conexion = new ConexionBD();
         ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
@@ -141,7 +141,6 @@ public class ActividadPersistencia {
 
     public static ArrayList<Actividad> actividadesAbiertasDe(String user) throws SQLException {
         String sql = "Select A.* from Actividad A, ActividadTrabajador AP where A.estado = 'realizando' and AP.nombreTrabajador = '" + user + "' and A.nombreProyecto = AP.nombreProyecto and A.numeroEtapa = AP.numeroEtapa and A.idActividad = AP.idActividad";
-
         ConexionBD conexion = new ConexionBD();
         ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
         conexion.close();

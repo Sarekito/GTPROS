@@ -78,6 +78,9 @@ public class Controlador extends HttpServlet {
             case "finPlanActividad":
                 url = finPlanActividad(request);
                 break;
+            case "cierre":
+                url = "/index.jsp";
+                break;
             case "generaActividadTrabajador":
                 url = otroTrabajador(request);
                 break;
@@ -308,64 +311,81 @@ public class Controlador extends HttpServlet {
     private String reservaVacaciones(HttpServletRequest request) {
         HttpSession sesion = request.getSession();
         Trabajador trabajador = (Trabajador) sesion.getAttribute("trabajador");
-
         java.util.Date hoy = new java.util.Date();
         Date hoySql = new Date(hoy.getYear(), hoy.getMonth(), hoy.getDate());
         if (request.getParameter("periodos") == null) {
             int semanas = Integer.parseInt(request.getParameter("semanas1"));
-            Date fechaElegida = Date.valueOf(request.getParameter("fecha1"));
+            String fechaTexto = request.getParameter("fecha1");
+            Scanner sc = new Scanner(fechaTexto);
+            sc.useDelimiter("/");
+            String dia = sc.next();
+            String mes = sc.next();
+            String ano = sc.next();
+            Date fechaElegida = Date.valueOf(ano + "-" + mes + "-" + dia);
             if (despliegueTrabajador.reservoVacaciones(trabajador.getUser(), (int) (1900 + fechaElegida.getYear()))) {
                 return "/vacacionesReservadas.jsp";
             }
             if (semanas != 4 || fechaElegida.getDay() != 1 || fechaElegida.before(hoySql)) {
                 return "/vacacionesErroneas.jsp";
             }
-            ArrayList<Actividad> tmpAct = despliegueProyecto.misActividadesAbiertas(trabajador.getUser());
+            ArrayList<Proyecto> tmpAct = despliegueProyecto.getMisProyectosActuales(trabajador);
             Date diaInicio = fechaElegida;
             Calendar c = Calendar.getInstance();
             c.setTime(fechaElegida);
             c.add(Calendar.DATE, (semanas * 7) - 1);
             Date fechaFin = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
             for (int i = 0; i < tmpAct.size(); i++) {
-                if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
-                        || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
-                        || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
-                        || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
+                if (!diaInicio.after(tmpAct.get(i).getFechaFin()) && !diaInicio.before(tmpAct.get(i).getFechaInicio())
+                        || !fechaFin.after(tmpAct.get(i).getFechaFin()) && !fechaFin.before(tmpAct.get(i).getFechaInicio())
+                        || !diaInicio.before(tmpAct.get(i).getFechaInicio()) && !fechaFin.after(tmpAct.get(i).getFechaFin())
+                        || !diaInicio.after(tmpAct.get(i).getFechaInicio()) && !fechaFin.before(tmpAct.get(i).getFechaFin())) {
                     return "/vacacionesErroneas.jsp";
 
                 }
             }
             despliegueTrabajador.reservaVacaciones(trabajador, 1, fechaElegida.getYear(), fechaElegida, semanas);
         } else {
-            ArrayList<Actividad> tmpAct = despliegueProyecto.misActividadesAbiertas(trabajador.getUser());
+            ArrayList<Proyecto> tmpAct = despliegueProyecto.getMisProyectosActuales(trabajador);
             int semanas1 = Integer.parseInt(request.getParameter("semanas1"));
-            Date fechaElegida1 = Date.valueOf(request.getParameter("fecha1"));
+            String fechaTexto = request.getParameter("fecha1");
+            Scanner sc = new Scanner(fechaTexto);
+            sc.useDelimiter("/");
+            String dia = sc.next();
+            String mes = sc.next();
+            String ano = sc.next();
+            Date fechaElegida1 = Date.valueOf(ano + "-" + mes + "-" + dia);
             Date diaInicio = fechaElegida1;
             Calendar cd = Calendar.getInstance();
             cd.setTime(fechaElegida1);
             cd.add(Calendar.DATE, (semanas1 * 7) - 1);
             Date fechaFin = new Date(cd.getTime().getYear(), cd.getTime().getMonth(), cd.getTime().getDate());
             for (int i = 0; i < tmpAct.size(); i++) {
-                if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
-                        || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
-                        || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
-                        || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
+                if (!diaInicio.after(tmpAct.get(i).getFechaFin()) && !diaInicio.before(tmpAct.get(i).getFechaInicio())
+                        || !fechaFin.after(tmpAct.get(i).getFechaFin()) && !fechaFin.before(tmpAct.get(i).getFechaInicio())
+                        || !diaInicio.before(tmpAct.get(i).getFechaInicio()) && !fechaFin.after(tmpAct.get(i).getFechaFin())
+                        || !diaInicio.after(tmpAct.get(i).getFechaInicio()) && !fechaFin.before(tmpAct.get(i).getFechaFin())) {
                     return "/vacacionesErroneas.jsp";
 
                 }
             }
             int semanas2 = Integer.parseInt(request.getParameter("semanas2"));
-            Date fechaElegida2 = Date.valueOf(request.getParameter("fecha2"));
+            fechaTexto = request.getParameter("fecha2");
+            sc = new Scanner(fechaTexto);
+            sc.useDelimiter("/");
+            dia = sc.next();
+            mes = sc.next();
+            ano = sc.next();
+            Date fechaElegida2 = Date.valueOf(ano + "-" + mes + "-" + dia);
             diaInicio = fechaElegida1;
             cd = Calendar.getInstance();
             cd.setTime(fechaElegida1);
             cd.add(Calendar.DATE, (semanas1 * 7) - 1);
             fechaFin = new Date(cd.getTime().getYear(), cd.getTime().getMonth(), cd.getTime().getDate());
             for (int i = 0; i < tmpAct.size(); i++) {
-                if (!diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !diaInicio.before(tmpAct.get(i).getFechaFin())
-                        || !diaInicio.after(tmpAct.get(i).getFechaComienzo()) && !fechaFin.before(tmpAct.get(i).getFechaFin())
-                        || !tmpAct.get(i).getFechaComienzo().after(diaInicio) && !tmpAct.get(i).getFechaComienzo().before(fechaFin)
-                        || !tmpAct.get(i).getFechaFin().after(diaInicio) && !tmpAct.get(i).getFechaFin().before(fechaFin)) {
+                if (!diaInicio.after(tmpAct.get(i).getFechaFin()) && !diaInicio.before(tmpAct.get(i).getFechaInicio())
+                        || !fechaFin.after(tmpAct.get(i).getFechaFin()) && !fechaFin.before(tmpAct.get(i).getFechaInicio())
+                        || !diaInicio.before(tmpAct.get(i).getFechaInicio()) && !fechaFin.after(tmpAct.get(i).getFechaFin())
+                        || !diaInicio.after(tmpAct.get(i).getFechaInicio()) && !fechaFin.before(tmpAct.get(i).getFechaFin())) {
                     return "/vacacionesErroneas.jsp";
 
                 }
@@ -572,10 +592,10 @@ public class Controlador extends HttpServlet {
         restantes = new ArrayList<>();
         ArrayList<Actividad> simultaneas;
         for (int i = 0; i < tp.size(); i++) {
-            restantes.add(tp.get(i));
+            
             Trabajador tmptr = despliegueTrabajador.getTrabajador(tp.get(i).getUser());
             if (actividad.getTipoRol().getCategoria().getCategoria() < tmptr.getCategoria().getCategoria()) {
-                restantes.remove(i);
+         
             } else {
                 simultaneas = new ArrayList<>();
                 ArrayList<Actividad> simultaneas2 = new ArrayList<>();
@@ -595,32 +615,38 @@ public class Controlador extends HttpServlet {
                     for (int p = 0; p < simultaneas.size(); p++) {
                         System.out.println(simultaneas.get(p).getFechaComienzo() + " " + simultaneas.get(p).getFechaFin());
                     }
-                    if (simultaneas.size() > 3) {
-                        restantes.remove(i);
+                    if (simultaneas.size() <= 3) {
+                        restantes.add(tp.get(i));
                     }
                 }
             }
-        }
-        for (int i = 0; i < restantes.size(); i++) {
-            ArrayList<Vacaciones> vc = despliegueTrabajador.getVacaciones(restantes.get(i).getUser());
-
-            if (vc != null) {
+        } 
+        System.out.println(restantes);
+        ArrayList<TrabajadoresProyecto> tmpres = restantes;
+        restantes = new ArrayList<TrabajadoresProyecto>();
+        for (int i = 0; i < tmpres.size(); i++) {
+            ArrayList<Vacaciones> vc = despliegueTrabajador.getVacaciones(tmpres.get(i).getUser());
+            if (!vc.isEmpty()) {
                 for (int j = 0; j < vc.size(); j++) {
                     java.util.Date inicio = vc.get(j).getInicio();
                     Calendar c = Calendar.getInstance();
                     c.setTime(vc.get(j).getInicio());
                     c.add(Calendar.DATE, (vc.get(j).getSemanas() * 7) - 1);
                     java.util.Date fin = c.getTime();
-                    if (!(actividad.getFechaComienzo().before(inicio)) && !(actividad.getFechaComienzo().after(fin))
-                            || !(actividad.getFechaFin().after(inicio)) && !(actividad.getFechaFin().before(fin))
-                            || !(inicio.after(actividad.getFechaComienzo())) && !(inicio.before(actividad.getFechaFin()))
-                            || !(fin.after(actividad.getFechaComienzo())) && !(fin.before(actividad.getFechaFin()))) {
-                        restantes.remove(i);
+                    if (!(actividad.getFechaComienzo().before(inicio)) && (actividad.getFechaComienzo().after(fin))
+                            || (actividad.getFechaFin().after(inicio)) && (actividad.getFechaFin().before(fin))
+                            || (inicio.after(actividad.getFechaComienzo())) && (inicio.before(actividad.getFechaFin()))
+                            || (fin.after(actividad.getFechaComienzo())) && (fin.before(actividad.getFechaFin()))) {
+                        restantes.add(tmpres.get(i));
                         break;
                     }
                 }
             }
+            else{
+                restantes.add(tmpres.get(i));
+            }
         }
+        System.out.println(restantes);
         actividades.add(actividad);
         actEtapa.add(actividad);
         request.getSession().setAttribute("trabajadoresProyecto", restantes);
@@ -885,7 +911,7 @@ public class Controlador extends HttpServlet {
             Trabajador tmptr = despliegueTrabajador.getTrabajador(tp.get(i).getUser());
             if (actividad.getTipoRol().getCategoria().getCategoria() < tmptr.getCategoria().getCategoria()) {
                 restantes.remove(i);
-                System.out.println(1+"--"+restantes);
+                System.out.println(1 + "--" + restantes);
             } else {
                 simultaneas = new ArrayList<>();
                 ArrayList<Actividad> simultaneas2 = new ArrayList<>();
@@ -918,14 +944,14 @@ public class Controlador extends HttpServlet {
                     }
                     if (simultaneas.size() > 3) {
                         restantes.remove(i);
-                        System.out.println(2+"--"+restantes);
+                        System.out.println(2 + "--" + restantes);
                     }
                 }
 
             }
         }
 
-        for (int i = 0;i < restantes.size();i++) {
+        for (int i = 0; i < restantes.size(); i++) {
             ArrayList<Vacaciones> vc = despliegueTrabajador.getVacaciones(restantes.get(i).getUser());
             if (vc != null) {
                 for (int j = 0; j < vc.size(); j++) {
@@ -939,21 +965,18 @@ public class Controlador extends HttpServlet {
                             || !(inicio.after(actividad.getFechaComienzo())) && !(inicio.before(actividad.getFechaFin()))
                             || !(fin.after(actividad.getFechaComienzo())) && !(fin.before(actividad.getFechaFin()))) {
                         restantes.remove(i);
-                        System.out.println(2+"--"+restantes);
+                        System.out.println(2 + "--" + restantes);
                         break;
                     }
                 }
             }
         }
-        System.out.println(3+"--"+restantes);
+        System.out.println(3 + "--" + restantes);
         actividades.add(actividad);
         actEtapa.add(actividad);
         request.getSession().setAttribute("trabajadoresProyecto", restantes);
         return "/seleccionarTrabajadores.jsp";
     }
-    
-
-    
 
     private String planificarSigsEtapas(HttpServletRequest request) {
         Date inicio = Date.valueOf(request.getParameter("inicio"));
@@ -1057,7 +1080,7 @@ public class Controlador extends HttpServlet {
         for (int i = 0; i < tareas.size(); i++) {
             despliegueProyecto.guardarTarea(tareas.get(i));
         }
-        return "/seleccionProyectos.jsp";
+        return "/index.jsp";
     }
 
     private String sobreesfuerzo(HttpServletRequest request) {
@@ -1137,10 +1160,11 @@ public class Controlador extends HttpServlet {
         request.getSession().setAttribute("elegir", elegir);
         ArrayList<Actividad> act = despliegueProyecto.getActividadesEtapa(et);
         for (int i = 0; i < act.size(); i++) {
-            duracion += act.get(i).getDuracionReal();
             if (!act.get(i).getEstado().equals("finalizado")) {
                 return "/errorCierreEtapa.jsp";
             }
+            duracion += act.get(i).getDuracionReal();
+            
         }
         et.setDuracionReal(duracion);
         et.setEstado("finalizado");

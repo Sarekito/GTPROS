@@ -113,8 +113,7 @@ public class ProyectoPersistencia {
     }
 
     public static ArrayList<Proyecto> getMisProyectosActuales(Trabajador tr) throws SQLException {
-        String sql = "SELECT P.* FROM (SELECT * FROM TrabajadoresProyecto TP where TP.trabajador = '" + tr.getUser() + "')TP, Proyecto P where P.nombreProyecto = TP.nombreProyecto and P.estado = 'realizando'";
-
+        String sql = "SELECT P.* FROM (SELECT * FROM TrabajadoresProyecto TP where TP.trabajador = '" + tr.getUser() + "')TP, Proyecto P where P.nombreProyecto = TP.nombreProyecto and P.estado <> 'cerrado'";
         ConexionBD conexion = new ConexionBD();
         ArrayList<Proyecto> proyectos = conexion.searchAll(proyectoConverter, sql);
         conexion.close();

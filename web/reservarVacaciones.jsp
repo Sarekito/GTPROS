@@ -26,7 +26,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <input id="fecha1" type="date" name ="fecha1">
+                        <input id="fecha1" type="text" name ="fecha1" value="dd/mm/aaaa" onclick="borra1()">
                     </td>
                 </tr>
                 <tr>
@@ -61,7 +61,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <input type="date" name ="fecha2">
+                        <input id = "fecha2" type="text" name ="fecha2" value="dd/mm/aaaa" onclick="borra2()">
                     </td>
                 </tr>
                 <tr>
@@ -105,14 +105,20 @@
             <input type="submit" value="Ir a inicio" />
         </form>
     </center>
-    </body>
-    <script>
-        function comprueba(){
-            if($('#fecha1').val()==""){
-                alert("Error en el periodo vacacional 1");
-                return false;
-            }
-            return true;
+</body>
+<script>
+    function comprueba() {
+        if ($('#fecha1').val() == "") {
+            alert("Error en el periodo vacacional 1");
+            return false;
         }
-    </script>
+        return true;
+    }
+    function borra1() {
+        document.getElementById("fecha1").value = ""
+    }
+    function borra2() {
+        document.getElementById("fecha2").value = ""
+    }
+</script>
 </html>

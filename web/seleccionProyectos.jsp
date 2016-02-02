@@ -4,6 +4,7 @@
     Author     : dalonso
 --%>
 
+<%@page import="Trabajador.Dominio.Trabajador"%>
 <%@page import="Proyecto.Dominio.Proyecto"%>
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -28,10 +29,12 @@
                 <td> </td>
             </tr>
             <%
+                Trabajador trabajador = (Trabajador) request.getSession().getAttribute("trabajador");
                 HttpSession sesion = request.getSession();
                 ArrayList<Proyecto> p = (ArrayList<Proyecto>) sesion.getAttribute("misProyectosActuales");
                 Proyecto plan = (Proyecto) sesion.getAttribute("planificar");
                 for (int i = 0; i < p.size(); i++) {
+                    if(!p.get(i).getEstado().equals("pendiente")){
             %>
             <tr>
                 <td><%=p.get(i).getNombre()%></td>
@@ -44,6 +47,7 @@
                     <input type="submit" value="Elegir" /></td>
                 </form>
             </tr>
+            <% }%>
             <% }%>
         </table>
         <br>
@@ -79,6 +83,19 @@
         <form name = "Controlador" method="POST">
             <input type="hidden" name="accion" value="vacaciones" readonly="readonly" />
             <input type="submit" value="                  Reservar Vacaciones                 " />
+        </form>
+        <%if(trabajador.getCategoria().getCategoria()==1){%>
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="sobreesfuerzo" readonly="readonly" />
+            <input type="submit" value="        Ver actividades con sobreesfuerzo      " />
+        </form>
+        <%}%>
+        <br>
+        <br>
+        <br>
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="cierre"/>
+            <input type="submit" value="  Cerrar sesion  " style="color: red" />
         </form>
     </center>
 </body>

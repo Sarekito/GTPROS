@@ -12,7 +12,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>GTPROS</title>
     </head>
-     <body>
+    <body>
     <center>
         <font size = "5" color="red">Los periodos vacacionales deben sumar cuatro semanas, empezar en lunes y no superponerse</font>
         <br><br>
@@ -26,7 +26,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <input id="fecha1" type="date" name ="fecha1">
+                        <input id="fecha1" type="text" name ="fecha1" value="dd/mm/aaaa" onclick="borra1()">
                     </td>
                 </tr>
                 <tr>
@@ -61,7 +61,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <input id="fecha2" type="date" name ="fecha2">
+                        <input id="fecha2" type="text" name ="fecha2" value="dd/mm/aaaa" onclick="borra1()">
                     </td>
                 </tr>
                 <tr>
@@ -98,14 +98,20 @@
             </table>
         </form>
     </center>
-    </body>
-    <script>
-        function comprueba(){
-            if($('#fecha1').val()==""){
-                alert("Error en el periodo vacacional 1");
-                return false;
-            }
-            return true;
+</body>
+<script>
+    function comprueba() {
+        if ($('#fecha1').val() == "") {
+            alert("Error en el periodo vacacional 1");
+            return false;
         }
-    </script>
+        return true;
+    }
+    function borra1() {
+        document.getElementById("fecha1").value = ""
+    }
+    function borra2() {
+        document.getElementById("fecha2").value = ""
+    }
+</script>
 </html>

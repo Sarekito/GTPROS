@@ -12,17 +12,22 @@
         <title>GTPROS</title>
     </head>
     <body>
-        <br>
     <center>
         <form name = "Controlador" method="POST">
             <input type="hidden" name="accion" value="registrarTrabajador"/>
             <input type="submit" value="Registrar Trabajador" />
         </form>
-        <br>
         <form name = "Controlador" method="POST">
             <input type="hidden" name="accion" value="registrarProyecto"/>
             <input type="submit" value="  Registrar Proyecto  " />
         </form>
+        <br>
+        <br>
+        <form name = "Controlador" method="POST">
+            <input type="hidden" name="accion" value="cierre"/>
+            <input type="submit" value="  Cerrar sesion  " style="color: red" />
+        </form>
+        <br>
     </center>
 </body>
 </html>

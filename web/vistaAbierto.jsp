@@ -162,10 +162,12 @@
             <%}%>
         </table>
         <br><br>
+        <%if (p.getJefe().equals(t.getUser())) {%>
         <form action="Controlador" method="POST">
             <input type="hidden" name="accion" value="finalizarProyecto" readonly="readonly" />
             <input type="submit" value="Cerrar proyecto" />
         </form>
+        <%}%>
         <br><br><br><br>
         <form action="Controlador" method="POST">
             <input type="text" name="usuario" value="<%=t.getUser()%>" readonly="readonly" hidden="hidden"/>
