@@ -1,7 +1,10 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Trabajador.Despliegue;
 
-import Excepciones.DatabaseException;
-import Excepciones.TrabajadorYaRegistradoException;
 import Trabajador.Dominio.Administrador;
 import Trabajador.Dominio.Trabajador;
 import Trabajador.Dominio.Vacaciones;
@@ -15,23 +18,27 @@ import javax.ejb.Local;
  */
 @Local
 public interface DespliegueTrabajadorLocal {
+    
+    public Trabajador getTrabajador(String parameter);
 
-    public Trabajador getTrabajador(String parameter) throws DatabaseException;
+    public boolean reservoVacaciones(String user, int date);
 
-    public boolean reservoVacaciones(String user, int date) throws DatabaseException;
+    public void reservaVacaciones(Trabajador t, int year, int i, Date fechaElegida, int semanas);
 
-    public void reservaVacaciones(Trabajador t, int year, int i, Date fechaElegida, int semanas) throws DatabaseException;
+    public Administrador getAdministrador(String parameter);
 
-    public Administrador getAdministrador(String parameter) throws DatabaseException;
+    public void registrarTrabajador(Trabajador tr);
 
-    public void registrarTrabajador(Trabajador tr) throws DatabaseException, TrabajadorYaRegistradoException;
+    public boolean buscaTrabajador(String user);
 
-    public boolean buscaTrabajador(String user) throws DatabaseException;
+    public ArrayList<Trabajador> getTrabajadores(String jefe);
 
-    public ArrayList<Trabajador> getTrabajadores(String jefe) throws DatabaseException;
+    public int getNumProyectosActivos(Trabajador t);
 
-    public ArrayList<Vacaciones> getVacaciones(String user) throws DatabaseException;
+    public ArrayList<Vacaciones> getVacaciones(String user);
 
-    java.util.ArrayList<Trabajador> getJefesSinProyecto() throws DatabaseException;
+    java.util.ArrayList<Trabajador> getJefesSinProyecto();
+
+    public ArrayList<Trabajador> getJefes();
 
 }

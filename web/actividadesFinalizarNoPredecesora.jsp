@@ -16,17 +16,16 @@
     </head>
     <body>
     <center>
-        <%Actividad a = (Actividad)request.getAttribute("predecesora");%>
-        <h2> La actividad <%=a.getDescripcion()%> no comienza mas pronto</h2>
+        <h2> La actividades predecesoras no finalizan antes del inicio de esta</h2>
         <h1>Introducir datos de la actividad</h1>
         <table>
             <form action="Controlador" method="POST" onsubmit="return check();">
-                <tr>
+                 <tr>
                     <td>
                         Fecha de inicio de la actividad:
                     </td>
                     <td>
-                        <input id="ini" type="date" name="inicio"/>
+                        <input id="ini" type="text" name="inicio" value="dd/mm/aaaa" onclick="borra1()"/>
                     </td>
                 </tr>
                 <tr>
@@ -34,7 +33,7 @@
                         Fecha de fin de la actividad:
                     </td>
                     <td>
-                        <input id="fin" type="date" name="fin"/>
+                        <input id="fin" type="text" name="fin" value="dd/mm/aaaa" onclick="borra2()"/>
                     </td>
                 </tr>
                 <tr>
@@ -84,8 +83,7 @@
                         Descripción:
                     </td>
                     <td>
-                        <textarea id="descripcion" name="descripcion" rows="10" cols="60" >
-                        </textarea>
+                        <input type ="text" id="descripcion" name="descripcion" spellcheck="true">
                     </td>
                 </tr>
                 <%ArrayList<Actividad> ac = new ArrayList<Actividad>();
@@ -133,6 +131,12 @@
             return false;
         }
         return true;
+    }
+    function borra1() {
+        document.getElementById("ini").value = ""
+    }
+    function borra2() {
+        document.getElementById("fin").value = ""
     }
 </script>
 </html>

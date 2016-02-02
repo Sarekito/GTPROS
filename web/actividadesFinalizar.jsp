@@ -24,7 +24,7 @@
                         Fecha de inicio de la actividad:
                     </td>
                     <td>
-                        <input id="ini" type="date" name="inicio"/>
+                        <input id="ini" type="text" name="inicio" value="dd/mm/aaaa" onclick="borra1()"/>
                     </td>
                 </tr>
                 <tr>
@@ -32,7 +32,7 @@
                         Fecha de fin de la actividad:
                     </td>
                     <td>
-                        <input id="fin" type="date" name="fin"/>
+                        <input id="fin" type="text" name="fin" value="dd/mm/aaaa" onclick="borra2()"/>
                     </td>
                 </tr>
                 <tr>
@@ -82,8 +82,12 @@
                         Descripción:
                     </td>
                     <td>
-                        <textarea id="descripcion" name="descripcion" rows="10" cols="60" >
-                        </textarea>
+                        <input type ="text" id="descripcion" name="descripcion" spellcheck="true">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h5>Posibles predecesoras:</h5>
                     </td>
                 </tr>
                 <%ArrayList<Actividad> ac = new ArrayList<Actividad>();
@@ -91,11 +95,11 @@
                     for (int i = 0; i < ac.size(); i++) {%>
                 <tr>
                     <td>
-                        <input type="checkbox" name=<%=i%> value="ON"/><%=ac.get(i).getDescripcion() %>
+                        <input type="checkbox" name=<%=i%> value="ON"/><%=ac.get(i).getDescripcion()%>
                     </td>
                 </tr>
                 <%
-                        }%>
+                    }%>
         </table>
         <br>
         <br>
@@ -112,30 +116,34 @@
 </center>
 </body>
 <script>
-    function comprueba(){
-        <script>
-    function check(){
-        //Omitimos comprobacion en radios ya que hay un checkeado predeterminado
-        if($('#ini').val()==""){
+    function comprueba() {
+
+        if ($('#ini').val() == "") {
             alert("Error en fecha inicio");
             return false;
         }
-        if($('#fin').val()==""){
+        if ($('#fin').val() == "") {
             alert("Error en fecha fin");
             return false;
         }
-        if($('#duracion').val()==""){
+        if ($('#duracion').val() == "") {
             alert("Error en la duracion");
             return false;
         }
-        if($('#descripcion').val()==""){
+        if ($('#descripcion').val() == "") {
             alert("Error en la descripcion");
             return false;
         }
+
         return true;
     }
-</script>
+    function borra1() {
+        document.getElementById("ini").value = ""
     }
+    function borra2() {
+        document.getElementById("fin").value = ""
+    }
+
 </script>
 </html>
 

@@ -19,7 +19,7 @@
     <body>
     <center>
         <%ArrayList<TrabajadoresProyecto> tr = (ArrayList<TrabajadoresProyecto>) request.getSession().getAttribute("trabajadoresProyecto");%>
-        <%=tr%>
+        <h2>Excedida la contribucion en el proyecto en este momento</h2>
         <h1>Elige el equipo del proyecto</h1>
         <p>Introducir las del trabajador y pulsar elegir</p>
         <table border="5">
@@ -34,7 +34,7 @@
                     Horas disponibles para este proyecto 
                 </td>
                 <%for (int i = 0; i < tr.size(); i++) {%>
-            <form action="Controlador" method="POST" onsubmit="checkit()">
+            <form action="Controlador" method="POST" onsubmit="return controla();">
                 </tr>
                 <tr>
                     <td>
@@ -55,14 +55,18 @@
                         <input type="submit" value="Elegir" />
                     </td>
                 </tr>
-                 </form>
+            </form>
             <%}%>
         </table>
+        <form action="Controlador" method="POST">
+             <input type="hidden" name="accion" value="finPlanActividad" readonly="readonly" />
+             <input type="submit" value="Finalizar Actividad"/>
+        </form>
     </center>
 </body>
 <script>
-    function checkit(){
-        if($("#horas").val()==""){
+    function controla(){
+        if($('#horas').val()==""){
             alert("Error en las horas introducidas");
             return false;
         } else{

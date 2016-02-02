@@ -14,30 +14,22 @@
     </head>
     <body>
     <center>
-        <h2>La etapa a planificar no puede acabar antes del fin de la anterior</h2>
+        <h2>La etapa a planificar no puede empezar antes del fin de la anterior</h2>
         <h1>Introducir datos de la etapa</h1>
         <table>
-            <form action="Controlador" method="POST" onsubmit="return checkeame();">
+            <form action="Controlador" method="POST" onsubmit="return controla();">
                 <tr>
                     <td>
                         Fecha de inicio de la etapa:
                     </td>
                     <td>
-                        <input id="ini" type="date" name="inicio"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Fecha de fin de la etapa:   
-                    </td>
-                    <td>
-                        <input id="fin" type="date" name="fin"/>
+                        <input id="ini" type="text" name="inicio" value="dd/mm/aaaa" onclick="borra1()"/>
                     </td>
                 </tr>
         </table>
         <br>
         <br>
-        <input type="hidden" name="accion" value="planificarSigsEtapas" />
+        <input type="hidden" name="accion" value="planificarActividades" />
         <input type="submit" value="Planificar Actividades" />
     </form>
     <br>
@@ -50,16 +42,19 @@
 </center>
 </body>
 <script>
-    function checkeame(){
-         if($('#ini').val()==""){
+    function checkeame() {
+        if ($('#ini').val() == "") {
             alert("Inicio no valido");
             return false;
         }
-        if($("#fin").val() == ""){
+        if ($("#fin").val() == "") {
             alert("Fin no valido");
             return false;
         }
         return true;
+    }
+    function borra1() {
+        document.getElementById("ini").value = ""
     }
 </script>
 </html>

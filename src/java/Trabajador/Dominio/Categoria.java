@@ -9,7 +9,8 @@ public enum Categoria {
     Uno(1),
     Dos(2),
     Tres(3),
-    Cuatro(4);
+    Cuatro(4),
+    diez(10);
 
     private final int categoria;
 

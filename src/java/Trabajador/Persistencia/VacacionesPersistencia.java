@@ -28,7 +28,7 @@ public class VacacionesPersistencia {
     };
 
     public static ArrayList<Vacaciones> getVacaciones(String user, int year) throws SQLException {
-        String sql = "SELECT * FROM Vacaciones V WHERE V.user='" + user + "' AND V.ano = " + year;
+        String sql = "SELECT * FROM Vacaciones V WHERE V.trabajador='" + user + "' AND V.ano = " + year;
 
         ConexionBD conexion = new ConexionBD();
         ArrayList<Vacaciones> vacaciones = conexion.searchAll(converter, sql);
@@ -46,7 +46,7 @@ public class VacacionesPersistencia {
     }
 
     public static ArrayList<Vacaciones> dameVacaciones(String user) throws SQLException {
-        String sql = "SELECT * FROM Vacaciones WHERE user = '" + user + "'";
+        String sql = "SELECT * FROM Vacaciones WHERE trabajador = '" + user + "'";
 
         ConexionBD conexion = new ConexionBD();
         ArrayList<Vacaciones> vacaciones = conexion.searchAll(converter, sql);

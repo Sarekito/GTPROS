@@ -27,9 +27,6 @@
                     Nombre
                 </td>
                 <td>
-                    Rol
-                </td>
-                <td>
                     Categoria
                 </td>
                 <td>
@@ -45,9 +42,6 @@
                 <tr>
                     <td>
                         <%=tr.get(i).getUser()%>
-                    </td>
-                    <td>
-                        <%=tr.get(i).getTipoRol().getRol()%>
                     </td>
                     <td>
                         <%=tr.get(i).getCategoria().getCategoria()%>

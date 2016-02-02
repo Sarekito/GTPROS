@@ -1,6 +1,5 @@
 package Proyecto.Despliegue;
 
-import Excepciones.DatabaseException;
 import Excepciones.EtapaConActividadesAbiertasException;
 import Excepciones.ProyectoConEtapasAbiertasException;
 import Proyecto.Dominio.Actividad;
@@ -40,6 +39,16 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
         }
         return proyectos;
     }
+    
+    @Override
+    public Proyecto getProyectoPlanificar(String user) {
+        try {
+            return ProyectoPersistencia.getPlanificar(user);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
 
     @Override
     public ArrayList<Proyecto> getMisProyectosActuales(Trabajador tr) {
@@ -66,12 +75,11 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     }
 
     @Override
-    public void generarProyecto(String nombreProyecto, String jefe) throws DatabaseException {
+    public void generar(String nombreProyecto, String jefe) {
         try {
             ProyectoPersistencia.generar(nombreProyecto, jefe);
-            ProyectoPersistencia.guardarTrabajadores(new TrabajadoresProyecto(nombreProyecto, jefe, 0));
         } catch (SQLException ex) {
-            throw new DatabaseException();
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -444,7 +452,7 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
 
     @Override
     public void cierreEtapa(Etapa et) {
-        try {
+    try {
             EtapaPersistencia.cerrar(et);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
@@ -455,6 +463,15 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
     public void cierreProyecto(Proyecto p) {
         try {
             ProyectoPersistencia.cerrar(p);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void guardarTarea(Tarea get) {
+        try {
+            TareaPersistencia.almacena(get);
         } catch (SQLException ex) {
             Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
         }

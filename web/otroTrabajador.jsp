@@ -18,9 +18,9 @@
     </head>
     <body>
     <center>
-        <%ArrayList<TrabajadoresProyecto> tr = (ArrayList<TrabajadoresProyecto>) request.getAttribute("trabajadoresProyecto");%>
+        <%ArrayList<TrabajadoresProyecto> tr = (ArrayList<TrabajadoresProyecto>) request.getSession().getAttribute("trabajadoresProyecto");%>
         <h1>Elige el equipo del proyecto</h1>
-        <p>Introducir las del trabajador y pulsar elegir</p>
+        <p>Seleccionar un trabajador para esta actividad</p>
         <table border="5">
             <tr>
                 <td>
@@ -58,7 +58,7 @@
             <%}%>
         </table>
         <form action="Controlador" method="POST">
-             <input type="hidden" name="accion" value="finalizarActividad" readonly="readonly" />
+             <input type="hidden" name="accion" value="finPlanActividad" readonly="readonly" />
              <input type="submit" value="Finalizar Actividad"/>
         </form>
     </center>

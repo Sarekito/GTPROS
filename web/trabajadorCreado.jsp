@@ -37,13 +37,13 @@
                         <input id="pass" type="text" name="clave" size="50" />
                     </td>
                 </tr>
-                 <tr>
+                <tr>
                     <td>
                         <br>
                         Seleccionar rol
                     </td>
                 </tr>
-                <tr>
+                <!--<tr>
                     <td>
                         <input type="radio" name="rol" value="JefeProyecto" checked="checked"  />Jefe de Proyecto
                     </td>
@@ -56,6 +56,11 @@
                 <tr>
                     <td>
                         <input type="radio" name="rol" value="Disenador" />Diseñador
+                    </td>
+                </tr>
+                  <tr>
+                    <td>
+                        <input type="radio" name="rol" value="AnalistaProgramador" />Analista-Programador
                     </td>
                 </tr>
                 <tr>
@@ -72,25 +77,43 @@
                     <td>
                         <input type="radio" name="rol" value="Probador" />Probador
                     </td>
+                </tr>-->
+                <tr>
+                    <td>Nivel 
+                        <select id="nivel" name="nivel">
+                            <option value="1">
+                                1
+                            </option>
+                            <option value="2">
+                                2
+                            </option>
+                            <option value="3">
+                                3
+                            </option>
+                            <option value="4" selected="selected">
+                                4
+                            </option>
+                        </select>
+                    </td>
                 </tr>
             </table>
             <br>
             <input type="hidden" name="accion" value="registroTrabajador"/>
-            <input type="submit" value="Acceder" />
+            <input type="submit" value="Crear" />
         </form>
     </center>
-    </body>
-    <script>
-        function comprueba(){
-            if($('#user').val()==""){
-                alert("Error en el usuario");
-                return false;
-            }
-            if($('#pass').val()==""){
-                alert("Error en la contraseña");
-                return false;
-            }
-            return true;
+</body>
+<script>
+    function comprueba() {
+        if ($('#user').val() == "") {
+            alert("Error en el usuario");
+            return false;
         }
-    </script>
+        if ($('#pass').val() == "") {
+            alert("Error en la contraseña");
+            return false;
+        }
+        return true;
+    }
+</script>
 </html>

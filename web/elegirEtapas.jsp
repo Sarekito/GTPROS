@@ -22,15 +22,7 @@
                         Fecha de inicio de la etapa:
                     </td>
                     <td>
-                        <input id="ini" type="date" name="inicio"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Fecha de fin de la etapa:   
-                    </td>
-                    <td>
-                        <input id="fin" type="date" name="fin"/>
+                        <input id="ini" type="text" name="inicio" value="dd/mm/aaaa" onclick="borra1()"/>
                     </td>
                 </tr>
         </table>
@@ -42,14 +34,16 @@
 </center>
 </body>
 <script>
-    function controla(){
-        if($('#ini').val()==""){
+    function controla() {
+        if ($('#ini').val() == "" || $('#ini').val() == "dd/mm/aaaa") {
             return false;
         }
-        if($('#fin').val()==""){
-            return false;
+        else {
+            return true;
         }
-        return true;
+    }
+    function borra1() {
+        document.getElementById("ini").value = ""
     }
 </script>
 </html>

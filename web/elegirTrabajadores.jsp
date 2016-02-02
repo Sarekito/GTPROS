@@ -17,16 +17,13 @@
     </head>
     <body>
     <center>
-        <%ArrayList<Trabajador> tr = (ArrayList<Trabajador>) request.getAttribute("trabajadores");%>
+        <%ArrayList<Trabajador> tr = (ArrayList<Trabajador>) request.getSession().getAttribute("trabajadores");%>
         <h1>Elige el equipo del proyecto</h1>
         <p>Introducir el porcentaje del trabajador y pulsar elegir</p>
         <table border="5">
             <tr>
                 <td>
                     Nombre
-                </td>
-                <td>
-                    Rol
                 </td>
                 <td>
                     Categoria
@@ -39,20 +36,17 @@
                 </td>
 
                 <%for (int i = 0; i < tr.size(); i++) {%>
-            <form action="Controlador" method="POST" onsubmit="return checkit();">
+            <form action="Controlador" method="POST" <!--onsubmit="return checkit();-->">
                 </tr>
                 <tr>
                     <td>
                         <%=tr.get(i).getUser()%>
                     </td>
                     <td>
-                        <%=tr.get(i).getTipoRol().getRol()%>
-                    </td>
-                    <td>
                         <%=tr.get(i).getCategoria().getCategoria()%>
                     </td>
                     <td>
-                        <input id="dedicacion" type="number" name="dedicacion" min="1" max="100">
+                        <input id="dedicacion" type="number" name="dedicacion" min="1" max="100" required>
                     </td>
                     <td>
                         <input type="hidden" name="accion" value="tomarDatos" readonly="readonly" />
@@ -65,7 +59,7 @@
         </table>
     </center>
 </body>
-<script>
+<!--<script>
     function checkit(){
         if($('#dedicacion').val()==""){
             return false;
@@ -73,5 +67,5 @@
             return true;
         }
     }
-</script>
+</script>-->
 </html>

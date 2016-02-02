@@ -29,7 +29,6 @@ public class TrabajadorPersistencia {
 
     public static Trabajador getTrabajador(String user) throws SQLException {
         String sql = "SELECT * FROM Trabajador T WHERE T.user = '" + user + "'";
-
         ConexionBD conexion = new ConexionBD();
         Trabajador t = conexion.search(trabajadorConverter, sql);
         conexion.close();
@@ -44,8 +43,7 @@ public class TrabajadorPersistencia {
     }
 
     public static ArrayList<Trabajador> getTrabajadores(String jefe) throws SQLException {
-        String sql = "SELECT * FROM Trabajador T WHERE T.user <> '" + jefe + "'";
-
+        String sql = "SELECT * FROM Trabajador T WHERE T.user <> '" + jefe + "' and tipoCategoria <>10";
         ConexionBD conexion = new ConexionBD();
         ArrayList<Trabajador> trabajadores = conexion.searchAll(trabajadorConverter, sql);
         conexion.close();
@@ -55,11 +53,18 @@ public class TrabajadorPersistencia {
 
     public static ArrayList<Trabajador> getJefesSinProyecto() throws SQLException {
         String sql = "SELECT * FROM Trabajador T WHERE T.tipoCategoria = 1 AND NOT EXISTS(SELECT * FROM Proyecto P WHERE P.jefeProyecto = T.user AND P.estado <> 'cerrado')";
-
         ConexionBD conexion = new ConexionBD();
         ArrayList<Trabajador> trabajadores = conexion.searchAll(trabajadorConverter, sql);
         conexion.close();
 
+        return trabajadores;
+    }
+
+    public static ArrayList<Trabajador> getJefes() throws SQLException {
+        String sql = "SELECT * FROM Trabajador T WHERE T.tipoCategoria = 1";
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Trabajador> trabajadores = conexion.searchAll(trabajadorConverter, sql);
+        conexion.close();
         return trabajadores;
     }
 }

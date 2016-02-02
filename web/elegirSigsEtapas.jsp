@@ -21,15 +21,7 @@
                         Fecha de inicio de la etapa:
                     </td>
                     <td>
-                        <input id="ini" type="date" name="inicio"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Fecha de fin de la etapa:   
-                    </td>
-                    <td>
-                        <input id="fin" type="date" name="fin"/>
+                        <input id="ini" type="text" name="inicio" value="dd/mm/aaaa" onclick="borra1()"/>
                     </td>
                 </tr>
         </table>
@@ -48,16 +40,19 @@
 </center>
 </body>
 <script>
-    function checkitbra(){
-        if($('#ini').val()==""){
+    function checkitbra() {
+        if ($('#ini').val() == "") {
             alert("Fecha de inicio incorrecta");
             return false;
         }
-        if($('#fin').val()==""){
+        if ($('#fin').val() == "") {
             alert("Fecha de fin incorrecta");
             return false;
         }
         return true;
+    }
+    function borra1() {
+        document.getElementById("ini").value = ""
     }
 </script>
 </html>

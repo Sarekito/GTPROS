@@ -78,19 +78,32 @@ public class ActividadPersistencia {
         Statement s = conexion.createStatement();
         s.execute("insert into Actividad values('" + actividad.getNombre() + "', "
                 + actividad.getNumero() + ", " + actividad.getId() + ", '"
-                + actividad.getDescripcion() + "', " + actividad.getDuracion() + ", null, '"
+                + actividad.getDescripcion() + "', " + actividad.getDuracion() + ", NULL, '"
                 + actividad.getFechaComienzo() + "', '" + actividad.getFechaFin()
-                + "', null, '" + actividad.getEstado() + "', '" + actividad.getTipoRol().name() + "')");
+                + "', NULL, '" + actividad.getEstado() + "', '" + actividad.getTipoRol().name() + "')");
         if (!actividad.getPredecesoras().isEmpty()) {
             for (int i = 0; i < actividad.getPredecesoras().size(); i++) {
-                s.execute("insert into Antecesora values('" + actividad.getNombre() + "', "
-                        //                        + actividad.getNumero() + ", " + actividad.getId() + ", '" + actividad.getPredecesoras().get(i).getNombre() + "', "
-                        + actividad.getPredecesoras().get(i).getNumero() + ", " + actividad.getPredecesoras().get(i).getId() + ")");
+                s.execute("INSERT INTO Antecesora values ('"+actividad.getNombre()+
+                        "', "+actividad.getNumero()+", "+actividad.getId()+", '"
+                        +actividad.getPredecesoras().get(i).getNombre()+"', "+
+                        actividad.getPredecesoras().get(i).getNumero()+", "+
+                        actividad.getPredecesoras().get(i).getId());
             }
         }
         conexion.close();
     }
-
+    
+    public static void cerrar(Actividad act) throws SQLException {
+        String sql = String.format("Update Actividad Set estado = 'finalizado' where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getNombre(), act.getNumero(), act.getId());
+        ConexionBD conexion = new ConexionBD();
+        conexion.execute(sql);
+        sql = String.format("Update Actividad Set duracionReal = %d where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getDuracionReal(), act.getNombre(), act.getNumero(), act.getId());
+        conexion.execute(sql);
+        sql = String.format("Update Actividad Set fechaFinReal = '%d-%d-%d' where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getFechaFinReal().getYear()+1900, act.getFechaFinReal().getMonth()+1, act.getFechaFinReal().getDate(), act.getNombre(), act.getNumero(), act.getId());
+        conexion.execute(sql);
+        conexion.close();
+    }
+    
     public static ArrayList<Actividad> sobreesfuerzo(String user) throws SQLException {
         String sql = "SELECT A.* from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'finalizado' and A.duracion<A.duracionReal";
         String sql2 = "Select A.* from  Actividad A, Proyecto P where P.nombre = A.nombre and P.estado = 'realizando' and A.duracion<A.duracionReal and P.jefeProyecto = '" + user + "'";
@@ -145,12 +158,10 @@ public class ActividadPersistencia {
     }
 
     public static ArrayList<Actividad> getMisActividadesActuales(String user) throws SQLException {
-        String sql = "SELECT A.* FROM ActividadTrabajador AP, Actividad A, Proyecto P where AP.nombreProyecto = A.nombre and AP.numeroEtapa = A.numero and AP.idActividad = A.id and P.nombre = A.nombre and P.estado = 'realizando' and AP.nombreTrabajador = '" + user + "'";
-
+       String sql = "SELECT A.* FROM ActividadTrabajador AP, Actividad A, Proyecto P where AP.nombreProyecto = A.nombreProyecto and AP.numeroEtapa = A.numeroEtapa and AP.idActividad = A.idActividad and A.estado <> 'finalizado' and P.estado = 'realizando' and AP.nombreTrabajador = '" + user + "'";
         ConexionBD conexion = new ConexionBD();
         ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
         conexion.close();
-
         return actividades;
     }
 
@@ -206,16 +217,5 @@ public class ActividadPersistencia {
         ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
         conexion.close();
         return actividades;
-    }
-
-    public static void cerrar(Actividad act) throws SQLException {
-        String sql = String.format("Update Actividad Set estado = 'finalizado' where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getNombre(), act.getNumero(), act.getId());
-        ConexionBD conexion = new ConexionBD();
-        conexion.execute(sql);
-        sql = String.format("Update Actividad Set duracionReal = %d where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getDuracionReal(), act.getNombre(), act.getNumero(), act.getId());
-        conexion.execute(sql);
-        sql = String.format("Update Actividad Set fechaFinReal = '%d-%d-%d' where nombreProyecto = '%s' and numeroEtapa = %d and idActividad = %d", act.getFechaFinReal().getYear()+1900, act.getFechaFinReal().getMonth()+1, act.getFechaFinReal().getDate(), act.getNombre(), act.getNumero(), act.getId());
-        conexion.execute(sql);
-        conexion.close();
     }
 }

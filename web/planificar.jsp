@@ -14,13 +14,9 @@
         <title>GTPROS</title>
     </head>
     <body>
-    <center>        
-        <%String fallo = (String) request.getAttribute("fallo");%>
-        <%if(fallo.equals("si")){%>
-        <h2><font color = "red">Los datos no son correctos</font></h2>
+    <center>
         <h1>Planifique este proyecto</h1>
-        <%}%>
-        <%Proyecto proyecto = (Proyecto) request.getAttribute("proyecto");%>
+        <%Proyecto proyecto = (Proyecto) request.getSession().getAttribute("planificar");%>
         <form action="Controlador" method ="post" onsubmit="return comprueba();">
             <input type="hidden" name="accion" value="planificado" readonly="readonly" />
             <table border = "5">
@@ -31,19 +27,13 @@
                     <td>
                         Fecha de inicio del proyecto
                     </td>
-                    <td>
-                        Fecha de fin de proyecto estimada
-                    </td>
                 </tr>
                 <tr>
                     <td>
                         <%=proyecto.getNombre()%>
                     </td>
                     <td>
-                        <input id="inicio" type="date" name = "inicio">
-                    </td>
-                    <td>
-                        <input id="fin" type="date" name = "fin">
+                        <input id="inicio" type="text" name = "inicio" onclick="borra()" value="dd/mm/aaaa"> 
                     </td>
                     <td>
                         <input type="submit" value="Guardar" />
@@ -54,16 +44,17 @@
     </center>
 </body>
 <script>
-    function comprueba(){
-        if($('#inicio').val()==""){
+    function comprueba() {
+        if ($('#inicio').val() == "" || $('#inicio').val() == "dd/mm/aaaa") {
             return false;
         }
-        if($('#fin').val()==""){
-            return false;
-        }
-        if(($('#fin').val()!="")&&($('#inicio').val()!="")){
-            return true;
+        else{
+            return true
         }
     }
+    function borra(){
+        document.getElementById("inicio").value=""
+    }
+    
 </script>
 </html>

@@ -17,17 +17,14 @@
     </head>
     <body>
     <center>
-        <h2>Ese trabajador excede las horas en esa fecha</h2>
-        <%ArrayList<Trabajador> tr = (ArrayList<Trabajador>) request.getAttribute("trabajadores");%>
+        <%ArrayList<Trabajador> tr = (ArrayList<Trabajador>) request.getSession().getAttribute("trabajadores");%>
+        <h2>Exceso de dediacion en los proyetos actuales</h2>
         <h1>Elige el equipo del proyecto</h1>
         <p>Introducir el porcentaje del trabajador y pulsar elegir</p>
         <table border="5">
             <tr>
                 <td>
                     Nombre
-                </td>
-                <td>
-                    Rol
                 </td>
                 <td>
                     Categoria
@@ -40,20 +37,17 @@
                 </td>
 
                 <%for (int i = 0; i < tr.size(); i++) {%>
-            <form action="Controlador" method="POST" onsubmit="return controlar();">
-                </tr>
+            <form action="Controlador" method="POST" <!--onsubmit="return checkit();-->">
+                  </tr>
                 <tr>
                     <td>
                         <%=tr.get(i).getUser()%>
                     </td>
                     <td>
-                        <%=tr.get(i).getTipoRol().getRol()%>
-                    </td>
-                    <td>
                         <%=tr.get(i).getCategoria().getCategoria()%>
                     </td>
                     <td>
-                        <input id="dedicacion" type="number" name="dedicacion" min="1" max="100">
+                        <input id="dedicacion" type="number" name="dedicacion" min="1" max="100" required>
                     </td>
                     <td>
                         <input type="hidden" name="accion" value="tomarDatos" readonly="readonly" />
@@ -67,10 +61,10 @@
     </center>
 </body>
 <script>
-    function controlar(){
-        if($('#dedicacion').val()==""){
+    function controlar() {
+        if ($('#dedicacion').val() == "") {
             return false;
-        } else{
+        } else {
             return true;
         }
     }

@@ -30,6 +30,7 @@
             <%
                 HttpSession sesion = request.getSession();
                 ArrayList<Proyecto> p = (ArrayList<Proyecto>) sesion.getAttribute("misProyectosActuales");
+                Proyecto plan = (Proyecto) sesion.getAttribute("planificar");
                 for (int i = 0; i < p.size(); i++) {
             %>
             <tr>
@@ -45,6 +46,25 @@
             </tr>
             <% }%>
         </table>
+        <br>
+        <%if (plan != null) {%>
+        <hr color = "gray" size="5px">
+        <h1>Tus proyectos pendientes de planificacion</h1>
+        <table>
+            <td>
+                nombre:
+            </td>
+            <td>
+                <%=plan.getNombre()%>
+            </td>
+            <td>
+                <form name = "Controlador" method="POST">
+                    <input type="hidden" name="accion" value="verProyecto" readonly="readonly" />
+                    <input type="submit" value="Planificar" />
+                </form>
+            </td>
+        </table>
+        <%}%>
         <br>
         <hr color = "gray" size="5px">
         <br>

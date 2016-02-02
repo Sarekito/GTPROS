@@ -13,16 +13,17 @@
         <title>GTPROS</title>
     </head>
     <body> 
+    <center>
         <h2>Las fechas son incorrectas</h2>
-        <h1>Introducir datos de la etapa</h1>
+        <h1>Introducir datos de la actividad</h1>
         <table>
-            <form action="Controlador" method="POST" onsubmit="return analice();">
+            <form action="Controlador" method="POST" onsubmit="return check();">
                 <tr>
                     <td>
                         Fecha de inicio de la actividad:
                     </td>
                     <td>
-                        <input id="ini" type="date" name="inicio"/>
+                        <input id="ini" type="text" name="inicio" value="dd/mm/aaaa" onclick="borra1()"/>
                     </td>
                 </tr>
                 <tr>
@@ -30,7 +31,7 @@
                         Fecha de fin de la actividad:
                     </td>
                     <td>
-                        <input id="fin" type="date" name="fin"/>
+                        <input id="fin" type="text" name="fin" value="dd/mm/aaaa" onclick="borra2()"/>
                     </td>
                 </tr>
                 <tr>
@@ -41,36 +42,36 @@
                         <input id="duracion" type="number" name="duracion" min="1"/>
                     </td>
                 </tr>
-                    <tr>
+                <tr>
                     <td>
                         Tipo de rol:   
                     </td>
-                    </tr>
-                    <tr>
+                </tr>
+                <tr>
                     <td>
                         <input type="radio" name="Rol" value="Analista" checked="checked" /> Analista
                     </td>
-                    </tr>
-                    <tr>
+                </tr>
+                <tr>
                     <td>
                         <input type="radio" name="Rol" value="Disenador" /> Diseñador
-                    </tr>
-                    <tr>
+                </tr>
+                <tr>
                     <td>
                         <input type="radio" name="Rol" value="AnalistaProgramador" /> Analista-Programador
                     </td>
-                    </tr>
-                    <tr>
+                </tr>
+                <tr>
                     <td>
                         <input type="radio" name="Rol" value="ResponsablePruebaas"/> Responsable de Pruebas
                     </td>
-                    </tr>
-                    <tr>
+                </tr>
+                <tr>
                     <td>
                         <input type="radio" name="Rol" value="Programador"/> Programador
                     </td>
-                    </tr>
-                    <tr>
+                </tr>
+                <tr>
                     <td>
                         <input type="radio" name="Rol" value="Probador"/> Probador
                     </td>
@@ -80,8 +81,7 @@
                         Descripción:
                     </td>
                     <td>
-                        <textarea id="descripcion" name="descripcion" rows="10" cols="60" >
-                        </textarea>
+                        <input type ="text" id="descripcion" name="descripcion" spellcheck="true">
                     </td>
                 </tr>
         </table>
@@ -90,27 +90,34 @@
         <input type="hidden" name="accion" value="asignarTrabajador" />
         <input type="submit" value="Planificar Actividades" />
     </form>
+</center>
 </body>
 <script>
-    function analice(){
+    function check() {
         //Omitimos comprobacion en radios ya que hay un checkeado predeterminado
-        if($('#ini').val()==""){
+        if ($('#ini').val() == "") {
             alert("Error en fecha inicio");
             return false;
         }
-        if($('#fin').val()==""){
+        if ($('#fin').val() == "") {
             alert("Error en fecha fin");
             return false;
         }
-        if($('#duracion').val()==""){
+        if ($('#duracion').val() == "") {
             alert("Error en la duracion");
             return false;
         }
-        if($('#descripcion').val()==""){
+        if ($('#descripcion').val() == "") {
             alert("Error en la descripcion");
             return false;
         }
         return true;
+    }
+    function borra1() {
+        document.getElementById("ini").value = ""
+    }
+    function borra2() {
+        document.getElementById("fin").value = ""
     }
 </script>
 </html>

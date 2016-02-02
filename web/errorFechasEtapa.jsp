@@ -12,9 +12,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>GTPROS</title>
     </head>
-    <body> 
+    <body>
     <center>
-        <h2>Las fechas son incorrectas</h2>
+        <h2>Error en la fecha, seleccione un lunes posterior al inicio del proyecto</h2>
         <h1>Introducir datos de la etapa</h1>
         <table>
             <form action="Controlador" method="POST" onsubmit="return controla();">
@@ -23,35 +23,38 @@
                         Fecha de inicio de la etapa:
                     </td>
                     <td>
-                        <input id="ini" type="date" name="inicio"/>
+                        <input id="ini" type="text" name="inicio" value="dd/mm/aaaa" onclick="borra1()"/>
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        Fecha de fin de la etapa:   
-                    </td>
-                    <td>
-                        <input id="fin" type="date" name="fin"/>
-                    </td>
-                </tr>
-            </form>
         </table>
         <br>
         <br>
-            <input type="hidden" name="accion" value="planificarActividades" />
-            <input type="submit" value="Planificar Actividades" />
-        </form>
-    </center>
+        <input type="hidden" name="accion" value="planificarActividades" />
+        <input type="submit" value="Planificar Actividades" />
+    </form>
+    <br>
+    <br>
+    <br>
+    <form action="Controlador" method="POST">
+        <input type="hidden" name="accion" value="finalizarPlanProyecto" readonly="readonly" />
+        <input type="submit" value="Finalizar planificacion del proyecto"/>
+    </form>
+</center>
 </body>
 <script>
-    function controla(){
-        if($('#ini').val()==""){
+    function checkeame() {
+        if ($('#ini').val() == "") {
+            alert("Inicio no valido");
             return false;
         }
-        if($('#fin').val()==""){
+        if ($("#fin").val() == "") {
+            alert("Fin no valido");
             return false;
         }
         return true;
+    }
+    function borra1() {
+        document.getElementById("ini").value = ""
     }
 </script>
 </html>

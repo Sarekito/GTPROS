@@ -79,4 +79,12 @@ public class TareaPersistencia {
         conexion.execute(sql);
         conexion.close();
     }
+    
+    public static void almacena(Tarea get) throws SQLException {
+        String sql = "Insert into Tarea values ('"+get.getNombreProyecto()+"', "+get.getNumeroEtapa()+", "+get.getIdActividad()+", '"+get.getTrabajador()+"', '"+(get.getSemana().getYear()+1900)+"-"+(get.getSemana().getMonth()+1)+"-"+get.getSemana().getDate()+"', '"+get.getTipoTarea().toString()+"', 0, 'Pendiente')";
+        System.out.println("Insert into Tarea values ('"+get.getNombreProyecto()+"', "+get.getNumeroEtapa()+", "+get.getIdActividad()+", '"+get.getTrabajador()+"', '"+(get.getSemana().getYear()+1900)+"-"+(get.getSemana().getMonth()+1)+"-"+get.getSemana().getDate()+"', '"+get.getTipoTarea().toString()+"', 0, 'Pendiente')");
+        ConexionBD conexion = new ConexionBD();
+        conexion.execute(sql);
+        conexion.close();
+    }
 }

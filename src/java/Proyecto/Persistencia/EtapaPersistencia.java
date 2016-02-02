@@ -4,8 +4,11 @@ import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.Etapa;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -50,8 +53,19 @@ public class EtapaPersistencia {
     }
 
     public static void guardarEtapa(Etapa etapa) throws SQLException {
-        ConexionBD conexion = new ConexionBD();
-        conexion.insert(etapaConverter, etapa);
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+
+        }
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/PGP_grupo11", "PGP_grupo11", "P6AbQA8Z");
+        Statement s = conexion.createStatement();
+        System.out.println("insert into Etapa values('"+etapa.getNombre()+"', "+
+                etapa.getNumero()+", '"+etapa.getFechaInicio()+"', '"+
+                etapa.getFechaFin()+"', null, "+etapa.getDuracion()+", NULL, '"+etapa.getEstado()+"')");
+        s.execute("insert into Etapa values('"+etapa.getNombre()+"', "+
+                etapa.getNumero()+", '"+etapa.getFechaInicio()+"', '"+
+                etapa.getFechaFin()+"', null, "+etapa.getDuracion()+", NULL, '"+etapa.getEstado()+"')");
         conexion.close();
     }
 
