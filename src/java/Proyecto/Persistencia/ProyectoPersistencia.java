@@ -41,7 +41,7 @@ public class ProyectoPersistencia {
     };
 
     public static ArrayList<Proyecto> getMisProyectos(String jefe) throws SQLException {
-         String sql = "select * from Proyecto P where P.jefeProyecto='" + jefe + "' and P.estado = 'realizando'";
+         String sql = "select * from Proyecto P where P.jefeProyecto='" + jefe + "' and P.estado <> 'cerrado'";
 
         ConexionBD conexion = new ConexionBD();
         ArrayList<Proyecto> proyectos = conexion.searchAll(proyectoConverter, sql);
