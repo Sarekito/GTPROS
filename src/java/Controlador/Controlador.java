@@ -356,13 +356,15 @@ public class Controlador extends HttpServlet {
             cd.setTime(fechaElegida1);
             cd.add(Calendar.DATE, (semanas1 * 7) - 1);
             Date fechaFin = new Date(cd.getTime().getYear(), cd.getTime().getMonth(), cd.getTime().getDate());
-            for (int i = 0; i < tmpAct.size(); i++) {
-                if (!diaInicio.after(tmpAct.get(i).getFechaFin()) && !diaInicio.before(tmpAct.get(i).getFechaInicio())
-                        || !fechaFin.after(tmpAct.get(i).getFechaFin()) && !fechaFin.before(tmpAct.get(i).getFechaInicio())
-                        || !diaInicio.before(tmpAct.get(i).getFechaInicio()) && !fechaFin.after(tmpAct.get(i).getFechaFin())
-                        || !diaInicio.after(tmpAct.get(i).getFechaInicio()) && !fechaFin.before(tmpAct.get(i).getFechaFin())) {
-                    return "/vacacionesErroneas.jsp";
+            if (tmpAct != null) {
+                for (int i = 0; i < tmpAct.size(); i++) {
+                    if (!diaInicio.after(tmpAct.get(i).getFechaFin()) && !diaInicio.before(tmpAct.get(i).getFechaInicio())
+                            || !fechaFin.after(tmpAct.get(i).getFechaFin()) && !fechaFin.before(tmpAct.get(i).getFechaInicio())
+                            || !diaInicio.before(tmpAct.get(i).getFechaInicio()) && !fechaFin.after(tmpAct.get(i).getFechaFin())
+                            || !diaInicio.after(tmpAct.get(i).getFechaInicio()) && !fechaFin.before(tmpAct.get(i).getFechaFin())) {
+                        return "/vacacionesErroneas.jsp";
 
+                    }
                 }
             }
             int semanas2 = Integer.parseInt(request.getParameter("semanas2"));
@@ -933,7 +935,7 @@ public class Controlador extends HttpServlet {
                 }
             }
         }
-        
+
         restantes = new ArrayList<>();
         ArrayList<Actividad> simultaneas;
         for (int i = 0; i < tp.size(); i++) {
