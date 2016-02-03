@@ -88,6 +88,7 @@
                 //MEses de 30 dias
                 if ((diaInicio < 32) && (diaInicio > 0)) {
                     //Mu bien, campeon, salte del bucle
+                    //asdfasdf
                 } else {
                     alert("El mes: " + mesInicio + " debe de tener el dia comprendido entre 01 y 30");
                     return false;
