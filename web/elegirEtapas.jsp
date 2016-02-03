@@ -76,6 +76,7 @@
                 }
             } else {
                 //MEses de 30 dias
+                //asdfaf
                 if ((diaInicio < 32) && (diaInicio > 0)) {
                     //Mu bien, campeon, salte del bucle
                 } else {

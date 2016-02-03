@@ -53,6 +53,7 @@
         var fechaInicioLocale = $('#inicio').val();
         if (patt.test(fechaInicioLocale)) {
             //Se cumple la fecha; comprobamos meses
+            //asdfasdfasd
             var diaInicio = fechaInicioLocale.subString(0, 2);
             var mesInicio = fechaInicioLocale.subString(3, 5);
             var anoInicio = fechaInicioLocale.subString(6);

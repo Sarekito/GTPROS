@@ -122,6 +122,7 @@
             alert("Error en fecha fin");
             return false;
         }
+        //asdfasdf
         if($('#duracion').val()==""){
             alert("Error en la duracion");
             return false;

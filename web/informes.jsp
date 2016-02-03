@@ -9,6 +9,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="./js/jquery-1.12.0.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>GTPROS</title>
     </head>
@@ -29,7 +30,7 @@
         <%}%><%}%>
         <h3>Semana: <%=tareas.get(j).getSemana()%> Trabajador: <%=tareas.get(j).getTrabajador()%> Estado: <%=tareas.get(j).getEstado()%></h3>
         <table border = "1">
-            <form action="Controlador" method="POST">
+            <form action="Controlador" method="POST"  onsubmit="return comprueba();">
                 <input type="text" value ="<%=at.get((int) j / 6)%>" name="horas" hidden="hidden"/>
                 <tr>
                     <td>
@@ -66,7 +67,7 @@
                     </td>
                     <%if (!p.getJefe().equals(trabajador.getUser()) && !ac.getEstado().equals("finalizado") && !tareas.get(j).getEstado().equals("Aceptado")) {%>
                     <td>
-                        <input type="number" max="40" min="0" name="get-<%=i % 6%>">
+                        <input type="number" class="controlBlancos" max="40" min="0" name="get-<%=i % 6%>">
                     </td>
                     <%}%>
                 </tr>
@@ -97,4 +98,18 @@
     </form>
 </center>
 </body>
+<script>
+    function comprueba(){
+        $('.controlBlancos').each(function(){
+            if($(this).val()==""){
+                alert("Por favor, introduzca un valor adecuado");
+                return false;
+            }
+            //Si no va asi le añades y si tampoco va, me dices que habria que contar para lanzar el true
+            /*else{
+                return true;
+            }*/
+        })
+    }
+</script>
 </html>

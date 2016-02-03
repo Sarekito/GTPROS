@@ -47,6 +47,7 @@
             alert("Inicio no valido");
             return false;
         }
+        //asdfasdfasdf
         if ($("#fin").val() == "") {
             alert("Fin no valido");
             return false;

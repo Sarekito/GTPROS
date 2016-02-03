@@ -3,7 +3,6 @@
     Created on : 25-dic-2015, 9:34:52
     Author     : antonio
 --%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -116,6 +115,7 @@
             diaInicio = parseInt(diaInicio);
             mesInicio = parseInt(mesInicio);
             anoInicio = parseInt(anoInicio);
+            //asdfsasd
             if ((mesInicio == 1) || (mesInicio == 3) || (mesInicio == 5) || (mesInicio == 7) || (mesInicio == 8) || (mesInicio == 10) || (mesInicio == 12)) {
                 //MEses de 31 dias
                 if ((diaInicio < 32) && (diaInicio > 0)) {

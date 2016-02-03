@@ -8,6 +8,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="./js/jquery-1.12.0.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>GTPROS</title>
     </head>
@@ -49,6 +50,7 @@
             alert("Fecha de fin incorrecta");
             return false;
         }
+        //asdfasdf
          var patt = new RegExp(/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/);
         var fechaInicioLocale = $('#ini').val();
         var fechaFinLocale = $('#fin').val();
