@@ -104,6 +104,12 @@ public class TareaPersistencia {
             Tarea t = new Tarea(rs.getString("nombreProyecto"), rs.getInt("numeroEtapa"), rs.getInt("idActividad"), rs.getString("trabajador"), rs.getDate("semana"), TipoTarea.get(rs.getString("tipoTarea")), rs.getInt("duracion"), rs.getString("estado"));
             tareas.add(t);
         }
-        return tareas;
+        ArrayList<Tarea> tareas2 = new ArrayList<>();
+        for(int i=0;i<tareas.size();i++){
+            if(tareas.get(i).getIdActividad()!=act.getId() || tareas.get(i).getNumeroEtapa()!=act.getNumero()){
+                tareas2.add(tareas.get(i));
+            }
+        }
+        return tareas2;
     }
 }

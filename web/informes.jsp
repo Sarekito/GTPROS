@@ -20,18 +20,22 @@
         <%ArrayList<ArrayList<Tarea>> tas = new ArrayList<ArrayList<Tarea>>();%>
         <%Actividad ac = (Actividad) request.getSession().getAttribute("actividad");%>
         <%Trabajador trabajador = (Trabajador) request.getSession().getAttribute("trabajador");%>
-
+        <%ArrayList<Integer> at = null; %>
         <h1>Etapas</h1> 
-        <%ArrayList<Integer> at = (ArrayList<Integer>) request.getSession().getAttribute("horas");%>
+        <%if (!p.getJefe().equals(trabajador.getUser())) {%>
+        <%at = (ArrayList<Integer>) request.getSession().getAttribute("horas");%>
+        <%}%>
         <%for (int j = 0; j < tareas.size(); j = j + 6) {%>
         <%if (!p.getJefe().equals(trabajador.getUser()) && !ac.getEstado().equals("finalizado")) {%>
-        <%if(!tareas.get(j).getEstado().equals("Aceptado")){%>
+        <%if (!tareas.get(j).getEstado().equals("Aceptado")) {%>
         <h4>Horas restantes en esta semana: <%=at.get((int) j / 6)%></h4>
         <%}%><%}%>
         <h3>Semana: <%=tareas.get(j).getSemana()%> Trabajador: <%=tareas.get(j).getTrabajador()%> Estado: <%=tareas.get(j).getEstado()%></h3>
         <table border = "1">
-            <form action="Controlador" method="POST"  onsubmit="return comprueba();">
+            <form action="Controlador" method="POST"  onsubmit="return compruebaBlanco();">
+                <%if (!p.getJefe().equals(trabajador.getUser())) {%>
                 <input type="text" value ="<%=at.get((int) j / 6)%>" name="horas" hidden="hidden"/>
+                <%}%>
                 <tr>
                     <td>
                         Etapa
@@ -67,7 +71,7 @@
                     </td>
                     <%if (!p.getJefe().equals(trabajador.getUser()) && !ac.getEstado().equals("finalizado") && !tareas.get(j).getEstado().equals("Aceptado")) {%>
                     <td>
-                        <input type="number" class="controlBlancos" max="40" min="0" name="get-<%=i % 6%>">
+                        <input type="number" id="num<%=i % 6%>" max="40" min="0" name="get-<%=i % 6%>">
                     </td>
                     <%}%>
                 </tr>
@@ -77,7 +81,7 @@
         <%if (!p.getJefe().equals(trabajador.getUser()) && !ac.getEstado().equals("finalizado") && !tareas.get(j).getEstado().equals("Aceptado")) {%>
         <input type="text" name="accion" value="guardarInforme" readonly="readonly" hidden="hidden" />
         <input type="text" name="inicio" value="<%=j%>" hidden="hidden"/>
-        <input type="submit" value="Guardar informe" />
+        <input type="submit" value="Guardar informe"/>
         <%}%>
     </form>
     <br>
@@ -99,17 +103,27 @@
 </center>
 </body>
 <script>
-    function comprueba(){
-        $('.controlBlancos').each(function(){
-            if($(this).val()==""){
-                alert("Por favor, introduzca un valor adecuado");
-                return false;
-            }
-            //Si no va asi le añades y si tampoco va, me dices que habria que contar para lanzar el true
-            /*else{
-                return true;
-            }*/
-        })
+    function compruebaBlanco() {
+        if (document.getElementById("num0").value == "") {
+            return false;
+        }
+        if (document.getElementById("num1").value == "") {
+            return false;
+        }
+        if (document.getElementById("num2").value == "") {
+            return false;
+        }
+        if (document.getElementById("num3").value == "") {
+            return false;
+        }
+        if (document.getElementById("num4").value == "") {
+            return false;
+        }
+        if (document.getElementById("num5").value == "") {
+            return false;
+        }
+        return true;
+
     }
 </script>
 </html>
