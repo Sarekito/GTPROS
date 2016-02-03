@@ -1,6 +1,5 @@
 package Controlador;
 
-import Excepciones.EtapaConActividadesAbiertasException;
 import Proyecto.Despliegue.DespliegueProyectoLocal;
 
 import Proyecto.Dominio.Actividad;
@@ -23,8 +22,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -698,7 +695,7 @@ public class Controlador extends HttpServlet {
             act = actividadesC.get(Integer.parseInt(request.getParameter("elegida")));
             ArrayList<Tarea> tmptareas = despliegueProyecto.getInformesActividadMios(act, trabajador);
             int cont = despliegueProyecto.getContribucion(trabajador, p);
-            cont = (cont*40)/100;
+            cont = (cont * 40) / 100;
             if (act.getFechaComienzo().equals(act.getFechaFin())) {
                 ArrayList<Tarea> t1 = despliegueProyecto.getTareasTiempo(trabajador, act.getFechaComienzo(), act);
                 if (t1 != null) {
@@ -936,18 +933,14 @@ public class Controlador extends HttpServlet {
                 }
             }
         }
+        
         restantes = new ArrayList<>();
         ArrayList<Actividad> simultaneas;
         for (int i = 0; i < tp.size(); i++) {
-            restantes.add(tp.get(i));
             Trabajador tmptr = despliegueTrabajador.getTrabajador(tp.get(i).getUser());
-            if (actividad.getTipoRol().getCategoria().getCategoria() < tmptr.getCategoria().getCategoria()) {
-                restantes.remove(i);
-                System.out.println(1 + "--" + restantes);
-            } else {
+            if (actividad.getTipoRol().getCategoria().getCategoria() >= tmptr.getCategoria().getCategoria()) {
                 simultaneas = new ArrayList<>();
-                ArrayList<Actividad> simultaneas2 = new ArrayList<>();
-                simultaneas2 = despliegueProyecto.misActividadesFecha(tp.get(i).getUser());
+                ArrayList<Actividad> simultaneas2 = despliegueProyecto.misActividadesFecha(tp.get(i).getUser());
                 if (simultaneas2 != null) {
                     for (int k = 0; k < simultaneas2.size(); k++) {
                         if (!(actividad.getFechaComienzo().before(simultaneas2.get(k).getFechaComienzo())) && !(actividad.getFechaComienzo().after(simultaneas2.get(k).getFechaFin()))
@@ -957,6 +950,7 @@ public class Controlador extends HttpServlet {
                             simultaneas.add(simultaneas2.get(k));
                         }
                     }
+
                     for (int k = 0; k < actividadTrabajador.size(); k++) {
                         if (actividadTrabajador.get(k).getNombreTrabajador().equals(tp.get(i).getUser())) {
                             for (int j = 0; j < actividades.size(); j++) {
@@ -974,16 +968,17 @@ public class Controlador extends HttpServlet {
                             }
                         }
                     }
-                    if (simultaneas.size() > 3) {
-                        restantes.remove(i);
-                        System.out.println(2 + "--" + restantes);
-                    }
-                }
 
+                    if (simultaneas.size() <= 3) {
+                        restantes.add(tp.get(i));
+                    }
+                } else {
+                    restantes.add(tp.get(i));
+                }
             }
         }
 
-        for (int i = 0; i < restantes.size(); i++) {
+        for (int i = restantes.size() - 1; i >= 0; i--) {
             ArrayList<Vacaciones> vc = despliegueTrabajador.getVacaciones(restantes.get(i).getUser());
             if (vc != null) {
                 for (int j = 0; j < vc.size(); j++) {
@@ -1003,7 +998,7 @@ public class Controlador extends HttpServlet {
                 }
             }
         }
-        System.out.println(3 + "--" + restantes);
+
         actividades.add(actividad);
         actEtapa.add(actividad);
         request.getSession().setAttribute("trabajadoresProyecto", restantes);
