@@ -14,15 +14,14 @@ public class ActividadTrabajador {
     int numeroEtapa;
     int idActividad;
     String nombreTrabajador;
-    int horas;
+
     
 
-    public ActividadTrabajador(Actividad ad, TrabajadoresProyecto tp, int tiempo){
+    public ActividadTrabajador(Actividad ad, TrabajadoresProyecto tp){
         nombreProyecto = ad.getNombre();
         numeroEtapa = ad.getNumero();
         idActividad = ad.getId();
         nombreTrabajador = tp.getUser();
-        horas = tiempo;
     }
     
     public String getNombreProyecto() {
@@ -40,9 +39,4 @@ public class ActividadTrabajador {
     public String getNombreTrabajador() {
         return nombreTrabajador;
     }
-
-    public int getHoras() {
-        return horas;
-    }
-
 }

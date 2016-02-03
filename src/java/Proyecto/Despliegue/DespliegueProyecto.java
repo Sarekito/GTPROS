@@ -477,4 +477,38 @@ public class DespliegueProyecto implements DespliegueProyectoLocal {
         }
     }
 
+    @Override
+    public int getContribucion(Trabajador trabajador, Proyecto proyecto) {
+        try {
+            return ProyectoPersistencia.contribucion(trabajador, proyecto);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    @Override
+    public ArrayList<Actividad> getActividades(Trabajador trabajador, Proyecto proyecto) {
+        try {
+            ActividadPersistencia.getActividades(trabajador, proyecto);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public ArrayList<Tarea> getTareasTiempo(Trabajador trabajador, Date fechaComienzo, Actividad act) {
+        try {
+            return TareaPersistencia.getTareasFecha(trabajador, fechaComienzo, act);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DespliegueProyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
 }

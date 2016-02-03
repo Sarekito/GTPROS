@@ -105,4 +105,10 @@ public interface DespliegueProyectoLocal {
 
     public void guardarTarea(Tarea get);
 
+    public int getContribucion(Trabajador trabajador, Proyecto proyecto);
+
+    public ArrayList<Actividad> getActividades(Trabajador trabajador, Proyecto proyecto);
+
+    public ArrayList<Tarea> getTareasTiempo(Trabajador trabajador, Date fechaComienzo, Actividad act);
+
 }

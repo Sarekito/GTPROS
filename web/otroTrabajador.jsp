@@ -46,9 +46,6 @@
                         <%=(tr.get(i).getDedicacion()*40)/100%>
                     </td>
                     <td>
-                        <input id="horas" type="number" name="horasActividad" min="1" max="<%=(tr.get(i).getDedicacion()*40)/100%>"
-                    </td>
-                    <td>
                         <input type="hidden" name="accion" value="generaActividadTrabajador" readonly="readonly" />
                         <input type="hidden" name="eleccion" value=<%=i%> readonly="readonly" />
                         <input type="submit" value="Elegir" />

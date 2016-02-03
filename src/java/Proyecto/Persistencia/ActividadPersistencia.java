@@ -4,6 +4,7 @@ import Persistencia.ConexionBD;
 import Persistencia.ObjectConverter;
 import Proyecto.Dominio.Actividad;
 import Proyecto.Dominio.Etapa;
+import Proyecto.Dominio.Proyecto;
 import Proyecto.Dominio.Tarea;
 import Proyecto.Dominio.TipoTarea;
 import Trabajador.Dominio.Rol;
@@ -216,5 +217,12 @@ public class ActividadPersistencia {
         ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
         conexion.close();
         return actividades;
+    }
+
+    public static void getActividades(Trabajador trabajador, Proyecto proyecto) throws SQLException { 
+        String sql = "Select * From Actividad A, ActividadTrabajador At where A.nombreProyecto = At.nombreProyecto and A.numeroEtapa = At.numeroEtapa and A.idActividad = At.idActividad and At.nombreTrabajador = '"+trabajador.getUser()+"'";
+        ConexionBD conexion = new ConexionBD();
+        ArrayList<Actividad> actividades = conexion.searchAll(actividadConverter, sql);
+        conexion.close();
     }
 }

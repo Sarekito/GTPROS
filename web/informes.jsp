@@ -13,21 +13,24 @@
         <title>GTPROS</title>
     </head>
     <body>
+    <center>
         <%ArrayList<Tarea> tareas = (ArrayList<Tarea>) request.getSession().getAttribute("tareas");%>
         <%Proyecto p = (Proyecto) request.getSession().getAttribute("proyecto");%>
         <%ArrayList<ArrayList<Tarea>> tas = new ArrayList<ArrayList<Tarea>>();%>
         <%Actividad ac = (Actividad) request.getSession().getAttribute("actividad");%>
         <%Trabajador trabajador = (Trabajador) request.getSession().getAttribute("trabajador");%>
-    <center>
+
         <h1>Etapas</h1> 
-        <%if (!p.getJefe().equals(trabajador.getUser()) && !ac.getEstado().equals("finalizado")) {
-            int at = (Integer) request.getSession().getAttribute("horas");%>
-        <h4>Horas asignadas a esta actividad: <%=at%></h4>
-        <%}%>
+        <%ArrayList<Integer> at = (ArrayList<Integer>) request.getSession().getAttribute("horas");%>
         <%for (int j = 0; j < tareas.size(); j = j + 6) {%>
+        <%if (!p.getJefe().equals(trabajador.getUser()) && !ac.getEstado().equals("finalizado")) {%>
+        <%if(!tareas.get(j).getEstado().equals("Aceptado")){%>
+        <h4>Horas restantes en esta semana: <%=at.get((int) j / 6)%></h4>
+        <%}%><%}%>
         <h3>Semana: <%=tareas.get(j).getSemana()%> Trabajador: <%=tareas.get(j).getTrabajador()%> Estado: <%=tareas.get(j).getEstado()%></h3>
         <table border = "1">
             <form action="Controlador" method="POST">
+                <input type="text" value ="<%=at.get((int) j / 6)%>" name="horas" hidden="hidden"/>
                 <tr>
                     <td>
                         Etapa

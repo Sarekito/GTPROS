@@ -87,4 +87,23 @@ public class TareaPersistencia {
         conexion.execute(sql);
         conexion.close();
     }
+
+    public static ArrayList<Tarea> getTareasFecha(Trabajador trabajador, java.util.Date fechaComienzo, Actividad act) throws ClassNotFoundException, SQLException {
+        ArrayList<Tarea> tareas = new ArrayList<>();
+        String sql = "select * from Tarea where trabajador = '"+trabajador.getUser()+"' and semana = '"+(fechaComienzo.getYear()+1900)+"-"+(fechaComienzo.getMonth()+1)+"-"+fechaComienzo.getDate()+"' and nombreProyecto = '"+act.getNombre()+"'";
+        System.out.println("select * from Tarea where trabajador = '"+trabajador.getUser()+"' and semana = '"+(fechaComienzo.getYear()+1900)+"-"+(fechaComienzo.getMonth()+1)+"-"+fechaComienzo.getDate()+"' and nombreProyecto = '"+act.getNombre()+"'");
+        String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
+        String DATABASE_URL = "jdbc:mysql://localhost:3306/PGP_grupo11?zeroDateTimeBehavior=convertToNull";
+        String DATABASE_USER = "PGP_grupo11";
+        String DATABASE_PASSWORD = "P6AbQA8Z";
+        Class.forName(DATABASE_DRIVER);
+        Connection conexion = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery(sql);
+        while (rs.next()) {
+            Tarea t = new Tarea(rs.getString("nombreProyecto"), rs.getInt("numeroEtapa"), rs.getInt("idActividad"), rs.getString("trabajador"), rs.getDate("semana"), TipoTarea.get(rs.getString("tipoTarea")), rs.getInt("duracion"), rs.getString("estado"));
+            tareas.add(t);
+        }
+        return tareas;
+    }
 }

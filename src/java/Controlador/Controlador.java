@@ -592,10 +592,10 @@ public class Controlador extends HttpServlet {
         restantes = new ArrayList<>();
         ArrayList<Actividad> simultaneas;
         for (int i = 0; i < tp.size(); i++) {
-            
+
             Trabajador tmptr = despliegueTrabajador.getTrabajador(tp.get(i).getUser());
             if (actividad.getTipoRol().getCategoria().getCategoria() < tmptr.getCategoria().getCategoria()) {
-         
+
             } else {
                 simultaneas = new ArrayList<>();
                 ArrayList<Actividad> simultaneas2 = new ArrayList<>();
@@ -620,7 +620,7 @@ public class Controlador extends HttpServlet {
                     }
                 }
             }
-        } 
+        }
         System.out.println(restantes);
         ArrayList<TrabajadoresProyecto> tmpres = restantes;
         restantes = new ArrayList<TrabajadoresProyecto>();
@@ -641,8 +641,7 @@ public class Controlador extends HttpServlet {
                         break;
                     }
                 }
-            }
-            else{
+            } else {
                 restantes.add(tmpres.get(i));
             }
         }
@@ -695,19 +694,53 @@ public class Controlador extends HttpServlet {
             tareas = despliegueProyecto.getInformesActividad(act);
             sesion.setAttribute("tareas", tareas);
         } else {
+            ArrayList<Integer> rest = new ArrayList<>();
             act = actividadesC.get(Integer.parseInt(request.getParameter("elegida")));
             ArrayList<Tarea> tmptareas = despliegueProyecto.getInformesActividadMios(act, trabajador);
-            int horas = despliegueProyecto.getDedicacion(act, trabajador);
-            request.getSession().setAttribute("horas", horas);
+            int cont = despliegueProyecto.getContribucion(trabajador, p);
+            cont = (cont*40)/100;
+            if (act.getFechaComienzo().equals(act.getFechaFin())) {
+                ArrayList<Tarea> t1 = despliegueProyecto.getTareasTiempo(trabajador, act.getFechaComienzo(), act);
+                if (t1 != null) {
+                    for (int i = 0; i < t1.size(); i++) {
+                        cont -= t1.get(i).getDuracion();
+                    }
+                }
+                rest.add(cont);
+            } else {
+                Calendar inicio = Calendar.getInstance();
+                inicio.setTime(act.getFechaComienzo());
+                Calendar fin = Calendar.getInstance();
+                fin.setTime(act.getFechaFin());
+                Calendar i = Calendar.getInstance();
+                int cont2;
+                for (i.setTime(act.getFechaComienzo()); !i.after(fin); i.add(Calendar.DAY_OF_MONTH, 7)) {
+                    cont2 = cont;
+                    System.out.println(i.getTime().toString());
+                    ArrayList<Tarea> t1 = despliegueProyecto.getTareasTiempo(trabajador, i.getTime(), act);
+                    System.out.println(t1);
+                    if (t1 != null) {
+                        for (int j = 0; j < t1.size(); j++) {
+                            cont2 -= t1.get(j).getDuracion();
+                        }
+                    }
+                    rest.add(cont2);
+                }
+            }
+
             java.util.Date hoy = new java.util.Date();
             for (int i = 0; i < tmptareas.size(); i++) {
                 if (!tmptareas.get(i).getSemana().after(hoy)) {
                     tareas.add(tmptareas.get(i));
                 }
             }
+            sesion.setAttribute("horas", rest);
             sesion.setAttribute("tareas", tareas);
         }
-        sesion.setAttribute("actividad", act);
+
+        sesion.setAttribute(
+                "actividad", act);
+
         return "/informes.jsp";
     }
 
@@ -830,8 +863,7 @@ public class Controlador extends HttpServlet {
         int elegido = Integer.parseInt(request.getParameter("eleccion"));
         TrabajadoresProyecto tptmp = tp.get(elegido);
         restantes.remove(elegido);
-        int tiempo = Integer.parseInt(request.getParameter("horasActividad"));
-        actividadTrabajador.add(new ActividadTrabajador(actividades.get(actividades.size() - 1), tptmp, tiempo));
+        actividadTrabajador.add(new ActividadTrabajador(actividades.get(actividades.size() - 1), tptmp));
         request.setAttribute("trabajadoresProyecto", restantes);
         return "/otroTrabajador.jsp";
     }
@@ -979,20 +1011,21 @@ public class Controlador extends HttpServlet {
     }
 
     private String planificarSigsEtapas(HttpServletRequest request) {
-        Date inicio = Date.valueOf(request.getParameter("inicio"));
-        Date fin = Date.valueOf(request.getParameter("fin"));
-        if (inicio.after(fin) || inicio.before(proyecto.getFechaInicio()) || fin.after(proyecto.getFechaFin()) || inicio.getDay() != 1 || fin.getDay() != 1) {
+        System.out.println(etapas.get(etapas.size() - 1).getFechaFin());
+        String fechaTexto = request.getParameter("inicio");
+        Scanner sc = new Scanner(fechaTexto);
+        sc.useDelimiter("/");
+        String dia = sc.next();
+        String mes = sc.next();
+        String ano = sc.next();
+        Date inicio = Date.valueOf(ano + "-" + mes + "-" + dia);
+        if (inicio.before(proyecto.getFechaInicio()) || inicio.getDay() != 1 || !inicio.after(etapas.get(etapas.size() - 1).getFechaFin())) {
             return "/errorFechasEtapa.jsp";
         } else {
             actEtapa = new ArrayList<>();
-            Etapa etapa = new Etapa(proyecto.getNombre(), etapas.size() + 1, inicio, fin, null, 0, 0, "pendiente");
-            if (etapas.get(etapas.size() - 1).getFechaFin().before(etapa.getFechaInicio())) {
-                etapas.add(etapa);
-                return "/actividades.jsp";
-            } else {
-                return "/errorEtapa.jsp";
-            }
-
+            System.out.println(etapas.size());
+            etapas.add(new Etapa(proyecto.getNombre(), (etapas.size() + 1), inicio, null, null, 0, 0, "realizando"));
+            return "/actividades.jsp";
         }
     }
 
@@ -1004,9 +1037,6 @@ public class Controlador extends HttpServlet {
             if (etapas.get(i).getFechaFin().after(hoy)) {
                 hoy = new Date(etapas.get(i).getFechaFin().getTime());
             }
-        }
-        for (int i = 0; i < etapas.size(); i++) {
-            System.out.println(etapas.get(i).getNombre() + " " + proyecto.getNombre());
         }
         proyecto.setFechaFin(hoy);
         proyecto.setDuracion(duracion);
@@ -1164,7 +1194,7 @@ public class Controlador extends HttpServlet {
                 return "/errorCierreEtapa.jsp";
             }
             duracion += act.get(i).getDuracionReal();
-            
+
         }
         et.setDuracionReal(duracion);
         et.setEstado("finalizado");
@@ -1347,7 +1377,7 @@ public class Controlador extends HttpServlet {
         int j = Integer.parseInt(request.getParameter("inicio"));
         ArrayList<String> estado = new ArrayList<>();
         int duracion = 0;
-        int limite = (Integer) request.getSession().getAttribute("horas");
+        int limite = Integer.parseInt(request.getParameter("horas"));
         estado.add("documentacion");
         estado.add("elaboracion");
         estado.add("otras");
@@ -1373,12 +1403,6 @@ public class Controlador extends HttpServlet {
     private String finPlanActividad(HttpServletRequest request) {
         Actividad ac = actEtapa.get(actEtapa.size() - 1);
         int numSemanas = (ac.getFechaFin().compareTo(ac.getFechaComienzo()) / 7) + 1;
-        int horasActividades = 0;
-        for (int i = 0; i < actividadTrabajador.size(); i++) {
-            if (actividadTrabajador.get(i).getNumeroEtapa() == ac.getNumero() && actividadTrabajador.get(i).getIdActividad() == ac.getId()) {
-                horasActividades += actividadTrabajador.get(i).getHoras() * numSemanas;
-            }
-        }
         request.setAttribute("posiblesPredecesoras", actEtapa);
         return "/actividadesFinalizar.jsp";
     }

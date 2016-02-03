@@ -19,7 +19,6 @@
     <body>
     <center>
         <%ArrayList<TrabajadoresProyecto> tr = (ArrayList<TrabajadoresProyecto>) request.getSession().getAttribute("trabajadoresProyecto");%>
-        <%=tr%>
         <h1>Elige el equipo del proyecto</h1>
         <p>Introducir las del trabajador y pulsar elegir</p>
         <table border="5">
@@ -45,9 +44,6 @@
                     </td>
                     <td>
                         <%=(tr.get(i).getDedicacion()*40)/100%>
-                    </td>
-                    <td>
-                        <input id="horas" type="number" name="horasActividad" min="1" max="<%=(tr.get(i).getDedicacion()*40)/100%>"
                     </td>
                     <td>
                         <input type="hidden" name="accion" value="generaActividadTrabajador" readonly="readonly" />

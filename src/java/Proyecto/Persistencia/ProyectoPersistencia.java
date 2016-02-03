@@ -10,6 +10,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.lang.Integer;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 /**
  *
@@ -151,7 +154,7 @@ public class ProyectoPersistencia {
     }
 
     public static void guardarAsignaciones(ActividadTrabajador get) throws SQLException {
-        String sql = "INSERT INTO ActividadTrabajador VALUES ('" + get.getNombreProyecto() + "', " + get.getNumeroEtapa() + ", " + get.getIdActividad() + ", '" + get.getNombreTrabajador() + "', " + get.getHoras() + ")";
+        String sql = "INSERT INTO ActividadTrabajador VALUES ('" + get.getNombreProyecto() + "', " + get.getNumeroEtapa() + ", " + get.getIdActividad() + ", '" + get.getNombreTrabajador() + "')";
         ConexionBD conexion = new ConexionBD();
         conexion.execute(sql);
         conexion.close();
@@ -172,5 +175,20 @@ public class ProyectoPersistencia {
         int count = conexion.count(sql);
         conexion.close();
         return count;
+    }
+
+    public static int contribucion(Trabajador trabajador, Proyecto proyecto) throws SQLException, ClassNotFoundException {
+        System.out.println("SELECT porcentaje FROM TrabajadoresProyecto where nombreProyecto = '"+proyecto.getNombre()+"' and trabajador = '"+trabajador.getUser()+"'");
+        String sql = "SELECT porcentaje FROM TrabajadoresProyecto where nombreProyecto = '"+proyecto.getNombre()+"' and trabajador = '"+trabajador.getUser()+"'";
+        String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
+        String DATABASE_URL = "jdbc:mysql://localhost:3306/PGP_grupo11?zeroDateTimeBehavior=convertToNull";
+        String DATABASE_USER = "PGP_grupo11";
+        String DATABASE_PASSWORD = "P6AbQA8Z";
+        Class.forName(DATABASE_DRIVER);
+        Connection conexion = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
+        Statement s = conexion.createStatement();
+        ResultSet rs = s.executeQuery(sql);
+        rs.next();
+        return rs.getInt(1);
     }
 }
